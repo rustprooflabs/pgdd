@@ -1,0 +1,5 @@
+%syntax-version=1.0.0
+%project=pgdd
+%uri=https://github.com/rustprooflabs/pgdd
+
+001 2018-09-18T19:19:14Z Ryan Lambert,,, <ryanlambert@tag1> # Initial data dictionary structures
