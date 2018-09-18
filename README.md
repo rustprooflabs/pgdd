@@ -1,0 +1,2 @@
+# pgdd
+PostgreSQL Data Dictionary
