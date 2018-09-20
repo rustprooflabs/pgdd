@@ -27,14 +27,3 @@ cd ~/git/pgdd/db
 sqitch deploy db:pg://youruser@192.168.2.15:5423/piws
 ```
 
-
-## Jupyter Notebook for visualizations
-
-```
-cd ~/venv/
-python3 -m venv pgdd
-
-cd ~/git/pgdd/example
-pip install -r ./requirements.txt
-```
-
