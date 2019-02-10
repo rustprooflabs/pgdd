@@ -7,22 +7,6 @@ BEGIN;
 	  		p.proname AS f_name,
 	  		pg_catalog.pg_get_function_result(p.oid) AS result_data_types,
 	  		pg_catalog.pg_get_function_arguments(p.oid) AS argument_data_types,
-			CASE
-			  	WHEN p.proisagg THEN 'agg'
-			  	WHEN p.proiswindow THEN 'window'
-			  	WHEN p.prorettype = 'pg_catalog.trigger'::pg_catalog.regtype THEN 'trigger'
-			  	ELSE 'normal'
-			END AS proc_type,
-			CASE
-			  	WHEN p.provolatile = 'i' THEN 'immutable'
-			  	WHEN p.provolatile = 's' THEN 'stable'
-			  	WHEN p.provolatile = 'v' THEN 'volatile'
-			END AS proc_volatility,
-			CASE
-			  	WHEN p.proparallel = 'r' THEN 'restricted'
-			  	WHEN p.proparallel = 's' THEN 'safe'
-			  	WHEN p.proparallel = 'u' THEN 'unsafe'
-			END as proc_parallel,
 			pg_catalog.pg_get_userbyid(p.proowner) as "Owner",
 			CASE WHEN prosecdef 
 				THEN 'definer' 
