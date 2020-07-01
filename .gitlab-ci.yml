@@ -1,0 +1,49 @@
+---
+
+stages:
+  - build
+  - run
+  - test
+  - publish
+
+before_script:
+  - docker info
+
+pre_clean:
+  stage: build
+  script:
+    - docker stop gl-pgdd && docker rm gl-pgdd
+  allow_failure: true
+
+build_image:
+  stage: build
+  script:
+    - docker build -t rustprooflabs/pgdd .
+
+start_container:
+  stage: run
+  script:
+    - docker run --name gl-pgdd -e POSTGRES_PASSWORD=$POSTGRES_PASSWORD -p $PG_PORT:5432 -d rustprooflabs/pgdd
+    - sleep 8
+
+
+query_extension:
+  stage: test
+  script:
+    - PGPASSWORD=$POSTGRES_PASSWORD  psql -h $PG_HOST -p $PG_PORT -U postgres -c "CREATE EXTENSION pgdd;"
+    - PGPASSWORD=$POSTGRES_PASSWORD  psql -h $PG_HOST -p $PG_PORT -U postgres -c "SELECT t_name FROM dd.tables;"
+    - docker stop gl-pgdd
+    - docker rm gl-pgdd
+
+
+create_non_extension_scripts:
+  stage: publish
+  script:
+    - cat pgdd--0.1.sql > pgdd_v0_2.sql
+    - cat pgdd--0.1--0.2.sql >> pgdd_v0_2.sql
+  artifacts:
+    paths:
+      - pgdd_v0_2.sql
+
+
+...
