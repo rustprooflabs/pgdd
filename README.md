@@ -4,6 +4,14 @@ The PostgreSQL Data Dictionary (`pgdd`) is an in-database solution to provide
 introspection via standard SQL query syntax.  This extension makes  it easy to
 provide a usable data dictionary to all users of a PostgreSQL database.
 
+## Compatability
+
+PgDD has been tested and found to work against PostgreSQL 10
+through 13-beta2.
+
+Docker images available on
+[Docker Hub](https://hub.docker.com/r/rustprooflabs/pgdd).
+
 
 ## Install `pgdd`
 
@@ -41,6 +49,32 @@ sudo su - postgres
 psql -d your_db
 CREATE EXTENSION pgdd;
 ```
+
+## Docker Image
+
+Build Docker image.  Uses [main Postgres image](https://hub.docker.com/_/postgres/) as starting point, see that
+repo for full instructions on using the core Postgres functionality.
+
+```
+docker build -t rustprooflabs/pgdd .
+```
+
+Build with tag.
+
+Run Postgres in Docker.
+
+```
+docker run --name test-pgdd12 -e POSTGRES_PASSWORD=mysecretpassword -p 6512:5432 -d rustprooflabs/pgdd
+```
+
+Connect via `psql` using `postgres` role, provide password from prior step
+when prompted.
+
+```
+psql -h host_or_ip -p 6512 -U postgres 
+```
+
+
 
 ## Database Permissions
 
@@ -80,6 +114,7 @@ This access can be granted using:
 ```
 GRANT dd_readwrite TO <your_login_user>;
 ```
+
 
 
 ## Use Data Dictionary
