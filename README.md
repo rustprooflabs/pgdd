@@ -13,10 +13,10 @@ Docker images available on
 [Docker Hub](https://hub.docker.com/r/rustprooflabs/pgdd).
 
 
-## Install `pgdd`
+## Install `pgdd` from source
 
-Currently the only way to install `pgdd` is to install from source by downloading
-this repository.
+One way to install `pgdd` is to install from 
+source by downloading this repository.
 
 ### Prereqs
 
@@ -52,7 +52,7 @@ CREATE EXTENSION pgdd;
 
 ## Docker Image
 
-Build Docker image.  Uses [main Postgres image](https://hub.docker.com/_/postgres/) as starting point, see that
+PgDD can be deployed in a Docker image.  Uses [main Postgres image](https://hub.docker.com/_/postgres/) as starting point, see that
 repo for full instructions on using the core Postgres functionality.
 
 ```

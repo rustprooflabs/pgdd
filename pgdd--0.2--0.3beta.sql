@@ -18,6 +18,19 @@ AS WITH s AS (
                 END AS system_object
            FROM pg_namespace n
              LEFT JOIN dd.meta_schema ms ON n.nspname = ms.s_name
+        ),
+    f AS (
+        SELECT n.nspname AS s_name, COUNT(DISTINCT p.oid) AS function_count
+            FROM pg_catalog.pg_proc p
+            INNER JOIN pg_catalog.pg_namespace n ON n.oid = p.pronamespace
+            GROUP BY n.nspname
+        ),
+    v AS (
+        SELECT n.nspname AS s_name, COUNT(DISTINCT c.oid) AS view_count
+            FROM pg_catalog.pg_class c
+            INNER JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
+            WHERE c.relkind IN ('v', 'm')
+        GROUP BY n.nspname 
         )
  SELECT s.s_name,
     s.owner,
@@ -25,14 +38,19 @@ AS WITH s AS (
     s.sensitive,
     s.description,
     s.system_object,
-    COALESCE(count(c.*), 0::bigint)::integer AS table_count,
-    pg_size_pretty(sum(pg_table_size(c.oid::regclass))) AS size_pretty,
-    pg_size_pretty(sum(pg_total_relation_size(c.oid::regclass))) AS size_plus_indexes,
-    sum(pg_table_size(c.oid::regclass)) AS size_bytes
+    COALESCE(COUNT(c.*), 0::BIGINT)::BIGINT AS table_count,
+    COALESCE(v.view_count, 0)::BIGINT AS view_count,
+    COALESCE(f.function_count, 0)::BIGINT AS function_count,
+    pg_size_pretty(SUM(pg_table_size(c.oid::regclass))) AS size_pretty,
+    pg_size_pretty(SUM(pg_total_relation_size(c.oid::regclass))) AS size_plus_indexes,
+    SUM(pg_table_size(c.oid::regclass)) AS size_bytes
    FROM s
      LEFT JOIN pg_class c ON s.oid = c.relnamespace AND (c.relkind = ANY (ARRAY['r'::"char", 'p'::"char"]))
+     LEFT JOIN f ON f.s_name = s.s_name
+     LEFT JOIN v ON v.s_name = s.s_name
   GROUP BY s.s_name, s.owner, s.data_source,
-        s.sensitive, s.description, s.system_object
+        s.sensitive, s.description, s.system_object,
+        v.view_count, f.function_count
  ;
 
 
