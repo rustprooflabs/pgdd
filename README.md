@@ -224,3 +224,14 @@ SELECT *
     FROM dd.fuctions;
 ```
 
+## PgDD UI
+
+The [PgDD UI](https://github.com/rustprooflabs/pgdd-ui) project provides
+a lightweight Flask interface to the the PgDD extension.
+
+### Version checking
+
+PgDD UI handles version checking with the Python `packaging` module so
+PgDD versioning must conform to
+[PEP 440](https://www.python.org/dev/peps/pep-0440/).
+
