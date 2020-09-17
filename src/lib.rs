@@ -3,12 +3,9 @@ use pgx::*;
 pg_module_magic!();
 
 
-
 extension_sql!(
     r#"
-CREATE SCHEMA dd;
 COMMENT ON SCHEMA dd IS 'Data Dictionary from https://github.com/rustprooflabs/pgdd';
-----------------------------------------
 
 CREATE TABLE dd.meta_schema
 (
@@ -31,41 +28,106 @@ COMMENT ON COLUMN dd.meta_schema.s_name
 INSERT INTO dd.meta_schema (s_name, data_source, sensitive)
     VALUES ('dd', 'Manually maintained', False);
 
-
-CREATE VIEW dd.schemas AS 
-WITH s AS (
-SELECT n.oid, n.nspname AS s_name,
-        pg_catalog.pg_get_userbyid(n.nspowner) AS owner,
-        ms.data_source,
-        ms.sensitive,
-        pg_catalog.obj_description(n.oid, 'pg_namespace') AS description
-    FROM pg_catalog.pg_namespace n
-    LEFT JOIN dd.meta_schema ms 
-        ON n.nspname = ms.s_name
-    
-    WHERE n.nspname !~ '^pg_' 
-        AND n.nspname NOT IN ('pg_catalog', 'information_schema')
-)
-SELECT s.s_name, s.owner, s.data_source, s.sensitive, 
-        s.description,
-        COALESCE(COUNT(c.*), 0)::INT AS table_count,
-        pg_catalog.pg_size_pretty(SUM(pg_catalog.pg_table_size(c.oid))) AS size_pretty,
-        SUM(pg_catalog.pg_table_size(c.oid)) AS size_bytes
-    FROM s
-    LEFT JOIN pg_catalog.pg_class c 
-        ON s.oid = c.relnamespace AND c.relkind IN ('r','p')
-    GROUP BY s.s_name, s.owner, s.data_source, s.sensitive, s.description
-;
--- Add more SQL here.
-"#
+CREATE TABLE dd.meta_table
+(
+    meta_table_id SERIAL NOT NULL,
+    s_name name NOT NULL,
+    t_name name NOT NULL,
+    data_source TEXT NULL,
+    sensitive BOOLEAN NOT NULL DEFAULT False,
+    CONSTRAINT PK_dd_meta_table_id PRIMARY KEY (meta_table_id),
+    CONSTRAINT UQ_dd_meta_table_schema_table UNIQUE (s_name, t_name)
 );
 
 
+COMMENT ON TABLE dd.meta_table 
+    IS 'User definable meta-data at the schema + table level.'
+;
+
+
+CREATE TABLE dd.meta_column
+(
+    meta_column_id SERIAL NOT NULL,
+    s_name name NOT NULL,
+    t_name name NOT NULL,
+    c_name name NOT NULL,
+    data_source TEXT NULL,
+    sensitive BOOLEAN NOT NULL DEFAULT False,
+    CONSTRAINT PK_dd_meta_column_id PRIMARY KEY (meta_column_id),
+    CONSTRAINT UQ_dd_meta_column_schema_table_column UNIQUE (s_name, t_name, c_name)
+);
+
+
+COMMENT ON TABLE dd.meta_column 
+    IS 'User definable meta-data at the schema + table + column level.'
+;
+
+
+INSERT INTO dd.meta_table (s_name, t_name, data_source, sensitive)
+    VALUES ('dd', 'meta_schema', 'Manually maintained', False);
+INSERT INTO dd.meta_table (s_name, t_name, data_source, sensitive)
+    VALUES ('dd', 'meta_table', 'Manually maintained', False);
+INSERT INTO dd.meta_table (s_name, t_name, data_source, sensitive)
+    VALUES ('dd', 'meta_column', 'Manually maintained', False);
+
+
+
+
+COMMENT ON COLUMN dd.meta_column.sensitive
+    IS 'Indicates if the column stores sensitive data.'
+;
+
+INSERT INTO dd.meta_column (s_name, t_name, c_name, data_source, sensitive)
+    VALUES ('dd', 'meta_column', 'sensitive', 'Manually defined', False)
+;
+"#
+);
 
 #[pg_extern]
-fn hello_pgdd_rust() -> &'static str {
-    "Hello, pgdd_rust"
+fn columns(
+) -> impl std::iter::Iterator<Item = (name!(s_name, Option<String>),
+                                        name!(source_type, Option<String>),
+                                        name!(t_name, Option<String>),
+                                        name!(c_name, Option<String>),
+                                        name!(data_type, Option<String>),
+                                        name!(position, Option<i64>),
+                                        name!(description, Option<String>),
+                                        name!(data_source, Option<String>),
+                                        name!(sensitive, Option<bool>),
+                                        name!(system_object, Option<bool>),
+                                        name!(default_value, Option<String>),
+                                        name!(generated_column, Option<bool>))>
+{
+    #[cfg(feature = "pg10")]
+    let query = include_str!("columns-pre-12.sql");
+    #[cfg(feature = "pg11")]
+    let query = include_str!("columns-pre-12.sql");
+    #[cfg(feature = "pg12")]
+    let query = include_str!("columns-12.sql");
+
+    let mut results = Vec::new();
+    Spi::connect(|client| {
+        client
+            .select(query, None, None)
+            .map(|row| (row.get_datum(1), row.get_datum(2),
+                        row.get_datum(3), row.get_datum(4),
+                        row.get_datum(5), row.get_datum(6),
+                        row.get_datum(7), row.get_datum(8),
+                        row.get_datum(9), row.get_datum(10),
+                        row.get_datum(11), row.get_datum(12)))
+            .for_each(|tuple| results.push(tuple));
+        Ok(Some(()))
+    });
+
+    results.into_iter()
 }
+
+#[pg_extern]
+fn about() -> &'static str {
+    "PgDD: PostgreSQL Data Dictionary extension.  See https://github.com/rustprooflabs/pgdd for details!"
+}
+
+
 
 #[cfg(any(test, feature = "pg_test"))]
 mod tests {
