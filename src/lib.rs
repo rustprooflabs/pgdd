@@ -157,6 +157,81 @@ fn columns(
     results.into_iter()
 }
 
+
+#[pg_extern]
+fn functions(
+) -> impl std::iter::Iterator<Item = (name!(s_name, Option<String>),
+                                        name!(f_name, Option<String>),
+                                        name!(result_data_types, Option<String>),
+                                        name!(argument_data_types, Option<String>),
+                                        name!(owned_by, Option<String>),
+                                        name!(proc_security, Option<String>),
+                                        name!(access_privileges, Option<String>),
+                                        name!(proc_language, Option<String>),
+                                        name!(source_code, Option<String>),
+                                        name!(description, Option<String>),
+                                        name!(system_object, Option<bool>))>
+{
+    let query = include_str!("functions-all.sql");
+
+    let mut results = Vec::new();
+    Spi::connect(|client| {
+        client
+            .select(query, None, None)
+            .map(|row| (row.get_datum(1), row.get_datum(2),
+                        row.get_datum(3), row.get_datum(4),
+                        row.get_datum(5), row.get_datum(6),
+                        row.get_datum(7), row.get_datum(8),
+                        row.get_datum(9), row.get_datum(10),
+                        row.get_datum(11)))
+            .for_each(|tuple| results.push(tuple));
+        Ok(Some(()))
+    });
+
+    results.into_iter()
+}
+
+
+
+#[pg_extern]
+fn tables(
+) -> impl std::iter::Iterator<Item = (name!(s_name, Option<String>),
+                                        name!(t_name, Option<String>),
+                                        name!(type, Option<String>),
+                                        name!(owned_by, Option<String>),
+                                        name!(size_pretty, Option<String>),
+                                        name!(size_bytes, Option<i64>),
+                                        name!(rows, Option<i64>),
+                                        name!(bytes_per_row, Option<i64>),
+                                        name!(size_plus_indexes, Option<String>),
+                                        name!(description, Option<String>),
+                                        name!(system_object, Option<bool>),
+                                        name!(data_source, Option<String>),
+                                        name!(sensitive, Option<bool>))>
+{
+    let query = include_str!("tables-all.sql");
+
+    let mut results = Vec::new();
+    Spi::connect(|client| {
+        client
+            .select(query, None, None)
+            .map(|row| (row.get_datum(1), row.get_datum(2),
+                        row.get_datum(3), row.get_datum(4),
+                        row.get_datum(5), row.get_datum(6),
+                        row.get_datum(7), row.get_datum(8),
+                        row.get_datum(9), row.get_datum(10),
+                        row.get_datum(11), row.get_datum(12),
+                        row.get_datum(13)))
+            .for_each(|tuple| results.push(tuple));
+        Ok(Some(()))
+    });
+
+    results.into_iter()
+}
+
+
+
+
 #[pg_extern]
 fn about() -> &'static str {
     "PgDD: PostgreSQL Data Dictionary extension.  See https://github.com/rustprooflabs/pgdd for details!"
