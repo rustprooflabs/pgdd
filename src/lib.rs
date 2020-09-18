@@ -83,6 +83,41 @@ INSERT INTO dd.meta_column (s_name, t_name, c_name, data_source, sensitive)
 "#
 );
 
+
+#[pg_extern]
+fn schemas(
+) -> impl std::iter::Iterator<Item = (name!(s_name, Option<String>),
+                                        name!(owner, Option<String>),
+                                        name!(data_source, Option<String>),
+                                        name!(sensitive, Option<bool>),
+                                        name!(description, Option<String>),
+                                        name!(system_object, Option<bool>),
+                                        name!(table_count, Option<i64>),
+                                        name!(view_count, Option<i64>),
+                                        name!(function_count, Option<i64>),
+                                        name!(size_pretty, Option<String>),
+                                        name!(size_plus_indexes, Option<String>),
+                                        name!(size_bytes, Option<i64>))>
+{
+    let query = include_str!("schemas-all.sql");
+
+    let mut results = Vec::new();
+    Spi::connect(|client| {
+        client
+            .select(query, None, None)
+            .map(|row| (row.get_datum(1), row.get_datum(2),
+                        row.get_datum(3), row.get_datum(4),
+                        row.get_datum(5), row.get_datum(6),
+                        row.get_datum(7), row.get_datum(8),
+                        row.get_datum(9), row.get_datum(10),
+                        row.get_datum(11), row.get_datum(12)))
+            .for_each(|tuple| results.push(tuple));
+        Ok(Some(()))
+    });
+
+    results.into_iter()
+}
+
 #[pg_extern]
 fn columns(
 ) -> impl std::iter::Iterator<Item = (name!(s_name, Option<String>),
