@@ -1,19 +1,20 @@
 # PostgreSQL Data Dictionary (pgdd)
 
 The PostgreSQL Data Dictionary (`pgdd`) is an in-database solution to provide
-introspection via standard SQL query syntax.  This extension makes  it easy to
+introspection via standard SQL query syntax.  This extension makes it easy to
 provide a usable data dictionary to all users of a PostgreSQL database.
 
 ## Compatability
 
-PgDD has been tested and found to work against PostgreSQL 10
-through 13-beta2.
+PgDD has been works for PostgreSQL 10 through 12.  PostgreSQL 13 support
+is coming soon.
 
 Docker images available on
 [Docker Hub](https://hub.docker.com/r/rustprooflabs/pgdd).
 
 
 ## Install `pgdd` from source
+
 
 One way to install `pgdd` is to install from 
 source by downloading this repository.
@@ -23,8 +24,17 @@ source by downloading this repository.
 Ensure PostgreSQL dev tools are installed.
 
 ```bash
-sudo apt install postgresql-server-dev-all
+sudo apt install postgresql-server-dev-all libreadline-dev zlib1g-dev curl
 ```
+
+[Install Rust](https://www.rust-lang.org/tools/install) and Pgx.
+
+```bash
+curl https://sh.rustup.rs -sSf | sh -s -- -y
+cargo install cargo-pgx
+```
+
+
 
 ### Clone repo
 
@@ -34,6 +44,16 @@ cd ~/git
 git clone https://github.com/rustprooflabs/pgdd.git
 cd ~/git/pgdd
 ```
+
+### Test deployment
+
+Specify version, ``pg10``, ``pg11``, and ``pg12`` are currently supported.
+
+```bash
+cargo pgx run pg12
+```
+
+
 
 ### Install on Server
 

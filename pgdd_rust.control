@@ -1,6 +1,0 @@
-comment = 'An in-database data dictionary providing database introspection via standard SQL query syntax.  Developed using pgx (https://github.com/zombodb/pgx).'
-default_version = '0.3'
-module_pathname = '$libdir/pgdd_rust'
-relocatable = false
-schema = dd
-superuser = false
