@@ -15,13 +15,9 @@ Docker images available on
 
 ## Install `pgdd` from source
 
+One way to install `pgdd` is to install from source by downloading this repository.
 
-One way to install `pgdd` is to install from 
-source by downloading this repository.
-
-### Prereqs
-
-Ensure PostgreSQL dev tools are installed.
+Install Prereqs, ensure PostgreSQL dev tools are installed.
 
 ```bash
 sudo apt install postgresql-server-dev-all libreadline-dev zlib1g-dev curl
@@ -34,8 +30,6 @@ curl https://sh.rustup.rs -sSf | sh -s -- -y
 cargo install cargo-pgx
 ```
 
-
-
 ### Clone repo
 
 ```bash
@@ -47,28 +41,61 @@ cd ~/git/pgdd
 
 ### Test deployment
 
-Specify version, ``pg10``, ``pg11``, and ``pg12`` are currently supported.
+Specify version, `pg10`, `pg11`, and `pg12` are currently supported. This command will
+start a test instance of Postgres on port `28812`.  (Using a different version changes the last two digits of the port!)
 
 ```bash
 cargo pgx run pg12
 ```
 
+Example output.
 
+```
+    Stopping Postgres v12
+building extension with features `pg12`
+"cargo" "build" "--features" "pg12" "--no-default-features"
+    Finished dev [unoptimized + debuginfo] target(s) in 0.07s
 
-### Install on Server
-
-```bash
-cd ~/git/pgdd
-sudo make install
+installing extension
+     Copying control file to `/home/username/.pgx/12.3/pgx-install/share/postgresql/extension/pgdd.control`
+     Copying shared library to `/home/username/.pgx/12.3/pgx-install/lib/postgresql/pgdd.so`
+     Writing extension schema to `/home/username/.pgx/12.3/pgx-install/share/postgresql/extension/pgdd--0.3.sql`
+    Finished installing pgdd
+    Starting Postgres v12 on port 28812
+    Re-using existing database pgdd
 ```
 
-### Create Extension in Database
+In the test instance of psql, create the extension in database.
 
 ```bash
-sudo su - postgres
-psql -d your_db
 CREATE EXTENSION pgdd;
 ```
+
+## Packaging the Extension
+
+Instructions Coming soon!
+
+```
+cargo pgx package
+```
+
+
+```
+cd target/release/pgdd-pg12/
+tar -chvzf pgdd0_3-pg12.tar.gz \
+   usr/share/postgresql/12/extension/pgdd.control \
+   usr/lib/postgresql/12/lib/pgdd.so \
+   usr/share/postgresql/12/extension/pgdd--0.3.sql
+```
+
+To install from the `.tar.gz` file.
+
+```
+cd /
+sudo tar -xvf /path/to/pgdd0_3-pg12.tar.gz
+```
+
+
 
 ## Docker Image
 
@@ -93,8 +120,6 @@ when prompted.
 ```
 psql -h host_or_ip -p 6512 -U postgres 
 ```
-
-
 
 ## Database Permissions
 
