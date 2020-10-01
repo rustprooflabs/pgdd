@@ -267,6 +267,12 @@ fn about() -> &'static str {
     "PgDD: PostgreSQL Data Dictionary extension.  See https://github.com/rustprooflabs/pgdd for details!"
 }
 
+#[pg_extern]
+fn version() -> &'static str {
+    let version = env!("CARGO_PKG_VERSION");
+    version
+}
+
 
 
 #[cfg(any(test, feature = "pg_test"))]
