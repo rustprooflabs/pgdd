@@ -2,6 +2,7 @@
 name = "pgdd"
 version = "0.3.1"
 edition = "2018"
+description = "In-database (PostgreSQL) data dictionary providing database introspection via standard SQL query syntax."
 
 [lib]
 crate-type = ["cdylib"]
@@ -14,11 +15,11 @@ pg12 = ["pgx/pg12"]
 pg_test = []
 
 [dependencies]
-pgx = "0.0.14"
-pgx-macros = "0.0.14"
+pgx = "0.0.16"
+pgx-macros = "0.0.16"
 
 [dev-dependencies]
-pgx-tests = "0.0.14"
+pgx-tests = "0.0.16"
 
 [profile.dev]
 panic = "unwind"
@@ -28,3 +29,21 @@ panic = "unwind"
 opt-level = 3
 lto = "fat"
 codegen-units = 1
+
+
+
+[package.metadata.deb]
+name = "pgdd"
+maintainer = "Ryan Lambert <ryan@rustprooflabs.com>"
+copyright = "2020, Ryan Lambert <ryan@rustprooflabs.com>"
+license-file = ["LICENSE", "0"]
+extended-description = "In-database (PostgreSQL) data dictionary providing database introspection via standard SQL query syntax."
+depends = "$auto"
+section = "database"
+priority = "optional"
+assets = [
+    ["target/release/pgdd-pg12/usr/share/postgresql/12/extension/pgdd.control", "usr/share/postgresql/12/extension/", "644"],
+    ["target/release/pgdd-pg12/usr/lib/postgresql/12/lib/pgdd.so", "usr/lib/postgresql/12/lib/", "644"],
+    ["target/release/pgdd-pg12/usr/share/postgresql/12/extension/pgdd--0.3.1.sql", "usr/share/postgresql/12/extension/", "644"],
+    ["target/release/pgdd-pg12/usr/share/postgresql/12/extension/pgdd--0.3--0.3.1.sql", "usr/share/postgresql/12/extension/", "644"],
+]

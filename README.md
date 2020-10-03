@@ -4,6 +4,10 @@ The PostgreSQL Data Dictionary (`pgdd`) is an in-database solution to provide
 introspection via standard SQL query syntax.  This extension makes it easy to
 provide a usable data dictionary to all users of a PostgreSQL database.
 
+Originally written in raw SQL, the extension is converting to the Rust
+[pgx framework](https://github.com/zombodb/pgx).
+
+
 ## Compatability
 
 PgDD has been works for PostgreSQL 10 through 12.  PostgreSQL 13 support
@@ -14,6 +18,9 @@ Docker images available on
 
 
 ## Install `pgdd` from source
+
+> See the [Cargo PGX](https://github.com/zombodb/pgx/tree/master/cargo-pgx)
+documentation for more information on using pgx.
 
 One way to install `pgdd` is to install from source by downloading this repository.
 
@@ -28,6 +35,7 @@ sudo apt install postgresql-server-dev-all libreadline-dev zlib1g-dev curl
 ```bash
 curl https://sh.rustup.rs -sSf | sh -s -- -y
 cargo install cargo-pgx
+cargo install cargo-deb
 ```
 
 ### Clone repo
@@ -73,26 +81,17 @@ CREATE EXTENSION pgdd;
 
 ## Packaging the Extension
 
-Instructions Coming soon!
 
 ```
 cargo pgx package
+cargo deb
 ```
 
 
-```
-cd target/release/pgdd-pg12/
-tar -chvzf pgdd0_3-pg12.tar.gz \
-   usr/share/postgresql/12/extension/pgdd.control \
-   usr/lib/postgresql/12/lib/pgdd.so \
-   usr/share/postgresql/12/extension/pgdd--0.3.sql
-```
-
-To install from the `.tar.gz` file.
+To install from the `.deb` file.
 
 ```
-cd /
-sudo tar -xvf /path/to/pgdd0_3-pg12.tar.gz
+cd sudo apt install ./pgdd_0.3.1_amd64.deb
 ```
 
 
