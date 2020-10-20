@@ -133,9 +133,7 @@ fn columns(
                                         name!(default_value, Option<String>),
                                         name!(generated_column, Option<bool>))>
 {
-    #[cfg(feature = "pg10")]
-    let query = include_str!("columns-pre-12.sql");
-    #[cfg(feature = "pg11")]
+    #[cfg(any(feature = "pg10", feature="pg11"))]
     let query = include_str!("columns-pre-12.sql");
     #[cfg(feature = "pg12")]
     let query = include_str!("columns-12.sql");
