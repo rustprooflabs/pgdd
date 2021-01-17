@@ -17,7 +17,11 @@ RUN DEBIAN_FRONTEND="noninteractive" apt-get install -y \
         postgresql-server-dev-11 \
         postgresql-server-dev-12 \
         postgresql-server-dev-13 \
-        libxml2 libxml2-dev libreadline7 libreadline-gplv2-dev flex bison libbison-dev build-essential zlib1g-dev libxslt-dev libssl-dev libxml2-utils xsltproc libgss-dev libldap2-dev libkrb5-dev gettext tcl-tclreadline tcl-dev libperl-dev libpython-dev libpython3-dev  libprotobuf-c-dev libprotobuf-dev gcc
+        libxml2 libxml2-dev libreadline7 libreadline-gplv2-dev flex bison libbison-dev build-essential zlib1g-dev libxslt-dev libssl-dev libxml2-utils xsltproc libgss-dev libldap2-dev libkrb5-dev gettext tcl-tclreadline tcl-dev libperl-dev libpython-dev libpython3-dev  libprotobuf-c-dev libprotobuf-dev gcc \
+        ruby ruby-dev rubygems
+
+RUN gem install --no-document fpm
+
 
 USER ${UID}:${GID}
 WORKDIR /home/${USER}
@@ -25,10 +29,8 @@ WORKDIR /home/${USER}
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs > rustup.sh
 ENV PATH="/home/${USER}/.cargo/bin:${PATH}"
 
-RUN /bin/bash rustup.sh -y
-
-RUN cargo install cargo-pgx \
-	&& cargo install cargo-deb
+RUN /bin/bash rustup.sh -y \
+	&& cargo install cargo-pgx
 
 RUN cargo pgx init \
 	--pg10=/usr/lib/postgresql/10/bin/pg_config \

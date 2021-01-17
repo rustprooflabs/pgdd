@@ -22,6 +22,14 @@ VERSION=$(cat $BASE/pgdd.control | grep default_version | cut -f2 -d\')
 LOGDIR=${BASE}/target/logs
 ARTIFACTDIR=${BASE}/target/artifacts
 
+PG_VER=$1
+
+if [ -z ${PG_VER} ]; then
+    echo 'usage:  ./build.sh <PG_VER>'
+    echo ' e.g. ./build.sh pg13'
+    exit 1
+fi
+
 echo $BASE
 echo $VERSION
 echo $LOGDIR
@@ -31,15 +39,14 @@ echo $ARTIFACTDIR
 mkdir -p ${LOGDIR}
 mkdir -p ${ARTIFACTDIR}
 
-rm -rf ${ARTIFACTDIR}
 for image in `ls docker/` ; do
     OS_DIST=$(echo ${image}|cut -f2 -d-)
     OS_VER=$(echo ${image}|cut -f3 -d-)
-    PG_VER=$(echo ${image}|cut -f4 -d-)
+
 
     echo $OS_DIST
     echo $OS_VER
-    echo $PG_VER
+    echo "Pg Version: ${PG_VER}"
 
     cd ${BUILDDIR}
 
@@ -48,36 +55,29 @@ for image in `ls docker/` ; do
     echo "  Building Docker image"
     docker build -t ${image} . 2>&1 > ${LOGDIR}/${image}-build.log || exit 1
 
-    BUILDDIR = "_build"
-    echo "${image}-${PGVER}:  Copying PgDD code to $BUILDDIR"
-   # rm -rf ${BUILDDIR} > /dev/null
-    mkdir ${BUILDDIR}
-    cp -Rp ../ ${BUILDDIR}
 
-
-
-    echo "${image}-${PG_VER}:  Building PgDD"
+    echo "Build PgDD: ${image}-${PG_VER}"
     docker run \
         -e pgver=${PG_VER} \
         -e image=${image} \
         -w /build \
-        -v ${BUILDDIR}:/build \
+        -v ${BASE}:/build \
         --rm \
         ${image} \
-        /bin/bash -c './package.sh $pgver ${image}' \
-            > ${LOGDIR}/${image}-${PG_VER}-package.sh.log 2>&1 || exit_with_error "${image}-${PG_VER}:  build failed"
+        /bin/bash -c '/build/build/package.sh ${pgver} ${image}' \
+            > ${LOGDIR}/${image}-${PG_VER}-package.sh.log 2>&1 || exit 1
 
     echo "${image}-${PG_VER}:  finished"
 
+done
 
 
-    cd ${ARTIFACTDIR}/${image}
-    echo ${image} | grep centos 2>&1 > /dev/null
-    if [ "$?" == "0" ] ; then
-        echo "  building rpm package"
-        echo " ... Support coming soon!"
-    else
-        echo "  building deb package"
-        docker run -e DESTDIR=/build/target/artifacts/${image} -w /build -v ${BASE}:/build ${image} cargo deb 2>&1 > ${LOGDIR}/${image}-compile.log || exit 1
-    fi
+# Collect artifacts
+cd $BASE
+
+echo "Copying artifacts..."
+
+for f in $(find target -name "*.deb") $(find target -name "*.rpm") $(find target -name "*.apk"); do
+    echo "copy: ${f}"
+    cp $f $ARTIFACTDIR/
 done

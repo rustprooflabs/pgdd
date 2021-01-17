@@ -24,6 +24,7 @@ if [ "x${PG_VER}" == "x" ] || [ "x${IMAGE}" == "x" ] ; then
 	exit 1
 fi
 
+PKG_FORMAT=deb
 
 set -x
 
@@ -39,19 +40,36 @@ export PATH=${PG_CONFIG_DIR}:${PATH}
 echo "   Packaging pgx"
 cargo pgx package || exit $?
 
-echo " If the above worked, remove below??"
-
-echo "   Inigit pgx"
-docker run -e DESTDIR=/build/target/artifacts/${image} -e pgver=${PG_VER} \
-    -w /build -v ${BASE}:/build \
-     ${image} \
-     cargo pgx init 2>&1 > ${LOGDIR}/${image}-pgx.log || exit 1
-
-echo "   Compiling PgDD"
-docker run -e DESTDIR=/build/target/artifacts/${image} -e pgver=${PG_VER} \
-    -w /build -v ${BASE}:/build \
-     ${image} \
-     cargo pgx init 2>&1 > ${LOGDIR}/${image}-compile.log || exit 1
 
 
+#
+# cd into the package directory
+#
+BUILDDIR=`pwd`
+cd target/release/pgdd-${PG_VER} || exit $?
 
+# strip the binaries to make them smaller
+find ./ -name "*.so" -exec strip {} \;
+
+#
+# then use 'fpm' to build a .deb
+#
+OUTNAME=pgdd_${OSNAME}_${PG_VER}-${VERSION}_amd64
+if [ "${PKG_FORMAT}" == "deb" ]; then
+
+	fpm \
+		-s dir \
+		-t deb \
+		-n pgdd-${PG_VER} \
+		-v ${VERSION} \
+		--deb-no-default-config-files \
+		-p ${OUTNAME}.deb \
+		-a amd64 \
+		. || exit 1
+
+else
+	echo Unrecognized value for PKG_FORMAT:  ${PKG_FORMAT}
+	exit 1
+fi
+
+echo "Packing complete: ${OUTNAME}.deb"

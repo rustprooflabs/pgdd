@@ -135,7 +135,7 @@ fn columns(
 {
     #[cfg(any(feature = "pg10", feature="pg11"))]
     let query = include_str!("columns-pre-12.sql");
-    #[cfg(feature = "pg12")]
+    #[cfg(any(feature = "pg12", feature="pg13"))]
     let query = include_str!("columns-12.sql");
 
     let mut results = Vec::new();
