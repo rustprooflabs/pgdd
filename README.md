@@ -10,12 +10,22 @@ Originally written in raw SQL, the extension is converting to the Rust
 
 ## Compatability
 
-PgDD has been works for PostgreSQL 10 through 12.  PostgreSQL 13 support
-is coming soon.
+PgDD has been works for PostgreSQL 10 through 13.
 
 Docker images available on
 [Docker Hub](https://hub.docker.com/r/rustprooflabs/pgdd).
 
+## Install from binary
+
+Debian/Ubuntu binaries are available for 0.3.1 (first dev pgx version)
+and on.
+
+Instructions coming soon as pieces are still being tied together.
+
+
+```
+time sh ./build.sh
+```
 
 ## Install `pgdd` from source
 

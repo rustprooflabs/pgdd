@@ -15,11 +15,14 @@ pre_clean:
     - docker stop gl-pgdd && docker rm gl-pgdd
   allow_failure: true
 
-build_docker_images:
+build_pgdd_images_and_binaries:
   stage: build
   script:
     - cd build
     - /bin/bash build.sh
+  artifacts:
+    paths:
+      - build/pgdd-binaries.tar.gz
 
 start_container_bionic_pg12:
   stage: run

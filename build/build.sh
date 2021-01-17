@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # 
-#! /bin/bash
+#!/bin/bash
 
 BUILDDIR=`pwd`
 BASE=$(dirname `pwd`)
@@ -22,20 +22,14 @@ VERSION=$(cat $BASE/pgdd.control | grep default_version | cut -f2 -d\')
 LOGDIR=${BASE}/target/logs
 ARTIFACTDIR=${BASE}/target/artifacts
 
-PG_VER=$1
-
-if [ -z ${PG_VER} ]; then
-    echo 'usage:  ./build.sh <PG_VER>'
-    echo ' e.g. ./build.sh pg13'
-    exit 1
-fi
+PG_VERS=("pg10" "pg11" "pg12" "pg13")
 
 echo $BASE
 echo $VERSION
 echo $LOGDIR
 echo $ARTIFACTDIR
 
-
+    
 mkdir -p ${LOGDIR}
 mkdir -p ${ARTIFACTDIR}
 
@@ -55,19 +49,21 @@ for image in `ls docker/` ; do
     echo "  Building Docker image"
     docker build -t ${image} . 2>&1 > ${LOGDIR}/${image}-build.log || exit 1
 
+    for PG_VER in ${PG_VERS[@]} ; do
+        echo "Build PgDD: ${image}-${PG_VER}"
+        docker run \
+            -e pgver=${PG_VER} \
+            -e image=${image} \
+            -w /build \
+            -v ${BASE}:/build \
+            --rm \
+            ${image} \
+            /bin/bash -c '/build/build/package.sh ${pgver} ${image}' \
+                > ${LOGDIR}/${image}-${PG_VER}-package.sh.log 2>&1 || echo 'Building this version might have encountered error.'
 
-    echo "Build PgDD: ${image}-${PG_VER}"
-    docker run \
-        -e pgver=${PG_VER} \
-        -e image=${image} \
-        -w /build \
-        -v ${BASE}:/build \
-        --rm \
-        ${image} \
-        /bin/bash -c '/build/build/package.sh ${pgver} ${image}' \
-            > ${LOGDIR}/${image}-${PG_VER}-package.sh.log 2>&1 || exit 1
+        echo "${image}-${PG_VER}:  finished"
+    done
 
-    echo "${image}-${PG_VER}:  finished"
 
 done
 
@@ -81,3 +77,6 @@ for f in $(find target -name "*.deb") $(find target -name "*.rpm") $(find target
     echo "copy: ${f}"
     cp $f $ARTIFACTDIR/
 done
+
+
+tar -zcvf $BUILDDIR/pgdd-binaries.tar.gz -C $ARTIFACTDIR .
