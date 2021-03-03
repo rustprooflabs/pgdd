@@ -10,21 +10,56 @@ Originally written in raw SQL, the extension is converting to the Rust
 
 ## Compatability
 
-PgDD has been works for PostgreSQL 10 through 13.
+PgDD has been tested to work for PostgreSQL 10 through 13.
 
 Docker images available on
 [Docker Hub](https://hub.docker.com/r/rustprooflabs/pgdd).
 
 ## Install from binary
 
-Debian/Ubuntu binaries are available for 0.3.1 (first dev pgx version)
-and on.
-
-Instructions coming soon as pieces are still being tied together.
+Debian/Ubuntu Bionic binaries are available for 0.3.1 (first dev pgx version)
+and on.  More distributions will be made available in the future.
 
 
+```bash
+cd build/docker
+time bash ./build.sh
 ```
-time sh ./build.sh
+
+Example output.
+
+```bash
+/home/ryanlambert/git/pgdd
+0.3.1
+/home/ryanlambert/git/pgdd/target/logs
+/home/ryanlambert/git/pgdd/target/artifacts
+ubuntu
+bionic
+Pg Version: 
+pgdd-ubuntu-bionic
+  Building Docker image
+Build PgDD: pgdd-ubuntu-bionic-pg10
+pgdd-ubuntu-bionic-pg10:  finished
+Build PgDD: pgdd-ubuntu-bionic-pg11
+pgdd-ubuntu-bionic-pg11:  finished
+Build PgDD: pgdd-ubuntu-bionic-pg12
+pgdd-ubuntu-bionic-pg12:  finished
+Build PgDD: pgdd-ubuntu-bionic-pg13
+pgdd-ubuntu-bionic-pg13:  finished
+Copying artifacts...
+copy: target/release/pgdd-pg12/pgdd_bionic_pg12-0.3.1_amd64.deb
+copy: target/release/pgdd-pg13/pgdd_bionic_pg13-0.3.1_amd64.deb
+copy: target/release/pgdd-pg11/pgdd_bionic_pg11-0.3.1_amd64.deb
+copy: target/release/pgdd-pg10/pgdd_bionic_pg10-0.3.1_amd64.deb
+./
+./pgdd_bionic_pg11-0.3.1_amd64.deb
+./pgdd_bionic_pg12-0.3.1_amd64.deb
+./pgdd_bionic_pg13-0.3.1_amd64.deb
+./pgdd_bionic_pg10-0.3.1_amd64.deb
+
+real    3m46.099s
+user    0m0.144s
+sys 0m0.140s
 ```
 
 ## Install `pgdd` from source
@@ -32,9 +67,9 @@ time sh ./build.sh
 > See the [Cargo PGX](https://github.com/zombodb/pgx/tree/master/cargo-pgx)
 documentation for more information on using pgx.
 
-One way to install `pgdd` is to install from source by downloading this repository.
+One way to install `pgdd` is to install from source by cloning this repository.
 
-Install Prereqs, ensure PostgreSQL dev tools are installed.
+Install Prereqs and ensure PostgreSQL dev tools are installed.
 
 ```bash
 sudo apt install postgresql-server-dev-all libreadline-dev zlib1g-dev curl
@@ -59,8 +94,8 @@ cd ~/git/pgdd
 
 ### Test deployment
 
-Specify version, `pg10`, `pg11`, and `pg12` are currently supported. This command will
-start a test instance of Postgres on port `28812`.  (Using a different version changes the last two digits of the port!)
+Specify version, `pg10` through `pg13` are currently supported. This command will
+start a test instance of Postgres on port `28812`.  Using a different version changes the last two digits of the port!
 
 ```bash
 cargo pgx run pg12
@@ -68,7 +103,7 @@ cargo pgx run pg12
 
 Example output.
 
-```
+```bash
     Stopping Postgres v12
 building extension with features `pg12`
 "cargo" "build" "--features" "pg12" "--no-default-features"
@@ -92,7 +127,7 @@ CREATE EXTENSION pgdd;
 ## Packaging the Extension
 
 
-```
+```bash
 cargo pgx package
 cargo deb
 ```
@@ -100,7 +135,7 @@ cargo deb
 
 To install from the `.deb` file.
 
-```
+```bash
 cd sudo apt install ./pgdd_0.3.1_amd64.deb
 ```
 
@@ -111,7 +146,7 @@ cd sudo apt install ./pgdd_0.3.1_amd64.deb
 PgDD can be deployed in a Docker image.  Uses [main Postgres image](https://hub.docker.com/_/postgres/) as starting point, see that
 repo for full instructions on using the core Postgres functionality.
 
-```
+```bash
 docker build -t rustprooflabs/pgdd .
 ```
 
@@ -119,14 +154,14 @@ Build with tag.
 
 Run Postgres in Docker.
 
-```
+```bash
 docker run --name test-pgdd12 -e POSTGRES_PASSWORD=mysecretpassword -p 6512:5432 -d rustprooflabs/pgdd
 ```
 
 Connect via `psql` using `postgres` role, provide password from prior step
 when prompted.
 
-```
+```bash
 psql -h host_or_ip -p 6512 -U postgres 
 ```
 
@@ -135,7 +170,7 @@ psql -h host_or_ip -p 6512 -U postgres
 Create Read-only group role to assign to users
 that need access to query (read-only) the PgDD objects.
 
-```
+```sql
 CREATE ROLE dd_read WITH NOLOGIN;
 COMMENT ON ROLE dd_read IS 'Group role to grant read-only permissions to PgDD views.';
 
@@ -146,14 +181,14 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA dd GRANT SELECT ON TABLES TO dd_read;
 
 Access can now be granted to other users using:
 
-```
+```sql
 GRANT dd_read TO <your_login_user>;
 ```
 
 For read-write access.
 
 
-```
+```sql
 CREATE ROLE dd_readwrite WITH NOLOGIN;
 COMMENT ON ROLE dd_readwrite IS 'Group role to grant write permissions to PgDD objects.';
 
@@ -165,7 +200,7 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA dd GRANT INSERT, UPDATE, DELETE ON TABLES TO 
 
 This access can be granted using:
  
-```
+```sql
 GRANT dd_readwrite TO <your_login_user>;
 ```
 
