@@ -16,7 +16,16 @@ PgDD has been tested to work for PostgreSQL 10 through 13.
 
 Download the appropriate binary.
 
-(INSTRUCTIONS COMING SOON!)
+```bash
+wget https://github.com/rustprooflabs/pgdd/raw/rust-pgx/standalone/pgdd_bionic_pg13-0.3.1_amd64.deb
+```
+
+Install.
+
+
+```bash
+sudo dpkg -i ./pgdd_bionic_pg13-0.3.1_amd64.deb
+```
 
 
 ## Install `pgdd` from source
