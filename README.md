@@ -12,55 +12,12 @@ Originally written in raw SQL, the extension is converting to the Rust
 
 PgDD has been tested to work for PostgreSQL 10 through 13.
 
-Docker images available on
-[Docker Hub](https://hub.docker.com/r/rustprooflabs/pgdd).
-
 ## Install from binary
 
-Debian/Ubuntu Bionic binaries are available for 0.3.1 (first dev pgx version)
-and on.  More distributions will be made available in the future.
+Download the appropriate binary.
 
+(INSTRUCTIONS COMING SOON!)
 
-```bash
-cd build/docker
-time bash ./build.sh
-```
-
-Example output.
-
-```bash
-/home/ryanlambert/git/pgdd
-0.3.1
-/home/ryanlambert/git/pgdd/target/logs
-/home/ryanlambert/git/pgdd/target/artifacts
-ubuntu
-bionic
-Pg Version: 
-pgdd-ubuntu-bionic
-  Building Docker image
-Build PgDD: pgdd-ubuntu-bionic-pg10
-pgdd-ubuntu-bionic-pg10:  finished
-Build PgDD: pgdd-ubuntu-bionic-pg11
-pgdd-ubuntu-bionic-pg11:  finished
-Build PgDD: pgdd-ubuntu-bionic-pg12
-pgdd-ubuntu-bionic-pg12:  finished
-Build PgDD: pgdd-ubuntu-bionic-pg13
-pgdd-ubuntu-bionic-pg13:  finished
-Copying artifacts...
-copy: target/release/pgdd-pg12/pgdd_bionic_pg12-0.3.1_amd64.deb
-copy: target/release/pgdd-pg13/pgdd_bionic_pg13-0.3.1_amd64.deb
-copy: target/release/pgdd-pg11/pgdd_bionic_pg11-0.3.1_amd64.deb
-copy: target/release/pgdd-pg10/pgdd_bionic_pg10-0.3.1_amd64.deb
-./
-./pgdd_bionic_pg11-0.3.1_amd64.deb
-./pgdd_bionic_pg12-0.3.1_amd64.deb
-./pgdd_bionic_pg13-0.3.1_amd64.deb
-./pgdd_bionic_pg10-0.3.1_amd64.deb
-
-real    3m46.099s
-user    0m0.144s
-sys 0m0.140s
-```
 
 ## Install `pgdd` from source
 
@@ -124,46 +81,25 @@ In the test instance of psql, create the extension in database.
 CREATE EXTENSION pgdd;
 ```
 
-## Packaging the Extension
+
+## Build binary packages
+
+Debian/Ubuntu Bionic binaries are available for 0.3.1 (first dev pgx version)
+and on.  More distributions will be made available in the future.
 
 
 ```bash
-cargo pgx package
-cargo deb
+cd build/docker
+time bash ./build.sh
 ```
 
-
-To install from the `.deb` file.
+New versions/builds get copied to the `./standalone/` directory.
 
 ```bash
-cd sudo apt install ./pgdd_0.3.1_amd64.deb
+cp ./target/artifacts/* ./standalone/
 ```
 
 
-
-## Docker Image
-
-PgDD can be deployed in a Docker image.  Uses [main Postgres image](https://hub.docker.com/_/postgres/) as starting point, see that
-repo for full instructions on using the core Postgres functionality.
-
-```bash
-docker build -t rustprooflabs/pgdd .
-```
-
-Build with tag.
-
-Run Postgres in Docker.
-
-```bash
-docker run --name test-pgdd12 -e POSTGRES_PASSWORD=mysecretpassword -p 6512:5432 -d rustprooflabs/pgdd
-```
-
-Connect via `psql` using `postgres` role, provide password from prior step
-when prompted.
-
-```bash
-psql -h host_or_ip -p 6512 -U postgres 
-```
 
 ## Database Permissions
 
