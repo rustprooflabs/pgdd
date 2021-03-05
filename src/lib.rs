@@ -71,8 +71,6 @@ INSERT INTO dd.meta_table (s_name, t_name, data_source, sensitive)
     VALUES ('dd', 'meta_column', 'Manually maintained', False);
 
 
-
-
 COMMENT ON COLUMN dd.meta_column.sensitive
     IS 'Indicates if the column stores sensitive data.'
 ;
@@ -270,6 +268,38 @@ fn version() -> &'static str {
     let version = env!("CARGO_PKG_VERSION");
     version
 }
+
+
+
+extension_sql!(
+    r#"
+CREATE OR REPLACE VIEW dd.schemas AS
+SELECT * FROM dd.schemas()
+    WHERE NOT system_object
+;
+
+CREATE OR REPLACE VIEW dd.tables AS
+SELECT * FROM dd.tables()
+    WHERE NOT system_object
+;
+
+CREATE OR REPLACE VIEW dd.views AS
+SELECT * FROM dd.views()
+    WHERE NOT system_object
+;
+
+CREATE OR REPLACE VIEW dd.columns AS
+SELECT * FROM dd.columns()
+    WHERE NOT system_object
+;
+
+CREATE OR REPLACE VIEW dd.functions AS
+SELECT * FROM dd.functions()
+    WHERE NOT system_object
+;
+
+"#
+);
 
 
 
