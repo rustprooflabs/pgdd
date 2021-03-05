@@ -8,7 +8,7 @@ description = "In-database (PostgreSQL) data dictionary providing database intro
 crate-type = ["cdylib"]
 
 [features]
-default = ["pg12"]
+default = ["pg13"]
 pg10 = ["pgx/pg10"]
 pg11 = ["pgx/pg11"]
 pg12 = ["pgx/pg12"]
@@ -17,10 +17,10 @@ pg_test = []
 
 [dependencies]
 pgx = "0.1.15"
-pgx-macros = "0.1.15"
+pgx-macros = "0.1.19"
 
 [dev-dependencies]
-pgx-tests = "0.1.15"
+pgx-tests = "0.1.19"
 
 [profile.dev]
 panic = "unwind"
