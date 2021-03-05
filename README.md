@@ -98,7 +98,7 @@ and on.  More distributions will be made available in the future.
 
 
 ```bash
-cd build/docker
+cd build/
 time bash ./build.sh
 ```
 
