@@ -1,4 +1,6 @@
-# pgdd extension
-comment = 'An in-database data dictionary providing database introspection via standard SQL query syntax.'
-default_version = '0.3'
+comment = 'An in-database data dictionary providing database introspection via standard SQL query syntax.  Developed using pgx (https://github.com/zombodb/pgx).'
+default_version = '0.3.1'
+module_pathname = '$libdir/pgdd'
 relocatable = false
+schema = dd
+superuser = false

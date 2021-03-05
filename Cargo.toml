@@ -1,0 +1,33 @@
+[package]
+name = "pgdd"
+version = "0.3.1"
+edition = "2018"
+description = "In-database (PostgreSQL) data dictionary providing database introspection via standard SQL query syntax."
+
+[lib]
+crate-type = ["cdylib"]
+
+[features]
+default = ["pg12"]
+pg10 = ["pgx/pg10"]
+pg11 = ["pgx/pg11"]
+pg12 = ["pgx/pg12"]
+pg13 = ["pgx/pg13"]
+pg_test = []
+
+[dependencies]
+pgx = "0.1.15"
+pgx-macros = "0.1.15"
+
+[dev-dependencies]
+pgx-tests = "0.1.15"
+
+[profile.dev]
+panic = "unwind"
+
+[profile.release]
+panic = "unwind"
+opt-level = 3
+lto = "fat"
+codegen-units = 1
+

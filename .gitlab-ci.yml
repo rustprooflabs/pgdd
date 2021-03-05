@@ -15,15 +15,19 @@ pre_clean:
     - docker stop gl-pgdd && docker rm gl-pgdd
   allow_failure: true
 
-build_image:
+build_pgdd_images_and_binaries:
   stage: build
   script:
-    - docker build -t rustprooflabs/pgdd .
+    - cd build
+    - /bin/bash build.sh
+  artifacts:
+    paths:
+      - build/pgdd-binaries.tar.gz
 
-start_container:
+start_container_bionic_pg12:
   stage: run
   script:
-    - docker run --name gl-pgdd -e POSTGRES_PASSWORD=$POSTGRES_PASSWORD -p $PG_PORT:5432 -d rustprooflabs/pgdd
+    - docker run --name gl-pgdd -e POSTGRES_PASSWORD=$POSTGRES_PASSWORD -p $PG_PORT:5432 -d rustprooflabs/pgdd:bionic-pg12
     - sleep 8
 
 
