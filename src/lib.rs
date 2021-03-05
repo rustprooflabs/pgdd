@@ -147,12 +147,19 @@ fn columns(
     Spi::connect(|client| {
         client
             .select(query, None, None)
-            .map(|row| (row.get_datum(1), row.get_datum(2),
-                        row.get_datum(3), row.get_datum(4),
-                        row.get_datum(5), row.get_datum(6),
-                        row.get_datum(7), row.get_datum(8),
-                        row.get_datum(9), row.get_datum(10),
-                        row.get_datum(11), row.get_datum(12)))
+            .map(|row| (row.by_ordinal(1).unwrap().value::<String>(),
+                        row.by_ordinal(2).unwrap().value::<String>(),
+                        row.by_ordinal(3).unwrap().value::<String>(),
+                        row.by_ordinal(4).unwrap().value::<String>(),
+                        row.by_ordinal(5).unwrap().value::<String>(),
+                        row.by_ordinal(6).unwrap().value::<i64>(),
+                        row.by_ordinal(7).unwrap().value::<String>(),
+                        row.by_ordinal(8).unwrap().value::<String>(),
+                        row.by_ordinal(9).unwrap().value::<bool>(),
+                        row.by_ordinal(10).unwrap().value::<bool>(),
+                        row.by_ordinal(11).unwrap().value::<String>(),
+                        row.by_ordinal(12).unwrap().value::<bool>()
+                        ))
             .for_each(|tuple| results.push(tuple));
         Ok(Some(()))
     });
@@ -181,12 +188,18 @@ fn functions(
     Spi::connect(|client| {
         client
             .select(query, None, None)
-            .map(|row| (row.get_datum(1), row.get_datum(2),
-                        row.get_datum(3), row.get_datum(4),
-                        row.get_datum(5), row.get_datum(6),
-                        row.get_datum(7), row.get_datum(8),
-                        row.get_datum(9), row.get_datum(10),
-                        row.get_datum(11)))
+            .map(|row| (row.by_ordinal(1).unwrap().value::<String>(),
+                        row.by_ordinal(2).unwrap().value::<String>(),
+                        row.by_ordinal(3).unwrap().value::<String>(),
+                        row.by_ordinal(4).unwrap().value::<String>(),
+                        row.by_ordinal(5).unwrap().value::<String>(),
+                        row.by_ordinal(6).unwrap().value::<String>(),
+                        row.by_ordinal(7).unwrap().value::<String>(),
+                        row.by_ordinal(8).unwrap().value::<String>(),
+                        row.by_ordinal(9).unwrap().value::<String>(),
+                        row.by_ordinal(10).unwrap().value::<String>(),
+                        row.by_ordinal(11).unwrap().value::<bool>()
+                        ))
             .for_each(|tuple| results.push(tuple));
         Ok(Some(()))
     });
@@ -218,13 +231,20 @@ fn tables(
     Spi::connect(|client| {
         client
             .select(query, None, None)
-            .map(|row| (row.get_datum(1), row.get_datum(2),
-                        row.get_datum(3), row.get_datum(4),
-                        row.get_datum(5), row.get_datum(6),
-                        row.get_datum(7), row.get_datum(8),
-                        row.get_datum(9), row.get_datum(10),
-                        row.get_datum(11), row.get_datum(12),
-                        row.get_datum(13)))
+            .map(|row| (row.by_ordinal(1).unwrap().value::<String>(),
+                        row.by_ordinal(2).unwrap().value::<String>(),
+                        row.by_ordinal(3).unwrap().value::<String>(),
+                        row.by_ordinal(4).unwrap().value::<String>(),
+                        row.by_ordinal(5).unwrap().value::<String>(),
+                        row.by_ordinal(6).unwrap().value::<i64>(),
+                        row.by_ordinal(7).unwrap().value::<i64>(),
+                        row.by_ordinal(8).unwrap().value::<i64>(),
+                        row.by_ordinal(9).unwrap().value::<String>(),
+                        row.by_ordinal(10).unwrap().value::<String>(),
+                        row.by_ordinal(11).unwrap().value::<bool>(),
+                        row.by_ordinal(12).unwrap().value::<String>(),
+                        row.by_ordinal(13).unwrap().value::<bool>()
+                        ))
             .for_each(|tuple| results.push(tuple));
         Ok(Some(()))
     });
@@ -252,11 +272,16 @@ fn views(
     Spi::connect(|client| {
         client
             .select(query, None, None)
-            .map(|row| (row.get_datum(1), row.get_datum(2),
-                        row.get_datum(3), row.get_datum(4),
-                        row.get_datum(5), row.get_datum(6),
-                        row.get_datum(7), row.get_datum(8),
-                        row.get_datum(9)))
+            .map(|row| (row.by_ordinal(1).unwrap().value::<String>(),
+                        row.by_ordinal(2).unwrap().value::<String>(),
+                        row.by_ordinal(3).unwrap().value::<String>(),
+                        row.by_ordinal(4).unwrap().value::<String>(),
+                        row.by_ordinal(5).unwrap().value::<i64>(),
+                        row.by_ordinal(6).unwrap().value::<String>(),
+                        row.by_ordinal(7).unwrap().value::<i64>(),
+                        row.by_ordinal(8).unwrap().value::<String>(),
+                        row.by_ordinal(9).unwrap().value::<bool>()
+                        ))
             .for_each(|tuple| results.push(tuple));
         Ok(Some(()))
     });
