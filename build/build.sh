@@ -1,6 +1,6 @@
 # Borrowed heavily from https://github.com/zombodb/zombodb/blob/master/build/build.sh
 #
-# Copyright 2018-2020 RustProof Labs
+# Copyright 2018-2021 RustProof Labs
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ LOGDIR=${BASE}/target/logs
 ARTIFACTDIR=${BASE}/target/artifacts
 
 PG_VERS=("pg10" "pg11" "pg12" "pg13")
+#PG_VERS=("pg13")
 
 echo $BASE
 echo $VERSION
@@ -37,7 +38,6 @@ for image in `ls docker/` ; do
     OS_DIST=$(echo ${image}|cut -f2 -d-)
     OS_VER=$(echo ${image}|cut -f3 -d-)
 
-
     echo $OS_DIST
     echo $OS_VER
     echo "Pg Version: ${PG_VER}"
@@ -45,8 +45,7 @@ for image in `ls docker/` ; do
     cd ${BUILDDIR}
 
     cd docker/${image}
-    echo ${image}
-    echo "  Building Docker image"
+    echo "  Building Docker image: ${image}"
     docker build -t ${image} . 2>&1 > ${LOGDIR}/${image}-build.log || exit 1
 
     for PG_VER in ${PG_VERS[@]} ; do
@@ -54,7 +53,6 @@ for image in `ls docker/` ; do
         docker run \
             -e pgver=${PG_VER} \
             -e image=${image} \
-            -w /build \
             -v ${BASE}:/build \
             --rm \
             ${image} \
@@ -65,18 +63,14 @@ for image in `ls docker/` ; do
     done
 
 
+    echo "Copying artifacts for ${OS_DIST} ${OS_VER}"
+    cd $BASE
+
+    for f in $(find target -name "*.deb") $(find target -name "*.rpm") $(find target -name "*.apk"); do
+        echo "copy: ${f}"
+        cp $f $ARTIFACTDIR/
+    done
 done
-
-
-# Collect artifacts
-cd $BASE
-
-echo "Copying artifacts..."
-
-for f in $(find target -name "*.deb") $(find target -name "*.rpm") $(find target -name "*.apk"); do
-    echo "copy: ${f}"
-    cp $f $ARTIFACTDIR/
-done
-
 
 tar -zcvf $BUILDDIR/pgdd-binaries.tar.gz -C $ARTIFACTDIR .
+

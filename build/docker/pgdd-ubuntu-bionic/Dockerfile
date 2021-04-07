@@ -8,7 +8,7 @@ ARG GID=1000
 RUN useradd -m ${USER} --uid=${UID}
 
 
-RUN apt-get update && apt-get install -y make wget curl gnupg
+RUN apt-get update && apt-get install -y make wget curl gnupg git
 RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ bionic-pgdg main" >> /etc/apt/sources.list.d/pgdg.list \
 	&& wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
 RUN apt-get update
