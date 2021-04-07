@@ -55,7 +55,7 @@ find ./ -name "*.so" -exec strip {} \;
 #
 # use 'fpm' to build a .deb
 #
-OUTNAME=pgdd_${OSNAME}_${PG_VER}-${VERSION}_amd64
+OUTNAME=pgdd_${VERSION}_${OSNAME}_${PG_VER}_amd64
 if [ "${PKG_FORMAT}" == "deb" ]; then
 	fpm \
 		-s dir \

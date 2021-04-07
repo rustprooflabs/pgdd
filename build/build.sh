@@ -72,6 +72,5 @@ for image in `ls docker/` ; do
     done
 done
 
+tar -zcvf $BUILDDIR/pgdd-binaries.tar.gz -C $ARTIFACTDIR .
 
-
-#tar -zcvf $BUILDDIR/pgdd-binaries.tar.gz -C $ARTIFACTDIR .
