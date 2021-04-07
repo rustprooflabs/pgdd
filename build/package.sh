@@ -15,6 +15,7 @@
 # limitations under the License.
 # 
 #! /bin/bash
+set -x
 
 PG_VER=$1
 IMAGE=$2
@@ -26,11 +27,11 @@ fi
 
 PKG_FORMAT=deb
 
-set -x
+echo "Changing to build dir..."
+cd /build
 
 OSNAME=$(echo ${IMAGE} | cut -f3-4 -d-)
 VERSION=$(cat pgdd.control | grep default_version | cut -f2 -d\')
-
 
 echo "PgDD Building for:  ${OSNAME}-${VERSION}"
 
@@ -52,15 +53,14 @@ cd target/release/pgdd-${PG_VER} || exit $?
 find ./ -name "*.so" -exec strip {} \;
 
 #
-# then use 'fpm' to build a .deb
+# use 'fpm' to build a .deb
 #
 OUTNAME=pgdd_${OSNAME}_${PG_VER}-${VERSION}_amd64
 if [ "${PKG_FORMAT}" == "deb" ]; then
-
 	fpm \
 		-s dir \
 		-t deb \
-		-n pgdd-${PG_VER} \
+		-n pgdd-${OSNAME}-${PG_VER} \
 		-v ${VERSION} \
 		--deb-no-default-config-files \
 		-p ${OUTNAME}.deb \
@@ -68,7 +68,7 @@ if [ "${PKG_FORMAT}" == "deb" ]; then
 		. || exit 1
 
 else
-	echo Unrecognized value for PKG_FORMAT:  ${PKG_FORMAT}
+	echo "Unrecognized value for PKG_FORMAT:  ${PKG_FORMAT}"
 	exit 1
 fi
 
