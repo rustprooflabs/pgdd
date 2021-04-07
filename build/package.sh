@@ -1,6 +1,6 @@
 # Borrowed heavily from https://github.com/zombodb/zombodb/blob/master/build/package.sh
 #
-# Copyright 2020 RustProof Labs
+# Copyright 2021 RustProof Labs
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
