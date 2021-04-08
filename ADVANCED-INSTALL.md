@@ -80,7 +80,7 @@ cd build/
 time bash ./build.sh
 ```
 
-Tagged versions will be attached to the Release.
+Tagged versions will be attached to their [releases](https://github.com/rustprooflabs/pgdd/releases).
 
 During development some versions may be copied to the `./standalone/` directory.
 
