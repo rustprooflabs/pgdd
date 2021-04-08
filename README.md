@@ -8,7 +8,7 @@ Originally written in raw SQL, the extension is converting to the Rust
 [pgx framework](https://github.com/zombodb/pgx).
 
 
-## Compatability
+## Compatibility
 
 PgDD has been tested to work for PostgreSQL 10 through 13.
 
@@ -17,96 +17,59 @@ PgDD has been tested to work for PostgreSQL 10 through 13.
 Download the appropriate binary.
 
 ```bash
-wget https://github.com/rustprooflabs/pgdd/raw/rust-pgx/standalone/pgdd_bionic_pg13-0.3.1_amd64.deb
+wget https://github.com/rustprooflabs/pgdd/raw/dev/standalone/pgdd_0.4.0-dev_focal_pg13_amd64.deb
 ```
 
 Install.
 
 
 ```bash
-sudo dpkg -i ./pgdd_bionic_pg13-0.3.1_amd64.deb
+sudo dpkg -i ./pgdd_0.4.0-dev_focal_pg13_amd64.deb
 ```
 
+In your database.
 
-## Install `pgdd` from source
 
-> See the [Cargo PGX](https://github.com/zombodb/pgx/tree/master/cargo-pgx)
-documentation for more information on using pgx.
-
-One way to install `pgdd` is to install from source by cloning this repository.
-
-Install Prereqs and ensure PostgreSQL dev tools are installed.
-
-```bash
-sudo apt install postgresql-server-dev-all libreadline-dev zlib1g-dev curl
-```
-
-[Install Rust](https://www.rust-lang.org/tools/install) and Pgx.
-
-```bash
-curl https://sh.rustup.rs -sSf | sh -s -- -y
-cargo install cargo-pgx
-cargo install cargo-deb
-```
-
-### Clone repo
-
-```bash
-mkdir ~/git
-cd ~/git
-git clone https://github.com/rustprooflabs/pgdd.git
-cd ~/git/pgdd
-```
-
-### Test deployment
-
-Specify version, `pg10` through `pg13` are currently supported. This command will
-start a test instance of Postgres on port `28812`.  Using a different version changes the last two digits of the port!
-
-```bash
-cargo pgx run pg12
-```
-
-Example output.
-
-```bash
-    Stopping Postgres v12
-building extension with features `pg12`
-"cargo" "build" "--features" "pg12" "--no-default-features"
-    Finished dev [unoptimized + debuginfo] target(s) in 0.07s
-
-installing extension
-     Copying control file to `/home/username/.pgx/12.3/pgx-install/share/postgresql/extension/pgdd.control`
-     Copying shared library to `/home/username/.pgx/12.3/pgx-install/lib/postgresql/pgdd.so`
-     Writing extension schema to `/home/username/.pgx/12.3/pgx-install/share/postgresql/extension/pgdd--0.3.sql`
-    Finished installing pgdd
-    Starting Postgres v12 on port 28812
-    Re-using existing database pgdd
-```
-
-In the test instance of psql, create the extension in database.
-
-```bash
+```sql
 CREATE EXTENSION pgdd;
 ```
 
 
-## Build binary packages
+## Update
 
-Debian/Ubuntu Bionic binaries are available for 0.3.1 (first dev pgx version)
-and on.  More distributions will be made available in the future.
+As new [releases](https://github.com/rustprooflabs/pgdd/releases) are
+available, download the new binary and install using the above instructions.
 
 
-```bash
-cd build/
-time bash ./build.sh
+Then, in your database.
+
+```sql
+UPDATE EXTENSION pgdd;
 ```
 
-New versions/builds get copied to the `./standalone/` directory.
+----
 
-```bash
-cp ./target/artifacts/* ./standalone/
+**WARNING**
+
+Postgres sessions started before the`UPDATE EXTENSION` command will
+continue to see the old version of PgDD. New sessions will see the
+updated extension.
+
+If the following query returns true, disconnect and reconnect to
+the database with PgDD to use the latest installed version.
+
+
+```sql
+SELECT CASE WHEN version <> dd.version() THEN True
+        ELSE False
+        END AS pgdd_needs_reload
+    FROM pg_catalog.pg_available_extension_versions
+    WHERE name = 'pgdd' AND installed
+;
 ```
+
+
+----
 
 
 
