@@ -44,7 +44,7 @@ available, download the new binary and install using the above instructions.
 Then, in your database.
 
 ```sql
-UPDATE EXTENSION pgdd;
+ALTER EXTENSION pgdd UPDATE;
 ```
 
 ----
