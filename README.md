@@ -8,7 +8,7 @@ Originally written in raw SQL, the extension is converting to the Rust
 [pgx framework](https://github.com/zombodb/pgx).
 
 
-## Compatability
+## Compatibility
 
 PgDD has been tested to work for PostgreSQL 10 through 13.
 
@@ -17,15 +17,60 @@ PgDD has been tested to work for PostgreSQL 10 through 13.
 Download the appropriate binary.
 
 ```bash
-wget https://github.com/rustprooflabs/pgdd/raw/rust-pgx/standalone/pgdd_bionic_pg13-0.3.1_amd64.deb
+wget https://github.com/rustprooflabs/pgdd/raw/rust-pgx/standalone/pgdd_0.4.0-dev_focal_pg13_amd64.deb
 ```
 
 Install.
 
 
 ```bash
-sudo dpkg -i ./pgdd_bionic_pg13-0.3.1_amd64.deb
+sudo dpkg -i ./pgdd_0.4.0-dev_focal_pg13_amd64.deb
 ```
+
+In your database.
+
+
+```sql
+CREATE EXTENSION pgdd;
+```
+
+
+## Update
+
+As new [releases](https://github.com/rustprooflabs/pgdd/releases) are
+available, download the new binary and install using the above instructions.
+
+
+Then, in your database.
+
+```sql
+UPDATE EXTENSION pgdd;
+```
+
+----
+
+**WARNING**
+
+Postgres sessions started before the`UPDATE EXTENSION` command will
+continue to see the old version of PgDD. New sessions will see the
+updated extension.
+
+If the following query returns true, disconnect and reconnect to
+the database with PgDD to use the latest version.
+
+
+```sql
+SELECT CASE WHEN version <> dd.version() THEN True
+        ELSE False
+        END AS pgdd_needs_reload
+    FROM pg_catalog.pg_available_extension_versions
+    WHERE name = 'pgdd' AND installed
+;
+```
+
+
+----
+
 
 
 ## Install `pgdd` from source
