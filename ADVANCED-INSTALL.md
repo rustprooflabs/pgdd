@@ -7,12 +7,17 @@ used to create the binaries.
 
 ## Install `pgdd` from source
 
-> See the [Cargo PGX](https://github.com/zombodb/pgx/tree/master/cargo-pgx)
-documentation for more information on using pgx.
 
 One way to install `pgdd` is to install from source by cloning this repository.
 
+### Prereqs
+
+Pgx and its dependencies are the main prereq for PgDD.
 Install Prereqs and ensure PostgreSQL dev tools are installed.
+
+> See the [Cargo PGX](https://github.com/zombodb/pgx/tree/master/cargo-pgx)
+documentation for more information on using pgx.
+
 
 ```bash
 sudo apt install postgresql-server-dev-all libreadline-dev zlib1g-dev curl
@@ -26,7 +31,14 @@ cargo install cargo-pgx
 cargo install cargo-deb
 ```
 
-### Clone repo
+Initialize pgx.  Need to run this after install AND occasionally to get updates to Postgres versions.
+
+```bash
+cargo pgx init
+```
+
+
+### Clone PgDD repo
 
 ```bash
 mkdir ~/git
@@ -39,6 +51,7 @@ cd ~/git/pgdd
 
 Specify version, `pg10` through `pg13` are currently supported. This command will
 start a test instance of Postgres on port `28812`.  Using a different version changes the last two digits of the port!
+
 
 ```bash
 cargo pgx run pg12
