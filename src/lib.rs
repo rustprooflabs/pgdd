@@ -341,6 +341,13 @@ SELECT * FROM dd.functions()
     WHERE NOT system_object
 ;
 
+
+COMMENT ON VIEW dd.schemas IS 'Data dictionary view: Lists schemas, excluding system schemas.';
+COMMENT ON VIEW dd.tables IS 'Data dictionary view: Lists tables, excluding system tables.';
+COMMENT ON VIEW dd.views IS 'Data dictionary view: Lists views, excluding system views.';
+COMMENT ON VIEW dd.columns IS 'Data dictionary view: Lists columns, excluding system columns.';
+COMMENT ON VIEW dd.functions IS 'Data dictionary view: Lists functions, excluding system functions.';
+
 "#
 );
 
