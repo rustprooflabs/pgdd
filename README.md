@@ -232,3 +232,9 @@ PgDD UI handles version checking with the Python `packaging` module so
 PgDD versioning must conform to
 [PEP 440](https://www.python.org/dev/peps/pep-0440/).
 
+
+## Caveats
+
+* `pg_dump` ignores rows where `s_name = 'dd'`
+
+
