@@ -5,8 +5,6 @@ pg_module_magic!();
 
 extension_sql!(
     r#"
-COMMENT ON SCHEMA dd IS 'Data Dictionary from https://github.com/rustprooflabs/pgdd';
-
 CREATE TABLE dd.meta_schema
 (
     meta_schema_id SERIAL NOT NULL,
@@ -17,13 +15,6 @@ CREATE TABLE dd.meta_schema
     CONSTRAINT UQ_dd_meta_schema_name UNIQUE (s_name)
 );
 
-COMMENT ON TABLE dd.meta_schema 
-    IS 'User definable meta-data at the schema level.'
-;
-
-COMMENT ON COLUMN dd.meta_schema.s_name
-    IS 'Schema name.'
-;
 
 INSERT INTO dd.meta_schema (s_name, data_source, sensitive)
     VALUES ('dd', 'Manually maintained', False);
@@ -40,11 +31,6 @@ CREATE TABLE dd.meta_table
 );
 
 
-COMMENT ON TABLE dd.meta_table 
-    IS 'User definable meta-data at the schema + table level.'
-;
-
-
 CREATE TABLE dd.meta_column
 (
     meta_column_id SERIAL NOT NULL,
@@ -58,11 +44,6 @@ CREATE TABLE dd.meta_column
 );
 
 
-COMMENT ON TABLE dd.meta_column 
-    IS 'User definable meta-data at the schema + table + column level.'
-;
-
-
 INSERT INTO dd.meta_table (s_name, t_name, data_source, sensitive)
     VALUES ('dd', 'meta_schema', 'Manually maintained', False);
 INSERT INTO dd.meta_table (s_name, t_name, data_source, sensitive)
@@ -70,10 +51,6 @@ INSERT INTO dd.meta_table (s_name, t_name, data_source, sensitive)
 INSERT INTO dd.meta_table (s_name, t_name, data_source, sensitive)
     VALUES ('dd', 'meta_column', 'Manually maintained', False);
 
-
-COMMENT ON COLUMN dd.meta_column.sensitive
-    IS 'Indicates if the column stores sensitive data.'
-;
 
 INSERT INTO dd.meta_column (s_name, t_name, c_name, data_source, sensitive)
     VALUES ('dd', 'meta_column', 'sensitive', 'Manually defined', False)
@@ -88,6 +65,30 @@ SELECT pg_catalog.pg_extension_config_dump('dd.meta_table_meta_table_id_seq'::re
 
 SELECT pg_catalog.pg_extension_config_dump('dd.meta_column'::regclass, 'WHERE s_name <> ''dd'' ');
 SELECT pg_catalog.pg_extension_config_dump('dd.meta_column_meta_column_id_seq'::regclass, '');
+
+
+COMMENT ON SCHEMA dd IS 'Schema for Data Dictionary objects.  See https://github.com/rustprooflabs/pgdd';
+
+COMMENT ON TABLE dd.meta_schema IS 'User definable meta-data at the schema level.';
+COMMENT ON TABLE dd.meta_table IS 'User definable meta-data at the schema + table level.';
+COMMENT ON TABLE dd.meta_column IS 'User definable meta-data at the schema + table + column level.';
+
+COMMENT ON COLUMN dd.meta_schema.meta_schema_id IS 'Primary key for meta table';
+COMMENT ON COLUMN dd.meta_table.meta_table_id IS 'Primary key for meta table';
+COMMENT ON COLUMN dd.meta_column.meta_column_id IS 'Primary key for meta table';
+COMMENT ON COLUMN dd.meta_schema.s_name IS 'Name of the schema for the object described.';
+COMMENT ON COLUMN dd.meta_table.s_name IS 'Name of the schema for the object described.';
+COMMENT ON COLUMN dd.meta_column.s_name IS 'Name of the schema for the object described.';
+COMMENT ON COLUMN dd.meta_table.t_name IS 'Name of the table for the object described.';
+COMMENT ON COLUMN dd.meta_column.t_name IS 'Name of the table for the object described.';
+COMMENT ON COLUMN dd.meta_column.c_name IS 'Name of the column for the object described.';
+
+COMMENT ON COLUMN dd.meta_schema.data_source IS 'Optional field to describe the data source(s) for the data in this schema.  Most helpful when objects are intentionally organized by schema.';
+COMMENT ON COLUMN dd.meta_table.data_source IS 'Optional field to describe the data source(s) for this table.';
+COMMENT ON COLUMN dd.meta_column.data_source IS 'Optional field to describe the data source(s) for this column.';
+COMMENT ON COLUMN dd.meta_schema.sensitive IS 'Manually updated indicator. Does the schema contain store sensitive data?';
+COMMENT ON COLUMN dd.meta_table.sensitive IS 'Manually updated indicator. Does the table contain store sensitive data?';
+COMMENT ON COLUMN dd.meta_column.sensitive IS 'Manually updated indicator. Does the column contain store sensitive data?';
 
 "#
 );
@@ -347,6 +348,15 @@ COMMENT ON VIEW dd.tables IS 'Data dictionary view: Lists tables, excluding syst
 COMMENT ON VIEW dd.views IS 'Data dictionary view: Lists views, excluding system views.';
 COMMENT ON VIEW dd.columns IS 'Data dictionary view: Lists columns, excluding system columns.';
 COMMENT ON VIEW dd.functions IS 'Data dictionary view: Lists functions, excluding system functions.';
+
+COMMENT ON FUNCTION dd.about IS 'Basic details about PgDD extension';
+COMMENT ON FUNCTION dd.version IS 'PgDD extension version';
+
+COMMENT ON FUNCTION dd.schemas IS 'Data dictionary function: Lists all schemas';
+COMMENT ON FUNCTION dd.tables IS 'Data dictionary function: Lists all tables';
+COMMENT ON FUNCTION dd.views IS 'Data dictionary function: Lists all views.';
+COMMENT ON FUNCTION dd.columns IS 'Data dictionary function: Lists all columns';
+COMMENT ON FUNCTION dd.functions IS 'Data dictionary function: Lists all functions';
 
 "#
 );
