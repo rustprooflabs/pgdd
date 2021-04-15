@@ -2,7 +2,9 @@ use pgx::*;
 
 pg_module_magic!();
 
-
+// WARNING:  DO NOT CHANGE DDL after it has been released!
+//  Changed DDL are ignored by pgx schema generated and will NOT be deployed
+//  when users run ALTER EXTENSION pgdd UPDATE;
 extension_sql!(
     r#"
 CREATE TABLE dd.meta_schema
@@ -89,7 +91,6 @@ COMMENT ON COLUMN dd.meta_column.data_source IS 'Optional field to describe the 
 COMMENT ON COLUMN dd.meta_schema.sensitive IS 'Manually updated indicator. Does the schema contain store sensitive data?';
 COMMENT ON COLUMN dd.meta_table.sensitive IS 'Manually updated indicator. Does the table contain store sensitive data?';
 COMMENT ON COLUMN dd.meta_column.sensitive IS 'Manually updated indicator. Does the column contain store sensitive data?';
-
 "#
 );
 
