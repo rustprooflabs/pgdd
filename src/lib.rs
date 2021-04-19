@@ -2,7 +2,9 @@ use pgx::*;
 
 pg_module_magic!();
 
-
+// NOTE: DDL must be defined here to be created by `CREATE EXTENSION pgdd;`
+//    Changes to DDL must be made BOTH here and
+//    in the associated version-to-version upgrade script
 extension_sql!(
     r#"
 CREATE TABLE dd.meta_schema
@@ -90,6 +92,10 @@ COMMENT ON COLUMN dd.meta_schema.sensitive IS 'Manually updated indicator. Does 
 COMMENT ON COLUMN dd.meta_table.sensitive IS 'Manually updated indicator. Does the table contain store sensitive data?';
 COMMENT ON COLUMN dd.meta_column.sensitive IS 'Manually updated indicator. Does the column contain store sensitive data?';
 
+----------------------
+-- Version 0.4.0 -- This is duplicated in sql/pgdd--0.3.1--0.4.0.sql
+----------------------
+ALTER TABLE dd.meta_schema ALTER COLUMN sensitive SET DEFAULT False;
 "#
 );
 
