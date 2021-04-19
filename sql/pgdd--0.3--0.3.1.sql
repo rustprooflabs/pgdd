@@ -1,1 +1,1 @@
--- Empty file to get ALTER EXTENSION pgdd UPDATE; to work.
+-- No DDL changes in this upgrade

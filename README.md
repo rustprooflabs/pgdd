@@ -248,6 +248,12 @@ PgDD versioning must conform to
 
 ## Caveats
 
+End user caveats:
+
 * `pg_dump` ignores rows where `s_name = 'dd'`
+
+Extension developer caveats:
+
+* DDL changes made in `src/lib.rs` need to be in version-to-version upgrade (e.g. ``sql/pgdd-0.3.1--0.4.0.sql``)
 
 
