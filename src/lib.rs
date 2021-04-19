@@ -313,13 +313,6 @@ fn about() -> &'static str {
     "PgDD: PostgreSQL Data Dictionary extension.  See https://github.com/rustprooflabs/pgdd for details!"
 }
 
-#[pg_extern]
-fn version() -> &'static str {
-    let version = env!("CARGO_PKG_VERSION");
-    version
-}
-
-
 
 extension_sql!(
     r#"
@@ -356,7 +349,6 @@ COMMENT ON VIEW dd.columns IS 'Data dictionary view: Lists columns, excluding sy
 COMMENT ON VIEW dd.functions IS 'Data dictionary view: Lists functions, excluding system functions.';
 
 COMMENT ON FUNCTION dd.about IS 'Basic details about PgDD extension';
-COMMENT ON FUNCTION dd.version IS 'PgDD extension version';
 
 COMMENT ON FUNCTION dd.schemas IS 'Data dictionary function: Lists all schemas';
 COMMENT ON FUNCTION dd.tables IS 'Data dictionary function: Lists all tables';
