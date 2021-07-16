@@ -96,7 +96,9 @@ COMMENT ON COLUMN dd.meta_column.sensitive IS 'Manually updated indicator. Does 
 -- Version 0.4.0 -- This is duplicated in sql/pgdd--0.3.1--0.4.0.sql
 ----------------------
 ALTER TABLE dd.meta_schema ALTER COLUMN sensitive SET DEFAULT False;
-"#
+"#,
+    name = "setup-tables",
+    bootstrap
 );
 
 
@@ -356,7 +358,9 @@ COMMENT ON FUNCTION dd.views IS 'Data dictionary function: Lists all views.';
 COMMENT ON FUNCTION dd.columns IS 'Data dictionary function: Lists all columns';
 COMMENT ON FUNCTION dd.functions IS 'Data dictionary function: Lists all functions';
 
-"#
+"#,
+name = "views",
+after = [schemas, functions, views, tables, columns]
 );
 
 

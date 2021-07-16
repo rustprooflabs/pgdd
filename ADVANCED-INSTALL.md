@@ -31,6 +31,16 @@ cargo install cargo-pgx
 cargo install cargo-deb
 ```
 
+ALTERNATIVE for development -- Install specific branch from Pgx repo:
+
+```bash
+cargo install --force --git "https://github.com/zombodb/pgx" \
+    --branch "oh-no-type-resolution" \
+    "cargo-pgx"
+```
+
+
+
 Initialize pgx.  Need to run this after install AND occasionally to get updates to Postgres versions.
 
 ```bash
@@ -101,3 +111,11 @@ During development some versions may be copied to the `./standalone/` directory.
 cp ./target/artifacts/* ./standalone/
 ```
 
+## Pgx Generate graphviz
+
+```bash
+cargo pgx schema -d
+dot -Goverlap=prism -Gspline=ortho -Tjpg extension.dot > extension.jpg
+```
+
+![pgx dependencies for pgdd v0.4.0-dev](pgdd--0.4.0-dev.jpg)
