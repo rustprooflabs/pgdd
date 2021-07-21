@@ -5,7 +5,9 @@ edition = "2018"
 description = "In-database (PostgreSQL) data dictionary providing database introspection via standard SQL query syntax."
 
 [lib]
-crate-type = ["cdylib"]
+# rlib added to build against repo instead of crate (I think)
+crate-type = ["cdylib", "rlib"]
+#crate-type = ["cdylib"]
 
 [features]
 default = ["pg13"]
@@ -16,11 +18,19 @@ pg13 = ["pgx/pg13"]
 pg_test = []
 
 [dependencies]
-pgx = "0.1.15"
-pgx-macros = "0.1.19"
+
+pgx = { git = "https://github.com/zombodb/pgx", branch = "oh-no-type-resolution" }
+pgx-macros = { git = "https://github.com/zombodb/pgx", branch = "oh-no-type-resolution" }
+#pgx = "0.1.21"
+#pgx-macros = "0.1.21"
+
+# Won't be needed in final version (hopefully!)
+pgx-utils = { git = "https://github.com/zombodb/pgx", branch = "oh-no-type-resolution" }
 
 [dev-dependencies]
-pgx-tests = "0.1.19"
+pgx-tests = { git = "https://github.com/zombodb/pgx", branch = "oh-no-type-resolution" }
+#pgx-tests = "0.1.21"
+
 
 [profile.dev]
 panic = "unwind"
