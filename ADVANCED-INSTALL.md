@@ -20,15 +20,22 @@ documentation for more information on using pgx.
 
 
 ```bash
-sudo apt install postgresql-server-dev-all libreadline-dev zlib1g-dev curl cargo
+sudo apt install postgresql-server-dev-all libreadline-dev zlib1g-dev curl \
+    libssl-dev llvm-dev libclang-dev clang
 ```
 
 [Install Rust](https://www.rust-lang.org/tools/install) and Pgx.
 
 ```bash
 curl https://sh.rustup.rs -sSf | sh -s -- -y
+source $HOME/.cargo/env
+```
+
+Install `cargo-pgx` regularly.
+
+
+```bash
 cargo install cargo-pgx
-cargo install cargo-deb
 ```
 
 ALTERNATIVE for development -- Install specific branch from Pgx repo:
@@ -40,8 +47,15 @@ cargo install --force --git "https://github.com/zombodb/pgx" \
 ```
 
 
+Install `cargo-deb` used for packaging binaries.
 
-Initialize pgx.  Need to run this after install AND occasionally to get updates to Postgres versions.
+```bash
+cargo install cargo-deb
+```
+
+
+Initialize pgx.  Need to run this after install AND occasionally to get updates
+to Postgres versions.
 
 ```bash
 cargo pgx init
@@ -60,7 +74,8 @@ cd ~/git/pgdd
 ### Test deployment
 
 Specify version, `pg10` through `pg13` are currently supported. This command will
-start a test instance of Postgres on port `28812`.  Using a different version changes the last two digits of the port!
+start a test instance of Postgres on port `28812`.  Using a different version
+changes the last two digits of the port!
 
 
 ```bash
@@ -95,7 +110,7 @@ CREATE EXTENSION pgdd;
 
 Debian/Ubuntu Bionic binaries are available for 0.4.0
 (first [pgx](https://github.com/zombodb/pgx) version)
-and on.  More distributions will be made available in the future.
+and later.  More distributions will likely have binaries available in the future.
 
 
 ```bash
