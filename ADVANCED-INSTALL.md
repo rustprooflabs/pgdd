@@ -20,7 +20,7 @@ documentation for more information on using pgx.
 
 
 ```bash
-sudo apt install postgresql-server-dev-all libreadline-dev zlib1g-dev curl
+sudo apt install postgresql-server-dev-all libreadline-dev zlib1g-dev curl cargo
 ```
 
 [Install Rust](https://www.rust-lang.org/tools/install) and Pgx.
