@@ -48,7 +48,9 @@ cargo install cargo-deb
 
 
 Initialize pgx.  Need to run this after install AND occasionally to get updates
-to Postgres versions.
+to Postgres versions or glibc updates.  Not typically required to follow pgx
+developments.
+
 
 ```bash
 cargo pgx init
