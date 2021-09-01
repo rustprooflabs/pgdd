@@ -21,15 +21,15 @@ pg_test = []
 
 pgx = { git = "https://github.com/zombodb/pgx", branch = "oh-no-type-resolution" }
 pgx-macros = { git = "https://github.com/zombodb/pgx", branch = "oh-no-type-resolution" }
-#pgx = "0.1.21"
-#pgx-macros = "0.1.21"
+#pgx = "0.1.22"
+#pgx-macros = "0.1.22"
 
 # Won't be needed in final version (hopefully!)
 pgx-utils = { git = "https://github.com/zombodb/pgx", branch = "oh-no-type-resolution" }
 
 [dev-dependencies]
 pgx-tests = { git = "https://github.com/zombodb/pgx", branch = "oh-no-type-resolution" }
-#pgx-tests = "0.1.21"
+#pgx-tests = "0.1.22"
 
 
 [profile.dev]

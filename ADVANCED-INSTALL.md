@@ -32,19 +32,11 @@ curl https://sh.rustup.rs -sSf | sh -s -- -y
 source $HOME/.cargo/env
 ```
 
-Install `cargo-pgx` regularly.
+Install `cargo-pgx` regularly (see dev steps below for non-standard install).
 
 
 ```bash
 cargo install cargo-pgx
-```
-
-ALTERNATIVE for development -- Install specific branch from Pgx repo:
-
-```bash
-cargo install --force --git "https://github.com/zombodb/pgx" \
-    --branch "oh-no-type-resolution" \
-    "cargo-pgx"
 ```
 
 
@@ -80,7 +72,7 @@ changes the last two digits of the port!
 
 
 ```bash
-cargo pgx run pg12
+cargo pgx run pg13
 ```
 
 Example output.
@@ -135,3 +127,52 @@ dot -Goverlap=prism -Gspline=ortho -Tjpg extension.dot > extension.jpg
 ```
 
 ![pgx dependencies for pgdd v0.4.0-dev](pgdd--0.4.0-dev.jpg)
+
+
+## Non-standard dev
+
+When working against Pgx installed from a non-tagged branch, install pgx using:
+
+```bash
+cargo install --force --git "https://github.com/zombodb/pgx" \
+    --branch "oh-no-type-resolution" \
+    "cargo-pgx"
+```
+
+Changes to `Cargo.toml` required in `[lib]` and `[dependencies]` sections.
+
+
+```toml
+[lib]
+# rlib added to build against repo instead of crate (I think)
+crate-type = ["cdylib", "rlib"]
+#crate-type = ["cdylib"]
+```
+
+
+```toml
+[dependencies]
+
+pgx = { git = "https://github.com/zombodb/pgx", branch = "oh-no-type-resolution" }
+pgx-macros = { git = "https://github.com/zombodb/pgx", branch = "oh-no-type-resolution" }
+#pgx = "0.1.21"
+#pgx-macros = "0.1.21"
+
+# Won't be needed in final version (hopefully!)
+pgx-utils = { git = "https://github.com/zombodb/pgx", branch = "oh-no-type-resolution" }
+
+[dev-dependencies]
+pgx-tests = { git = "https://github.com/zombodb/pgx", branch = "oh-no-type-resolution" }
+#pgx-tests = "0.1.21"
+```
+
+
+
+The following command can be used to force pgx to overwrite the configs it needs to
+for various dev related changes.
+
+
+```bash
+cargo pgx schema -f
+```
+ 
