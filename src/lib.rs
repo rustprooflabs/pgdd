@@ -8,13 +8,13 @@ pg_module_magic!();
 //
 // FIXME:  WATCH FOR WHEN THIS COMMENT BECOMES OBSOLETE!  ^^^
 
-extension_sql_file!("sql/create-extension-tables-all.sql",
+extension_sql_file!("sql/create_extension_tables_all.sql",
     bootstrap
 );
 
 
-extension_sql_file!("sql/load-default-data.sql",
-    after = ["create-extension-tables-all"]
+extension_sql_file!("sql/load_default_data.sql",
+    requires = ["create_extension_tables_all"]
 );
 
 
@@ -233,7 +233,7 @@ fn about() -> &'static str {
 }
 
 
-extension_sql_file!("sql/create-extension-views-all.sql",
+extension_sql_file!("sql/create_extension_views_all.sql",
     finalize
 );
 

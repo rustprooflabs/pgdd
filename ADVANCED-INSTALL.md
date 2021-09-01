@@ -21,7 +21,8 @@ documentation for more information on using pgx.
 
 ```bash
 sudo apt install postgresql-server-dev-all libreadline-dev zlib1g-dev curl \
-    libssl-dev llvm-dev libclang-dev clang
+    libssl-dev llvm-dev libclang-dev clang \
+    graphviz
 ```
 
 [Install Rust](https://www.rust-lang.org/tools/install) and Pgx.
