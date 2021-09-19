@@ -80,17 +80,27 @@ cargo pgx run pg13
 Example output.
 
 ```bash
-    Stopping Postgres v12
-building extension with features `pg12`
-"cargo" "build" "--features" "pg12" "--no-default-features"
-    Finished dev [unoptimized + debuginfo] target(s) in 0.07s
+    Stopping Postgres v13
+building extension with features `pg13`
+"cargo" "build" "--features" "pg13" "--no-default-features"
+    Finished dev [unoptimized + debuginfo] target(s) in 0.05s
 
 installing extension
-     Copying control file to `/home/username/.pgx/12.3/pgx-install/share/postgresql/extension/pgdd.control`
-     Copying shared library to `/home/username/.pgx/12.3/pgx-install/lib/postgresql/pgdd.so`
-     Writing extension schema to `/home/username/.pgx/12.3/pgx-install/share/postgresql/extension/pgdd--0.3.sql`
+     Copying control file to `/home/username/.pgx/13.4/pgx-install/share/postgresql/extension/pgdd.control`
+     Copying shared library to `/home/username/.pgx/13.4/pgx-install/lib/postgresql/pgdd.so`
+    Building SQL generator with features `pg13`
+"cargo" "build" "--bin" "sql-generator" "--features" "pg13" "--no-default-features"
+    Finished dev [unoptimized + debuginfo] target(s) in 0.05s
+ Discovering SQL entities
+  Discovered 9 SQL entities: 0 schemas (0 unique), 6 functions, 0 types, 0 enums, 3 sqls, 0 ords, 0 hashes
+running SQL generator with features `pg13`
+"cargo" "run" "--bin" "sql-generator" "--features" "pg13" "--no-default-features" "--" "--sql" "/home/username/.pgx/13.4/pgx-install/share/postgresql/extension/pgdd--0.4.0-dev.sql"
+    Finished dev [unoptimized + debuginfo] target(s) in 0.06s
+     Running `target/debug/sql-generator --sql /home/username/.pgx/13.4/pgx-install/share/postgresql/extension/pgdd--0.4.0-dev.sql`
+     Copying extension schema file to `/home/username/.pgx/13.4/pgx-install/share/postgresql/extension/pgdd--0.3.1--0.4.0-dev.sql`
+     Copying extension schema file to `/home/username/.pgx/13.4/pgx-install/share/postgresql/extension/pgdd--0.3--0.3.1.sql`
     Finished installing pgdd
-    Starting Postgres v12 on port 28812
+    Starting Postgres v13 on port 28813
     Re-using existing database pgdd
 ```
 
@@ -137,7 +147,7 @@ When working against Pgx installed from a non-tagged branch, install pgx using:
 
 ```bash
 cargo install --force --git "https://github.com/zombodb/pgx" \
-    --branch "oh-no-type-resolution" \
+    --branch "develop" \
     "cargo-pgx"
 ```
 
