@@ -40,7 +40,7 @@ echo "PgDD Building for:  ${OSNAME}-${VERSION}"
 #echo "Add PG Config Dir to path: ${PG_CONFIG_DIR}"
 #export PATH=${PG_CONFIG_DIR}:${PATH}
 
-PG_CONFIG_PATH=$(grep pg12 ~/.pgx/config.toml | cut -f2 -d= | cut -f2 -d\")
+PG_CONFIG_PATH=$(grep ${PG_VER} ~/.pgx/config.toml | cut -f2 -d= | cut -f2 -d\")
 
 echo "   Packaging pgx"
 cargo pgx package -c ${PG_CONFIG_PATH} || exit $?
