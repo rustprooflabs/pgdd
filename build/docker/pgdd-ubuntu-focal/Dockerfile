@@ -36,7 +36,12 @@ WORKDIR /home/${USER}
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs > rustup.sh
 ENV PATH="/home/${USER}/.cargo/bin:${PATH}"
 
+#RUN /bin/bash rustup.sh -y \
+#    && cargo install cargo-pgx
+
 RUN /bin/bash rustup.sh -y \
-    && cargo install cargo-pgx
+    && cargo install --force --git "https://github.com/zombodb/pgx" \
+        --branch "develop" \
+        "cargo-pgx"
 
 RUN cargo pgx init

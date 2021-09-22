@@ -36,15 +36,15 @@ VERSION=$(cat pgdd.control | grep default_version | cut -f2 -d\')
 echo "PgDD Building for:  ${OSNAME}-${VERSION}"
 
 # This seems to be causing issues.... :(
-#PG_CONFIG_DIR=$(dirname $(grep ${PG_VER} ~/.pgx/config.toml | cut -f2 -d= | cut -f2 -d\"))
-#echo "Add PG Config Dir to path: ${PG_CONFIG_DIR}"
-#export PATH=${PG_CONFIG_DIR}:${PATH}
+PG_CONFIG_DIR=$(dirname $(grep ${PG_VER} ~/.pgx/config.toml | cut -f2 -d= | cut -f2 -d\"))
+echo "Add PG Config Dir to path: ${PG_CONFIG_DIR}"
+export PATH=${PG_CONFIG_DIR}:${PATH}
 
-PG_CONFIG_PATH=$(grep ${PG_VER} ~/.pgx/config.toml | cut -f2 -d= | cut -f2 -d\")
+#PG_CONFIG_PATH=$(grep ${PG_VER} ~/.pgx/config.toml | cut -f2 -d= | cut -f2 -d\")
 
 echo "   Packaging pgx"
-cargo pgx package -c ${PG_CONFIG_PATH} || exit $?
-
+#cargo pgx package -c ${PG_CONFIG_PATH} || exit $?
+cargo pgx package || exit $?
 
 
 #
