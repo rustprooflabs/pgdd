@@ -188,6 +188,12 @@ for various dev related changes.
 cargo pgx schema -f
 ```
 
+Another option to try.
+
+```bash
+cargo clean
+```
+
 
 ## Non-standard In Docker
 

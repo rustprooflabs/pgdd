@@ -41,6 +41,12 @@ ENV PATH="/home/${USER}/.cargo/bin:${PATH}"
 RUN /bin/bash rustup.sh -y \
     && cargo install cargo-pgx --version ${PGXVERSION}
 
+
+RUN mkdir -p /home/${USER}/.pgx/data-10 \
+    && mkdir /home/${USER}/.pgx/data-11 \
+    && mkdir /home/${USER}/.pgx/data-12 \
+    && mkdir /home/${USER}/.pgx/data-13
+
 RUN cargo pgx init \
     --pg10=/usr/lib/postgresql/10/bin/pg_config \
     --pg11=/usr/lib/postgresql/11/bin/pg_config \
