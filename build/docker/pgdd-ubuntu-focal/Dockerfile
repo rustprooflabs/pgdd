@@ -5,6 +5,8 @@ LABEL maintainer="PgDD Project - https://github.com/rustprooflabs/pgdd"
 ARG USER=docker
 ARG UID=1000
 ARG GID=1000
+ARG PGXVERSION
+
 RUN useradd -m ${USER} --uid=${UID}
 
 
@@ -36,12 +38,11 @@ WORKDIR /home/${USER}
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs > rustup.sh
 ENV PATH="/home/${USER}/.cargo/bin:${PATH}"
 
-#RUN /bin/bash rustup.sh -y \
-#    && cargo install cargo-pgx
-
 RUN /bin/bash rustup.sh -y \
-    && cargo install --force --git "https://github.com/zombodb/pgx" \
-        --branch "develop" \
-        "cargo-pgx"
+    && cargo install cargo-pgx --version ${PGXVERSION}
 
-RUN cargo pgx init
+RUN cargo pgx init \
+    --pg10=/usr/lib/postgresql/10/bin/pg_config \
+    --pg11=/usr/lib/postgresql/11/bin/pg_config \
+    --pg12=/usr/lib/postgresql/12/bin/pg_config \
+    --pg13=/usr/lib/postgresql/13/bin/pg_config
