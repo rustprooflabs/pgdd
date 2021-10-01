@@ -37,11 +37,6 @@ mkdir -p ${ARTIFACTDIR}
 
 for image in `ls docker/` ; do
 
-    if [ $image = "pgdd-ubuntu-bionic" ]; then
-        echo "Skipping IMAGE ${image}"
-        continue
-    fi
-
     OS_DIST=$(echo ${image}|cut -f2 -d-)
     OS_VER=$(echo ${image}|cut -f3 -d-)
 
