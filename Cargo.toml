@@ -19,18 +19,18 @@ pg_test = []
 
 [dependencies]
 
-#pgx = { git = "https://github.com/zombodb/pgx", branch = "develop" }
-#pgx-macros = { git = "https://github.com/zombodb/pgx", branch = "develop" }
-pgx = "0.2.0-beta.1"
-pgx-macros = "0.2.0-beta.1"
+pgx = { git = "https://github.com/zombodb/pgx", branch = "develop" }
+pgx-macros = { git = "https://github.com/zombodb/pgx", branch = "develop" }
+#pgx = "0.2.0-beta.1"
+#pgx-macros = "0.2.0-beta.1"
 
 # Won't be needed in final version (hopefully!)
-#pgx-utils = { git = "https://github.com/zombodb/pgx", branch = "develop" }
-pgx-utils = "0.2.0-beta.1"
+pgx-utils = { git = "https://github.com/zombodb/pgx", branch = "develop" }
+#pgx-utils = "0.2.0-beta.1"
 
 [dev-dependencies]
-#pgx-tests = { git = "https://github.com/zombodb/pgx", branch = "develop" }
-pgx-tests = "0.2.0-beta.1"
+pgx-tests = { git = "https://github.com/zombodb/pgx", branch = "develop" }
+#pgx-tests = "0.2.0-beta.1"
 
 
 [profile.dev]
@@ -40,6 +40,6 @@ lto = "thin"
 [profile.release]
 panic = "unwind"
 opt-level = 3
-lto = "fat"
+lto = "thin"
 codegen-units = 1
 

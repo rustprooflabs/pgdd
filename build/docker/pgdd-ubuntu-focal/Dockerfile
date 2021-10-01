@@ -26,7 +26,8 @@ RUN apt-get install -y \
         postgresql-server-dev-10 \
         postgresql-server-dev-11 \
         postgresql-server-dev-12 \
-        postgresql-server-dev-13
+        postgresql-server-dev-13 \
+        postgresql-server-dev-14
 
 
 RUN gem install --no-document fpm
@@ -38,8 +39,12 @@ WORKDIR /home/${USER}
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs > rustup.sh
 ENV PATH="/home/${USER}/.cargo/bin:${PATH}"
 
+#RUN /bin/bash rustup.sh -y \
+#    && cargo install cargo-pgx --version ${PGXVERSION}
 RUN /bin/bash rustup.sh -y \
-    && cargo install cargo-pgx --version ${PGXVERSION}
+    && cargo install --force --git "https://github.com/zombodb/pgx" \
+        --branch "develop" \
+        "cargo-pgx"
 
 
 RUN mkdir -p /home/${USER}/.pgx/data-10 \
