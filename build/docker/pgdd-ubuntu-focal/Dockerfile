@@ -26,8 +26,7 @@ RUN apt-get install -y \
         postgresql-server-dev-10 \
         postgresql-server-dev-11 \
         postgresql-server-dev-12 \
-        postgresql-server-dev-13 \
-        postgresql-server-dev-14
+        postgresql-server-dev-13
 
 
 RUN gem install --no-document fpm
