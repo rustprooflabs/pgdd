@@ -42,11 +42,9 @@ echo "   Packaging pgx"
 cargo pgx package || exit $?
 
 
-
 #
 # cd into the package directory
 #
-BUILDDIR=`pwd`
 cd target/release/pgdd-${PG_VER} || exit $?
 
 # strip the binaries to make them smaller

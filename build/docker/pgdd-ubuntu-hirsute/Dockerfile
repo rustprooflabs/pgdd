@@ -1,4 +1,4 @@
-FROM ubuntu:focal
+FROM ubuntu:hirsute
 
 LABEL maintainer="PgDD Project - https://github.com/rustprooflabs/pgdd"
 
@@ -16,8 +16,8 @@ RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ focal-pgdg main" >> /etc/
     && wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
 RUN apt-get update
 RUN apt-get install -y \
-        clang-10 llvm-10 clang libz-dev strace pkg-config \
-        libxml2 libxml2-dev libreadline8 libreadline-gplv2-dev \
+        clang-12 llvm-12 clang libz-dev strace pkg-config \
+        libxml2 libxml2-dev libreadline8 libreadline-dev \
         flex bison libbison-dev build-essential \
         zlib1g-dev libxslt-dev libssl-dev libxml2-utils xsltproc libgss-dev \
         libldap2-dev libkrb5-dev gettext tcl-tclreadline tcl-dev libperl-dev \

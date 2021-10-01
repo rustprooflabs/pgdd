@@ -166,15 +166,15 @@ crate-type = ["cdylib", "rlib"]
 [dependencies]
 
 pgx = { git = "https://github.com/zombodb/pgx", branch = "oh-no-type-resolution" }
-pgx-macros = { git = "https://github.com/zombodb/pgx", branch = "oh-no-type-resolution" }
+pgx-macros = { git = "https://github.com/zombodb/pgx", branch = "develop" }
 #pgx = "0.1.21"
 #pgx-macros = "0.1.21"
 
 # Won't be needed in final version (hopefully!)
-pgx-utils = { git = "https://github.com/zombodb/pgx", branch = "oh-no-type-resolution" }
+pgx-utils = { git = "https://github.com/zombodb/pgx", branch = "develop" }
 
 [dev-dependencies]
-pgx-tests = { git = "https://github.com/zombodb/pgx", branch = "oh-no-type-resolution" }
+pgx-tests = { git = "https://github.com/zombodb/pgx", branch = "develop" }
 #pgx-tests = "0.1.21"
 ```
 
@@ -187,4 +187,32 @@ for various dev related changes.
 ```bash
 cargo pgx schema -f
 ```
- 
+
+Another option to try.
+
+```bash
+cargo clean
+```
+
+
+## Non-standard In Docker
+
+If testing this extension against non-standard pgx install, update the
+Dockerfile to install from the specific branch.
+
+Change
+
+```bash
+RUN /bin/bash rustup.sh -y \
+    && cargo install cargo-pgx
+```
+
+To
+
+```bash
+RUN /bin/bash rustup.sh -y \
+    && cargo install --force --git "https://github.com/zombodb/pgx" \
+        --branch "develop" \
+        "cargo-pgx"
+```
+

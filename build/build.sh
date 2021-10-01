@@ -21,20 +21,22 @@ BASE=$(dirname `pwd`)
 VERSION=$(cat $BASE/pgdd.control | grep default_version | cut -f2 -d\')
 LOGDIR=${BASE}/target/logs
 ARTIFACTDIR=${BASE}/target/artifacts
+PGXVERSION=0.2.0-beta.1
 
-PG_VERS=("pg10" "pg11" "pg12" "pg13")
-#PG_VERS=("pg13")
+#PG_VERS=("pg10" "pg11" "pg12" "pg13")
+PG_VERS=("pg12" "pg13")
 
 echo $BASE
 echo $VERSION
 echo $LOGDIR
 echo $ARTIFACTDIR
+echo "PGX Version: ${PGXVERSION}"
 
-    
 mkdir -p ${LOGDIR}
 mkdir -p ${ARTIFACTDIR}
 
 for image in `ls docker/` ; do
+
     OS_DIST=$(echo ${image}|cut -f2 -d-)
     OS_VER=$(echo ${image}|cut -f3 -d-)
 
@@ -46,9 +48,10 @@ for image in `ls docker/` ; do
 
     cd docker/${image}
     echo "  Building Docker image: ${image}"
-    docker build -t ${image} . 2>&1 > ${LOGDIR}/${image}-build.log || exit 1
+    docker build -t ${image} --build-arg PGXVERSION=${PGXVERSION}  . 2>&1 > ${LOGDIR}/${image}-build.log || exit 1
 
     for PG_VER in ${PG_VERS[@]} ; do
+
         echo "Build PgDD: ${image}-${PG_VER}"
         docker run \
             -e pgver=${PG_VER} \
