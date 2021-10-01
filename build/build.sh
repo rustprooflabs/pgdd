@@ -23,8 +23,8 @@ LOGDIR=${BASE}/target/logs
 ARTIFACTDIR=${BASE}/target/artifacts
 PGXVERSION=0.2.0-beta.1
 
-#PG_VERS=("pg10" "pg11" "pg12" "pg13")
-PG_VERS=("pg12" "pg13")
+PG_VERS=("pg10" "pg11" "pg12" "pg13")
+#PG_VERS=("pg13")
 
 echo $BASE
 echo $VERSION

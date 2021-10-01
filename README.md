@@ -14,31 +14,49 @@ PgDD has been tested to work for PostgreSQL 10 through 13.
 
 ## Upgrading from <= v0.3
 
-Version 0.4.0 was a complete rewrite of the PgDD extension in a new language.
+Version 0.4.0 was a complete rewrite of the PgDD extension from a raw-SQL
+extension to using the [pgx framework](https://github.com/zombodb/pgx). 
+
+
+
+Upgrading from Raw SQL version of PgDD (v0.3) to the pgx version (v0.4.0) is done with `DROP EXTENSION pgdd; CREATE EXTENSION pgdd;`
 Care has been taken to provide a smooth upgrade experience but
-**do not upgrade without testing the upgrade on a test server!**
+**do not install the upgrade without testing the process on a test server!**
+
+If custom attributes were stored in the `dd` tables you will need to use
+`pg_dump` to export the data and reload after recreating the extension
+with pgx.  If any of the three (3) queries below return a count > 0
+this applies to you.
 
 
-Versions 0.3 and prior were written as a raw SQL extension, but that method lacked ability to provide version-specific functionality (such as generated columns, procedures, etc.).
+```sql
+SELECT COUNT(*)
+    FROM dd.meta_table
+    WHERE s_name <> 'dd';
+SELECT COUNT(*)
+    FROM dd.meta_column
+    WHERE s_name <> 'dd';
+SELECT COUNT(*)
+    FROM dd.meta_schema
+    WHERE s_name <> 'dd';
+```
+
+
 
 The last raw SQL version is still available to [download](https://raw.githubusercontent.com/rustprooflabs/pgdd/main/standalone/pgdd_v0_3.sql).  This version is no longer maintained and may or may not
 work on future Postgres versions.
 
 
-
 ## Install from binary
 
-Download the appropriate binary.
+Binaries are available for Ubuntu 20.04 (bionic) and Ubuntu 21.04 (hirsute).
+
+Download and install.
 
 ```bash
-wget https://github.com/rustprooflabs/pgdd/raw/dev/standalone/pgdd_0.4.0-dev_focal_pg13_amd64.deb
-```
+wget https://github.com/rustprooflabs/pgdd/releases/download/0.4.0.rc2/pgdd_0.4.0.rc2_focal_pg13_amd64.deb
 
-Install.
-
-
-```bash
-sudo dpkg -i ./pgdd_0.4.0-dev_focal_pg13_amd64.deb
+sudo dpkg -i ./pgdd_0.4.0.rc2_focal_pg13_amd64.deb
 ```
 
 In your database.
@@ -48,42 +66,22 @@ In your database.
 CREATE EXTENSION pgdd;
 ```
 
-
-## Update
-
-As new [releases](https://github.com/rustprooflabs/pgdd/releases) are
-available, download the new binary and install using the above instructions.
-
-
-Then, in your database.
+Check version.
 
 ```sql
-ALTER EXTENSION pgdd UPDATE;
-```
-
-----
-
-**WARNING**
-
-Postgres sessions started before the`UPDATE EXTENSION` command will
-continue to see the old version of PgDD. New sessions will see the
-updated extension.
-
-If the following query returns true, disconnect and reconnect to
-the database with PgDD to use the latest installed version.
-
-
-```sql
-SELECT CASE WHEN version <> dd.version() THEN True
-        ELSE False
-        END AS pgdd_needs_reload
-    FROM pg_catalog.pg_available_extension_versions
-    WHERE name = 'pgdd' AND installed
+SELECT extname, extversion
+    FROM pg_catalog.pg_extension
+    WHERE extname = 'pgdd'
 ;
 ```
 
-
-----
+```
+┌─────────┬────────────┐
+│ extname │ extversion │
+╞═════════╪════════════╡
+│ pgdd    │ 0.4.0.rc2  │
+└─────────┴────────────┘
+```
 
 
 ## Use Data Dictionary
@@ -93,12 +91,13 @@ could be psql, DBeaver, PgAdmin, or Python code... all you need
 is a place to execute SQL code and see the results.
 
 The main interaction with PgDD is through the views in the `dd` schema.
+
 The `dd.views` query can be used to query the views within a database.
 
 ```sql
 SELECT s_name, v_name, description
     FROM dd.views
-    WHERE s_name = 'dd';
+;
 ```
 
 ```bash
@@ -122,7 +121,8 @@ The highest level of querying provided by `pgdd` is at the schema level.
 This provides counts of tables, views and functions along with the size on disk of the objects within the schema.
 
 ```sql
-SELECT *
+SELECT s_name, table_count, view_count, function_count,
+        size_plus_indexes, description
     FROM dd.schemas
     WHERE s_name = 'dd';
 ```
@@ -130,21 +130,16 @@ SELECT *
 Yields results such as this.
 
 ```bash
-┌─[ RECORD 1 ]──────┬────────────────────────────────────────────────────────────┐
-│ s_name            │ dd                                                         │
-│ owner             │ postgres                                                   │
-│ data_source       │ Manually maintained                                        │
-│ sensitive         │ f                                                          │
-│ description       │ Data Dictionary from https://github.com/rustprooflabs/pgdd │
-│ system_object     │ f                                                          │
-│ table_count       │ 3                                                          │
-│ view_count        │ 5                                                          │
-│ function_count    │ 7                                                          │
-│ size_pretty       │ 48 kB                                                      │
-│ size_plus_indexes │ 144 kB                                                     │
-│ size_bytes        │ 49152                                                      │
-└───────────────────┴────────────────────────────────────────────────────────────┘
+┌─[ RECORD 1 ]──────┬────────────────────────────────────────────────────────────────────────────────┐
+│ s_name            │ dd                                                                             │
+│ table_count       │ 3                                                                              │
+│ view_count        │ 5                                                                              │
+│ function_count    │ 6                                                                              │
+│ size_plus_indexes │ 144 kB                                                                         │
+│ description       │ Schema for Data Dictionary objects.  See https://github.com/rustprooflabs/pgdd │
+└───────────────────┴────────────────────────────────────────────────────────────────────────────────┘
 ```
+
 
 ### Tables
 
@@ -159,7 +154,6 @@ SELECT t_name, size_pretty, rows, bytes_per_row
     ORDER BY size_bytes DESC;
 ```
 
-Returns:
 
 ```bash
 ┌──────────────────┬─────────────┬──────────┬───────────────┐

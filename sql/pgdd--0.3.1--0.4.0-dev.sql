@@ -1,1 +1,0 @@
-ALTER TABLE dd.meta_schema ALTER COLUMN sensitive SET DEFAULT False;
