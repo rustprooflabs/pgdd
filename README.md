@@ -112,7 +112,7 @@ SELECT s_name, v_name, description
 └────────┴───────────┴────────────────────────────────────────────────────────────────────┘
 ```
 
-> The views wrap around functions with the same name and enforce `WHERE NOT system_object`. Query the functions to include system_objects in the results.
+> PgDD views wrap around functions with the same name and enforce `WHERE NOT system_object`. Query the functions to include `system_object` results.  e.g. `SELECT s_name, v_name FROM dd.views() WHERE system_object;`
 
 
 ### Schema
@@ -171,7 +171,30 @@ SELECT t_name, size_pretty, rows, bytes_per_row
 ### Columns
 
 ```sql
-SELECT * FROM dd.columns;
+SELECT source_type, s_name, t_name, c_name, data_type
+    FROM dd.columns
+    WHERE data_type LIKE 'int%'
+;
+```
+
+```
+┌─────────────┬────────┬─────────────┬────────────────┬───────────┐
+│ source_type │ s_name │   t_name    │     c_name     │ data_type │
+╞═════════════╪════════╪═════════════╪════════════════╪═══════════╡
+│ table       │ dd     │ meta_schema │ meta_schema_id │ int8      │
+│ table       │ dd     │ meta_table  │ meta_table_id  │ int8      │
+│ table       │ dd     │ meta_column │ meta_column_id │ int8      │
+│ view        │ dd     │ schemas     │ table_count    │ int8      │
+│ view        │ dd     │ schemas     │ view_count     │ int8      │
+│ view        │ dd     │ schemas     │ function_count │ int8      │
+│ view        │ dd     │ schemas     │ size_bytes     │ int8      │
+│ view        │ dd     │ tables      │ size_bytes     │ int8      │
+│ view        │ dd     │ tables      │ rows           │ int8      │
+│ view        │ dd     │ tables      │ bytes_per_row  │ int8      │
+│ view        │ dd     │ views       │ rows           │ int8      │
+│ view        │ dd     │ views       │ size_bytes     │ int8      │
+│ view        │ dd     │ columns     │ position       │ int8      │
+└─────────────┴────────┴─────────────┴────────────────┴───────────┘
 ```
 
 
@@ -180,8 +203,9 @@ SELECT * FROM dd.columns;
 
 
 ```sql
-SELECT *
-    FROM dd.fuctions;
+SELECT s_name, f_name, argument_data_types, result_data_types
+    FROM dd.functions
+;
 ```
 
 
