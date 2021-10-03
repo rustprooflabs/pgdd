@@ -1,0 +1,45 @@
+[package]
+name = "pgdd"
+version = "0.4.0-dev"
+edition = "2018"
+description = "In-database (PostgreSQL) data dictionary providing database introspection via standard SQL query syntax."
+
+[lib]
+# rlib added to build against repo instead of crate (I think)
+crate-type = ["cdylib", "rlib"]
+#crate-type = ["cdylib"]
+
+[features]
+default = ["pg13"]
+pg10 = ["pgx/pg10"]
+pg11 = ["pgx/pg11"]
+pg12 = ["pgx/pg12"]
+pg13 = ["pgx/pg13"]
+pg_test = []
+
+[dependencies]
+
+pgx = { git = "https://github.com/zombodb/pgx", branch = "develop" }
+pgx-macros = { git = "https://github.com/zombodb/pgx", branch = "develop" }
+#pgx = "0.2.0-beta.1"
+#pgx-macros = "0.2.0-beta.1"
+
+# Won't be needed in final version (hopefully!)
+pgx-utils = { git = "https://github.com/zombodb/pgx", branch = "develop" }
+#pgx-utils = "0.2.0-beta.1"
+
+[dev-dependencies]
+pgx-tests = { git = "https://github.com/zombodb/pgx", branch = "develop" }
+#pgx-tests = "0.2.0-beta.1"
+
+
+[profile.dev]
+panic = "unwind"
+lto = "thin"
+
+[profile.release]
+panic = "unwind"
+opt-level = 3
+lto = "thin"
+codegen-units = 1
+
