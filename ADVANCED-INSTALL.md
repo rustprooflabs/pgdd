@@ -194,6 +194,13 @@ Another option to try.
 cargo clean
 ```
 
+If you're doing the above, you probably should remove the `Cargo.lock`
+file while you're at it.
+
+```bash
+rm Cargo.lock
+```
+
 
 ## Non-standard In Docker
 
