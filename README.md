@@ -9,7 +9,7 @@ The extension is built on the Rust [pgx framework](https://github.com/zombodb/pg
 
 ## Compatibility
 
-PgDD has been tested to work for PostgreSQL 10 through 13.
+PgDD has been tested to work for PostgreSQL 10 through 14.
 
 
 ## Upgrading from <= v0.3
@@ -54,9 +54,9 @@ Binaries are available for Ubuntu 20.04 (bionic) and Ubuntu 21.04 (hirsute).
 Download and install.
 
 ```bash
-wget https://github.com/rustprooflabs/pgdd/releases/download/0.4.0.rc3/pgdd_0.4.0.rc3_focal_pg13_amd64.deb
+wget https://github.com/rustprooflabs/pgdd/releases/download/0.4.0-rc4/pgdd_0.4.0-rc4_focal_pg13_amd64.deb
 
-sudo dpkg -i ./pgdd_0.4.0.rc3_focal_pg13_amd64.deb
+sudo dpkg -i ./pgdd_0.4.0-rc4_focal_pg13_amd64.deb
 ```
 
 In your database.
@@ -79,7 +79,7 @@ SELECT extname, extversion
 ┌─────────┬────────────┐
 │ extname │ extversion │
 ╞═════════╪════════════╡
-│ pgdd    │ 0.4.0.rc3  │
+│ pgdd    │ 0.4.0-rc4  │
 └─────────┴────────────┘
 ```
 

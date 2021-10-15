@@ -1,6 +1,6 @@
 [package]
 name = "pgdd"
-version = "0.4.0-rc3"
+version = "0.4.0-rc4"
 edition = "2018"
 description = "In-database (PostgreSQL) data dictionary providing database introspection via standard SQL query syntax."
 
@@ -10,7 +10,7 @@ crate-type = ["cdylib", "rlib"]
 #crate-type = ["cdylib"]
 
 [features]
-default = ["pg13"]
+default = ["pg14"]
 pg10 = ["pgx/pg10"]
 pg11 = ["pgx/pg11"]
 pg12 = ["pgx/pg12"]
