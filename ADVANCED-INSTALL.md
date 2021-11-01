@@ -151,6 +151,12 @@ cargo install --force --git "https://github.com/zombodb/pgx" \
     "cargo-pgx"
 ```
 
+Or a beta branch
+
+```bash
+cargo install --force cargo-pgx --version 0.2.0-beta.4
+```
+
 Changes to `Cargo.toml` required in `[lib]` and `[dependencies]` sections.
 
 
@@ -183,22 +189,24 @@ pgx-tests = { git = "https://github.com/zombodb/pgx", branch = "develop" }
 The following command can be used to force pgx to overwrite the configs it needs to
 for various dev related changes.
 
-
-```bash
-cargo pgx schema -f
-```
-
-Another option to try.
+Clean things out.
 
 ```bash
 cargo clean
 ```
 
 If you're doing the above, you probably should remove the `Cargo.lock`
-file while you're at it.
+file while you're at it.  The more cautious may want to move it aside for a backup.
 
 ```bash
 rm Cargo.lock
+```
+
+Force build the schema.
+
+
+```bash
+cargo pgx schema -f
 ```
 
 
