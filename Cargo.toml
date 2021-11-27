@@ -1,13 +1,11 @@
 [package]
 name = "pgdd"
-version = "0.4.0-rc4"
+version = "0.4.0"
 edition = "2018"
 description = "In-database (PostgreSQL) data dictionary providing database introspection via standard SQL query syntax."
 
 [lib]
-# rlib added to build against repo instead of crate (I think)
 crate-type = ["cdylib", "rlib"]
-#crate-type = ["cdylib"]
 
 [features]
 default = ["pg14"]
@@ -22,15 +20,15 @@ pg_test = []
 
 #pgx = { git = "https://github.com/zombodb/pgx", branch = "develop" }
 #pgx-macros = { git = "https://github.com/zombodb/pgx", branch = "develop" }
-pgx = "0.2.0-beta.4"
-pgx-macros = "0.2.0-beta.4"
+pgx = "0.2.5"
+pgx-macros = "0.2.5"
 
 #pgx-utils = { git = "https://github.com/zombodb/pgx", branch = "develop" }
-pgx-utils = "0.2.0-beta.4"
+pgx-utils = "0.2.5"
 
 [dev-dependencies]
 #pgx-tests = { git = "https://github.com/zombodb/pgx", branch = "develop" }
-pgx-tests = "0.2.0-beta.4"
+pgx-tests = "0.2.5"
 
 
 [profile.dev]
