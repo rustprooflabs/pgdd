@@ -54,9 +54,9 @@ Binaries are available for Ubuntu 20.04 (bionic) and Ubuntu 21.04 (hirsute).
 Download and install.
 
 ```bash
-wget https://github.com/rustprooflabs/pgdd/releases/download/0.4.0-rc4/pgdd_0.4.0-rc4_focal_pg13_amd64.deb
+wget https://github.com/rustprooflabs/pgdd/releases/download/0.4.0/pgdd_0.4.0_focal_pg14_amd64.deb
 
-sudo dpkg -i ./pgdd_0.4.0-rc4_focal_pg13_amd64.deb
+sudo dpkg -i ./pgdd_0.4.0_focal_pg14_amd64.deb
 ```
 
 In your database.
