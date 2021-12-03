@@ -49,17 +49,18 @@ work on future Postgres versions.
 
 ## Install from binary
 
-Binaries are available for Ubuntu 20.04 (bionic) and Ubuntu 21.04 (hirsute).
+Binaries are available for Ubuntu 20.04 (focal) and Ubuntu 21.04 (hirsute).
+See [releases](https://github.com/rustprooflabs/pgdd/releases) for the full list
+of binaries.
 
-Download and install.
+Download and install for Postgres 14 on Ubuntu 20.04 (focal).
 
 ```bash
 wget https://github.com/rustprooflabs/pgdd/releases/download/0.4.0/pgdd_0.4.0_focal_pg14_amd64.deb
-
 sudo dpkg -i ./pgdd_0.4.0_focal_pg14_amd64.deb
 ```
 
-In your database.
+Create the extension in your database.
 
 
 ```sql
@@ -79,7 +80,7 @@ SELECT extname, extversion
 ┌─────────┬────────────┐
 │ extname │ extversion │
 ╞═════════╪════════════╡
-│ pgdd    │ 0.4.0-rc4  │
+│ pgdd    │ 0.4.0      │
 └─────────┴────────────┘
 ```
 

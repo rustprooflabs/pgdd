@@ -138,7 +138,7 @@ cargo pgx schema -d
 dot -Goverlap=prism -Gspline=ortho -Tjpg extension.dot > extension.jpg
 ```
 
-![pgx dependencies for pgdd v0.4.0-dev](pgdd--0.4.0-dev.jpg)
+![pgx dependencies for pgdd v0.4.0](pgdd--0.4.0.jpg)
 
 
 ## Non-standard dev
