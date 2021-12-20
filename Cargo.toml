@@ -20,15 +20,15 @@ pg_test = []
 
 #pgx = { git = "https://github.com/zombodb/pgx", branch = "develop" }
 #pgx-macros = { git = "https://github.com/zombodb/pgx", branch = "develop" }
-pgx = "0.2.5"
-pgx-macros = "0.2.5"
+pgx = "0.2.6"
+pgx-macros = "0.2.6"
 
 #pgx-utils = { git = "https://github.com/zombodb/pgx", branch = "develop" }
-pgx-utils = "0.2.5"
+pgx-utils = "0.2.6"
 
 [dev-dependencies]
 #pgx-tests = { git = "https://github.com/zombodb/pgx", branch = "develop" }
-pgx-tests = "0.2.5"
+pgx-tests = "0.2.6"
 
 
 [profile.dev]
