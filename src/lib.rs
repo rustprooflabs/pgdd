@@ -149,18 +149,20 @@ fn functions(
 #[pg_extern]
 fn tables(
 ) -> impl std::iter::Iterator<Item = (name!(s_name, Option<String>),
-                                        name!(t_name, Option<String>),
-                                        name!(type, Option<String>),
-                                        name!(owned_by, Option<String>),
-                                        name!(size_pretty, Option<String>),
-                                        name!(size_bytes, Option<i64>),
-                                        name!(rows, Option<i64>),
-                                        name!(bytes_per_row, Option<i64>),
-                                        name!(size_plus_indexes, Option<String>),
-                                        name!(description, Option<String>),
-                                        name!(system_object, Option<bool>),
-                                        name!(data_source, Option<String>),
-                                        name!(sensitive, Option<bool>))>
+                                      name!(t_name, Option<String>),
+                                      name!(type, Option<String>),
+                                      name!(owned_by, Option<String>),
+                                      name!(size_pretty, Option<String>),
+                                      name!(size_bytes, Option<i64>),
+                                      name!(rows, Option<i64>),
+                                      name!(bytes_per_row, Option<i64>),
+                                      name!(size_plus_indexes, Option<String>),
+                                      name!(description, Option<String>),
+                                      name!(system_object, Option<bool>),
+                                      name!(data_source, Option<String>),
+                                      name!(sensitive, Option<bool>),
+                                      name!(oid, Option<i64>)
+                                      )>
 {
     let query = include_str!("sql/function_query/tables-all.sql");
 
@@ -180,7 +182,8 @@ fn tables(
                         row.by_ordinal(10).unwrap().value::<String>(),
                         row.by_ordinal(11).unwrap().value::<bool>(),
                         row.by_ordinal(12).unwrap().value::<String>(),
-                        row.by_ordinal(13).unwrap().value::<bool>()
+                        row.by_ordinal(13).unwrap().value::<bool>(),
+                        row.by_ordinal(14).unwrap().value::<i64>()
                         ))
             .for_each(|tuple| results.push(tuple));
         Ok(Some(()))
@@ -218,6 +221,35 @@ fn views(
                         row.by_ordinal(7).unwrap().value::<i64>(),
                         row.by_ordinal(8).unwrap().value::<String>(),
                         row.by_ordinal(9).unwrap().value::<bool>()
+                        ))
+            .for_each(|tuple| results.push(tuple));
+        Ok(Some(()))
+    });
+
+    results.into_iter()
+}
+
+
+
+#[pg_extern]
+fn partition_parent(
+) -> impl std::iter::Iterator<Item = (name!(oid, Option<i64>),
+                                      name!(s_name, Option<String>),
+                                      name!(t_name, Option<String>),
+                                      name!(partition_type, Option<String>),
+                                      name!(partitions, Option<i64>))>
+{
+    let query = include_str!("sql/function_query/partition-parent.sql");
+
+    let mut results = Vec::new();
+    Spi::connect(|client| {
+        client
+            .select(query, None, None)
+            .map(|row| (row.by_ordinal(1).unwrap().value::<i64>(),
+                        row.by_ordinal(2).unwrap().value::<String>(),
+                        row.by_ordinal(3).unwrap().value::<String>(),
+                        row.by_ordinal(4).unwrap().value::<String>(),
+                        row.by_ordinal(5).unwrap().value::<i64>()
                         ))
             .for_each(|tuple| results.push(tuple));
         Ok(Some(()))

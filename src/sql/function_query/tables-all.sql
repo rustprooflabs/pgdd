@@ -23,7 +23,8 @@ SELECT n.nspname::TEXT AS s_name,
             ELSE true
         END AS system_object,
     mt.data_source,
-    mt.sensitive
+    mt.sensitive,
+    c.oid
    FROM pg_class c
      LEFT JOIN pg_namespace n ON n.oid = c.relnamespace
      LEFT JOIN dd.meta_table mt ON n.nspname = mt.s_name AND c.relname = mt.t_name

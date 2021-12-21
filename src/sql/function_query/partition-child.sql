@@ -15,5 +15,4 @@ INNER JOIN pg_catalog.pg_class cp ON i.inhparent = cp.oid
 )
 SELECT *
     FROM partition_child
-    ORDER BY parent_oid, s_name, t_name
 ;
