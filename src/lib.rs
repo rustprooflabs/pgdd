@@ -283,7 +283,7 @@ fn partition_child(
                         row.by_ordinal(5).unwrap().value::<String>(),
                         row.by_ordinal(6).unwrap().value::<bool>(),
                         row.by_ordinal(7).unwrap().value::<String>(),
-                        row.by_ordinal(8).unwrap().value::<String>(),
+                        row.by_ordinal(8).unwrap().value::<String>()
                         ))
             .for_each(|tuple| results.push(tuple));
         Ok(Some(()))
