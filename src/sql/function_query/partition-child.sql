@@ -1,11 +1,11 @@
-SELECT c.oid,
-        ns.nspname AS s_name,
-        c.relname AS t_name,
-        i.inhparent AS parent_oid,
-        i.inhparent::regclass AS parent_name,
-        c.relispartition,
-        c.relkind,
-        pg_catalog.pg_get_expr(c.relpartbound, c.oid) AS partition_expression
+SELECT c.oid::BIGINT,
+        ns.nspname::TEXT AS s_name,
+        c.relname::TEXT AS t_name,
+        i.inhparent::BIGINT AS parent_oid,
+        i.inhparent::regclass::TEXT AS parent_name,
+        c.relispartition::BOOLEAN,
+        c.relkind::TEXT,
+        pg_catalog.pg_get_expr(c.relpartbound, c.oid)::TEXT AS partition_expression
 FROM pg_catalog.pg_class c
 INNER JOIN pg_catalog.pg_namespace ns ON c.relnamespace = ns.oid
 INNER JOIN pg_catalog.pg_inherits i ON c.oid = i.inhrelid
