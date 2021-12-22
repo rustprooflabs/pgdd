@@ -260,6 +260,40 @@ fn partition_parent(
 
 
 #[pg_extern]
+fn partition_child(
+) -> impl std::iter::Iterator<Item = (name!(oid, Option<i64>),
+                                      name!(s_name, Option<String>),
+                                      name!(t_name, Option<String>),
+                                      name!(parent_oid, Option<i64>),
+                                      name!(parent_name, Option<String>),
+                                      name!(relispartition, Option<bool>),
+                                      name!(relkind, Option<String>),
+                                      name!(partition_expression, Option<String>))>
+{
+    let query = include_str!("sql/function_query/partition-child.sql");
+
+    let mut results = Vec::new();
+    Spi::connect(|client| {
+        client
+            .select(query, None, None)
+            .map(|row| (row.by_ordinal(1).unwrap().value::<i64>(),
+                        row.by_ordinal(2).unwrap().value::<String>(),
+                        row.by_ordinal(3).unwrap().value::<String>(),
+                        row.by_ordinal(4).unwrap().value::<i64>(),
+                        row.by_ordinal(5).unwrap().value::<String>(),
+                        row.by_ordinal(6).unwrap().value::<bool>(),
+                        row.by_ordinal(7).unwrap().value::<String>(),
+                        row.by_ordinal(8).unwrap().value::<String>(),
+                        ))
+            .for_each(|tuple| results.push(tuple));
+        Ok(Some(()))
+    });
+
+    results.into_iter()
+}
+
+
+#[pg_extern]
 fn about() -> &'static str {
     "PgDD: PostgreSQL Data Dictionary extension.  See https://github.com/rustprooflabs/pgdd for details!"
 }
