@@ -33,28 +33,3 @@ CREATE TABLE dd.meta_column
     CONSTRAINT UQ_dd_meta_column_schema_table_column UNIQUE (s_name, t_name, c_name)
 );
 
-
-COMMENT ON SCHEMA dd IS 'Schema for Data Dictionary objects.  See https://github.com/rustprooflabs/pgdd';
-
-COMMENT ON TABLE dd.meta_schema IS 'User definable meta-data at the schema level.';
-COMMENT ON TABLE dd.meta_table IS 'User definable meta-data at the schema + table level.';
-COMMENT ON TABLE dd.meta_column IS 'User definable meta-data at the schema + table + column level.';
-
-COMMENT ON COLUMN dd.meta_schema.meta_schema_id IS 'Primary key for meta table';
-COMMENT ON COLUMN dd.meta_table.meta_table_id IS 'Primary key for meta table';
-COMMENT ON COLUMN dd.meta_column.meta_column_id IS 'Primary key for meta table';
-COMMENT ON COLUMN dd.meta_schema.s_name IS 'Name of the schema for the object described.';
-COMMENT ON COLUMN dd.meta_table.s_name IS 'Name of the schema for the object described.';
-COMMENT ON COLUMN dd.meta_column.s_name IS 'Name of the schema for the object described.';
-COMMENT ON COLUMN dd.meta_table.t_name IS 'Name of the table for the object described.';
-COMMENT ON COLUMN dd.meta_column.t_name IS 'Name of the table for the object described.';
-COMMENT ON COLUMN dd.meta_column.c_name IS 'Name of the column for the object described.';
-
-COMMENT ON COLUMN dd.meta_schema.data_source IS 'Optional field to describe the data source(s) for the data in this schema.  Most helpful when objects are intentionally organized by schema.';
-COMMENT ON COLUMN dd.meta_table.data_source IS 'Optional field to describe the data source(s) for this table.';
-COMMENT ON COLUMN dd.meta_column.data_source IS 'Optional field to describe the data source(s) for this column.';
-COMMENT ON COLUMN dd.meta_schema.sensitive IS 'Manually updated indicator. Does the schema contain store sensitive data?';
-COMMENT ON COLUMN dd.meta_table.sensitive IS 'Manually updated indicator. Does the table contain store sensitive data?';
-COMMENT ON COLUMN dd.meta_column.sensitive IS 'Manually updated indicator. Does the column contain store sensitive data?';
-
-

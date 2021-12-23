@@ -266,8 +266,7 @@ fn partition_child(
                                       name!(t_name, Option<String>),
                                       name!(parent_oid, Option<i64>),
                                       name!(parent_name, Option<String>),
-                                      name!(relispartition, Option<bool>),
-                                      name!(relkind, Option<String>),
+                                      name!(declarative_partition, Option<bool>),
                                       name!(partition_expression, Option<String>))>
 {
     let query = include_str!("sql/function_query/partition-child.sql");
@@ -282,8 +281,7 @@ fn partition_child(
                         row.by_ordinal(4).unwrap().value::<i64>(),
                         row.by_ordinal(5).unwrap().value::<String>(),
                         row.by_ordinal(6).unwrap().value::<bool>(),
-                        row.by_ordinal(7).unwrap().value::<String>(),
-                        row.by_ordinal(8).unwrap().value::<String>()
+                        row.by_ordinal(7).unwrap().value::<String>()
                         ))
             .for_each(|tuple| results.push(tuple));
         Ok(Some(()))
@@ -300,9 +298,12 @@ fn about() -> &'static str {
 
 
 extension_sql_file!("sql/create_extension_views_all.sql",
-    finalize
+    name = "views"
 );
 
+extension_sql_file!("sql/comments_all.sql",
+    finalize
+);
 
 
 #[cfg(any(test, feature = "pg_test"))]
