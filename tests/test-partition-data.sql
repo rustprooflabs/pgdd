@@ -9,13 +9,17 @@ CREATE TABLE pgdd_test.parent (
     val TEXT NOT NULL
 ) PARTITION BY RANGE (id);
 
-CREATE TABLE pgdd_test.child_a
+CREATE TABLE pgdd_test.child_0_10
     PARTITION OF pgdd_test.parent
-    FOR VALUES FROM (1) TO (10)
+    FOR VALUES FROM (0) TO (10)
 ;
-CREATE TABLE pgdd_test.child_b
+CREATE TABLE pgdd_test.child_10_20
     PARTITION OF pgdd_test.parent
     FOR VALUES FROM (10) TO (20)
+;
+CREATE TABLE pgdd_test.child_20_30
+    PARTITION OF pgdd_test.parent
+    FOR VALUES FROM (20) TO (30)
 ;
 
 INSERT INTO pgdd_test.parent (val)

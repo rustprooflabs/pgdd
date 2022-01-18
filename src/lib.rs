@@ -232,7 +232,7 @@ fn views(
 
 
 #[pg_extern]
-fn partition_parent(
+fn partition_parents(
 ) -> impl std::iter::Iterator<Item = (name!(oid, Option<i64>),
                                       name!(s_name, Option<String>),
                                       name!(t_name, Option<String>),
@@ -260,7 +260,7 @@ fn partition_parent(
 
 
 #[pg_extern]
-fn partition_child(
+fn partition_children(
 ) -> impl std::iter::Iterator<Item = (name!(oid, Option<i64>),
                                       name!(s_name, Option<String>),
                                       name!(t_name, Option<String>),

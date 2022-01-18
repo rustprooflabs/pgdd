@@ -1,6 +1,6 @@
 -- Declarative is built-in Postgres partitioning per
 --     https://www.postgresql.org/docs/current/ddl-partitioning.html
--- Inheritence includes partitions like Timescale hypertables,
+-- Inheritance includes partitions like Timescale hypertables,
 --    but probably includes objects that are not partitions such as
 --    https://www.postgresql.org/docs/current/tutorial-inheritance.html
 WITH partition_parent AS (
@@ -8,7 +8,7 @@ SELECT c.oid,
         n.nspname::TEXT AS s_name,
         c.relname::TEXT AS t_name,
         CASE WHEN pt.partrelid IS NOT NULL THEN 'declarative'
-            WHEN c.relkind = 'r' THEN 'inheritence'
+            WHEN c.relkind = 'r' THEN 'inheritance'
             ELSE 'unknown' END AS partition_type,
         COUNT(i.inhrelid) AS partitions
     FROM pg_catalog.pg_class c

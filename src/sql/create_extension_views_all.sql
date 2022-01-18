@@ -32,9 +32,10 @@ SELECT p.oid, p.s_name, p.t_name, p.partition_type, p.partitions,
         -- "If the table has never yet been vacuumed or analyzed, reltuples contains -1 indicating that the row count is unknown."
         -- https://www.postgresql.org/docs/current/catalog-pg-class.html
         SUM(CASE WHEN t.rows = -1 THEN NULL ELSE t.rows END) AS rows,
-        SUM(CASE WHEN t.rows = -1 THEN 1 ELSE 0 END) AS partitions_never_analyzed
-    FROM dd.partition_parent() p
-    LEFT JOIN dd.partition_child() c ON p.oid = c.parent_oid
+        COUNT(*) FILTER (WHERE t.rows = -1) AS partitions_never_analyzed,
+        COUNT(*) FILTER (WHERE t.rows = 0) AS partitions_no_data
+    FROM dd.partition_parents() p
+    LEFT JOIN dd.partition_children() c ON p.oid = c.parent_oid
     LEFT JOIN dd.tables() t ON c.oid = t.oid
     GROUP BY p.oid, p.s_name, p.t_name, p.partition_type, p.partitions
 )
@@ -49,8 +50,24 @@ SELECT oid, s_name, t_name, partition_type, partitions,
             THEN ROUND(rows / partitions)
             ELSE NULL
         END AS rows_per_partition,
-        partitions_never_analyzed
+        partitions_never_analyzed,
+        partitions_no_data
     FROM partition_details
 ;
 
 
+CREATE OR REPLACE VIEW dd.partition_children AS
+SELECT pc.oid, pc.s_name, pc.t_name, pc.parent_oid, pc.parent_name,
+        t.rows, t.size_bytes, t.size_pretty, t.size_plus_indexes, t.bytes_per_row,
+        CASE WHEN pp.rows > 0
+            THEN ROUND(t.rows * 1.0 / pp.rows, 4)
+            ELSE NULL
+            END AS percent_of_partition_rows,
+        CASE WHEN pp.size_bytes > 0
+            THEN ROUND(t.size_bytes * 1.0 / pp.size_bytes, 4)
+            ELSE NULL
+            END AS percent_of_partition_bytes
+    FROM dd.partition_children() pc
+    INNER JOIN dd.partition_parents pp ON pc.parent_oid = pp.oid
+    INNER JOIN dd.tables() t ON pc.oid = t.oid
+;
