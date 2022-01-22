@@ -292,6 +292,35 @@ fn partition_children(
 
 
 #[pg_extern]
+fn database(
+) -> impl std::iter::Iterator<Item = (name!(oid, Option<i64>),
+                                      name!(db_name, Option<String>),
+                                      name!(db_size, Option<String>),
+                                      name!(schema_count, Option<i64>),
+                                      name!(table_count, Option<i64>),
+                                      name!(extension_count, Option<i64>))>
+{
+    let query = include_str!("sql/function_query/database-all.sql");
+
+    let mut results = Vec::new();
+    Spi::connect(|client| {
+        client
+            .select(query, None, None)
+            .map(|row| (row.by_ordinal(1).unwrap().value::<i64>(),
+                        row.by_ordinal(2).unwrap().value::<String>(),
+                        row.by_ordinal(3).unwrap().value::<String>(),
+                        row.by_ordinal(4).unwrap().value::<i64>(),
+                        row.by_ordinal(5).unwrap().value::<i64>(),
+                        row.by_ordinal(6).unwrap().value::<i64>()
+                        ))
+            .for_each(|tuple| results.push(tuple));
+        Ok(Some(()))
+    });
+
+    results.into_iter()
+}
+
+#[pg_extern]
 fn about() -> &'static str {
     "PgDD: PostgreSQL Data Dictionary extension.  See https://github.com/rustprooflabs/pgdd for details!"
 }
