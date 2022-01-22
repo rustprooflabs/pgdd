@@ -320,6 +320,7 @@ fn database(
     results.into_iter()
 }
 
+
 #[pg_extern]
 fn about() -> &'static str {
     "PgDD: PostgreSQL Data Dictionary extension.  See https://github.com/rustprooflabs/pgdd for details!"

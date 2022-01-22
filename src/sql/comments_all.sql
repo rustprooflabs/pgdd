@@ -38,6 +38,7 @@ COMMENT ON FUNCTION dd.columns IS 'Data dictionary function: Lists all columns';
 COMMENT ON FUNCTION dd.functions IS 'Data dictionary function: Lists all functions';
 COMMENT ON FUNCTION dd.partition_parents IS 'Data dictionary function: Lists parent partition tables. Column partition_type indicates declarative vs inheritance based partitioning.';
 COMMENT ON FUNCTION dd.partition_children IS 'Data dictionary function: Lists partition child tables.';
+COMMENT ON FUNCTION dd.database IS 'Data dictionary function: Provides basic statistics for the current database. Limited to current database via current_database() function.';
 
 COMMENT ON VIEW dd.partition_parents IS 'Data dictionary view: Lists parent partition tables with aggregate details about child partitions.';
 COMMENT ON COLUMN dd.partition_parents.partition_type IS 'Options declarative and inheritance. Declarative determined by record existing in pg_catalog.pg_partitioned_table. Inheritance based on pg_class.relkind.';
@@ -60,4 +61,11 @@ COMMENT ON COLUMN dd.partition_children.size_plus_indexes IS 'Size pretty of the
 COMMENT ON COLUMN dd.partition_children.bytes_per_row IS 'Average size per row in bytes';
 COMMENT ON COLUMN dd.partition_children.percent_of_partition_rows IS 'Percent of the total row count found in all partitions of the parent table.';
 COMMENT ON COLUMN dd.partition_children.percent_of_partition_bytes IS 'Percent of the total size (bytes) used by all partitions of the parent table.';
+
+COMMENT ON VIEW dd.database IS 'Data dictionary view: Provides basic statistics for the current database.';
+COMMENT ON COLUMN dd.database.db_size IS 'Size pretty of current database.  Uses pg_database_size() function.';
+COMMENT ON COLUMN dd.database.schema_count IS 'Count of non-system schemas, uses dd.schemas view.';
+COMMENT ON COLUMN dd.database.table_count IS 'Count of non-system tables, uses dd.tables view.';
+COMMENT ON COLUMN dd.database.extension_count IS 'Count of extensions installed in database.';
+
 
