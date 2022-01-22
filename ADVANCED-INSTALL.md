@@ -138,10 +138,10 @@ cp ./target/artifacts/* ./standalone/
 
 ```bash
 cargo pgx schema -d
-dot -Goverlap=prism -Gspline=ortho -Tjpg extension.dot > extension.jpg
+dot -Goverlap=prism -Gspline=ortho -Tjpg extension.dot > pgdd.jpg
 ```
 
-![pgx dependencies for pgdd v0.4.0](pgdd--0.4.0.jpg)
+![pgx dependencies for pgdd](pgdd.jpg)
 
 
 ## Non-standard dev
