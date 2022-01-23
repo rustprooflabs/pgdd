@@ -15,7 +15,8 @@ SELECT n.nspname::TEXT AS s_name,
         WHEN n.nspname !~ '^pg_toast'::text AND (n.nspname <> ALL (ARRAY['pg_catalog'::name, 'information_schema'::name]))
             THEN false
         ELSE true
-    END AS system_object
+    END AS system_object,
+    c.oid
    FROM pg_class c
      LEFT JOIN pg_namespace n ON n.oid = c.relnamespace
   WHERE (c.relkind = ANY (ARRAY['v'::"char", 'm'::"char"]))

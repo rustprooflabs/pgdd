@@ -68,4 +68,3 @@ COMMENT ON COLUMN dd.database.schema_count IS 'Count of non-system schemas, uses
 COMMENT ON COLUMN dd.database.table_count IS 'Count of non-system tables, uses dd.tables view.';
 COMMENT ON COLUMN dd.database.extension_count IS 'Count of extensions installed in database.';
 
-
