@@ -9,6 +9,7 @@ SELECT n.nspname::TEXT AS s_name,
     c.reltuples::BIGINT AS rows,
     pg_size_pretty(pg_table_size(c.oid::regclass))::TEXT AS size_pretty,
     pg_table_size(c.oid::regclass)::BIGINT AS size_bytes,
+    pg_total_relation_size(c.oid::regclass)::BIGINT AS size_plus_indexes_bytes,
     obj_description(c.oid, 'pg_class'::name)::TEXT AS description,
     CASE
         WHEN n.nspname !~ '^pg_toast'::text AND (n.nspname <> ALL (ARRAY['pg_catalog'::name, 'information_schema'::name]))
