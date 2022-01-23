@@ -207,6 +207,7 @@ fn views(
                                       name!(rows, Option<i64>),
                                       name!(size_pretty, Option<String>),
                                       name!(size_bytes, Option<i64>),
+                                      name!(size_plus_indexes, Option<String>),
                                       name!(size_plus_indexes_bytes, Option<i64>),
                                       name!(description, Option<String>),
                                       name!(system_object, Option<bool>),
@@ -225,10 +226,11 @@ fn views(
                         row.by_ordinal(5).unwrap().value::<i64>(),
                         row.by_ordinal(6).unwrap().value::<String>(),
                         row.by_ordinal(7).unwrap().value::<i64>(),
-                        row.by_ordinal(8).unwrap().value::<i64>(),
-                        row.by_ordinal(9).unwrap().value::<String>(),
-                        row.by_ordinal(10).unwrap().value::<bool>(),
-                        row.by_ordinal(11).unwrap().value::<i64>()
+                        row.by_ordinal(8).unwrap().value::<String>(),
+                        row.by_ordinal(9).unwrap().value::<i64>(),
+                        row.by_ordinal(10).unwrap().value::<String>(),
+                        row.by_ordinal(11).unwrap().value::<bool>(),
+                        row.by_ordinal(12).unwrap().value::<i64>()
                         ))
             .for_each(|tuple| results.push(tuple));
         Ok(Some(()))
