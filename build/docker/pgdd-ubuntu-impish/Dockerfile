@@ -14,8 +14,8 @@ ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get upgrade -y && apt-get install -y make wget curl gnupg git
 RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ impish-pgdg main" >> /etc/apt/sources.list.d/pgdg.list \
     &&  curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor | tee /etc/apt/trusted.gpg.d/apt.postgresql.org.gpg >/dev/null
-RUN apt-get update && apt-get upgrade -y
-RUN apt-get install -y \
+RUN apt-get update && apt-get upgrade -y --fix-missing
+RUN apt-get install -y --fix-missing \
         clang-13 llvm-13 clang libz-dev strace pkg-config \
         libxml2 libxml2-dev libreadline8 libreadline-dev \
         flex bison libbison-dev build-essential \

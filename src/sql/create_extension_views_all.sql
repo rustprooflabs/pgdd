@@ -71,3 +71,9 @@ SELECT pc.oid, pc.s_name, pc.t_name, pc.parent_oid, pc.parent_name,
     INNER JOIN dd.partition_parents pp ON pc.parent_oid = pp.oid
     INNER JOIN dd.tables() t ON pc.oid = t.oid
 ;
+
+
+CREATE OR REPLACE VIEW dd.database AS
+SELECT *
+    FROM dd.database()
+;
