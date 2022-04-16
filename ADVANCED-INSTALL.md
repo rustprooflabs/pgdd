@@ -74,33 +74,34 @@ changes the last two digits of the port!
 
 
 ```bash
-cargo pgx run pg13
+cargo pgx run pg14
 ```
 
-Example output.
+The output starts with something similar to:
 
 ```bash
-    Stopping Postgres v13
-building extension with features `pg13`
-"cargo" "build" "--features" "pg13" "--no-default-features"
-    Finished dev [unoptimized + debuginfo] target(s) in 0.05s
+building extension with features `pg14`
+"cargo" "build" "--lib" "--features" "pg14" "--no-default-features"
+    Updating crates.io index
+```
 
-installing extension
-     Copying control file to `/home/username/.pgx/13.4/pgx-install/share/postgresql/extension/pgdd.control`
-     Copying shared library to `/home/username/.pgx/13.4/pgx-install/lib/postgresql/pgdd.so`
-    Building SQL generator with features `pg13`
-"cargo" "build" "--bin" "sql-generator" "--features" "pg13" "--no-default-features"
-    Finished dev [unoptimized + debuginfo] target(s) in 0.05s
+
+```bash
+     Copying control file to `/home/username/.pgx/14.0/pgx-install/share/postgresql/extension/pgdd.control`
+     Copying shared library to `/home/username/.pgx/14.0/pgx-install/lib/postgresql/pgdd.so`
+    Building SQL generator with features `pg14`
+"cargo" "build" "--bin" "sql-generator" "--features" "pg14" "--no-default-features"
+   Compiling pgdd v0.4.0 (/home/username/git/pgdd)
+    Finished dev [unoptimized + debuginfo] target(s) in 13.84s
  Discovering SQL entities
   Discovered 9 SQL entities: 0 schemas (0 unique), 6 functions, 0 types, 0 enums, 3 sqls, 0 ords, 0 hashes
-running SQL generator with features `pg13`
-"cargo" "run" "--bin" "sql-generator" "--features" "pg13" "--no-default-features" "--" "--sql" "/home/username/.pgx/13.4/pgx-install/share/postgresql/extension/pgdd--0.4.0-dev.sql"
+running SQL generator with features `pg14`
+"cargo" "run" "--bin" "sql-generator" "--features" "pg14" "--no-default-features" "--" "--sql" "/home/username/.pgx/14.0/pgx-install/share/postgresql/extension/pgdd--0.4.1-dev.sql"
     Finished dev [unoptimized + debuginfo] target(s) in 0.06s
-     Running `target/debug/sql-generator --sql /home/username/.pgx/13.4/pgx-install/share/postgresql/extension/pgdd--0.4.0-dev.sql`
-     Copying extension schema file to `/home/username/.pgx/13.4/pgx-install/share/postgresql/extension/pgdd--0.3.1--0.4.0-dev.sql`
-     Copying extension schema file to `/home/username/.pgx/13.4/pgx-install/share/postgresql/extension/pgdd--0.3--0.3.1.sql`
+     Running `target/debug/sql-generator --sql /home/username/.pgx/14.0/pgx-install/share/postgresql/extension/pgdd--0.4.1-dev.sql`
+     Copying extension schema file to `/home/username/.pgx/14.0/pgx-install/share/postgresql/extension/pgdd--0.4.1-dev.sql`
     Finished installing pgdd
-    Starting Postgres v13 on port 28813
+    Starting Postgres v14 on port 28814
     Re-using existing database pgdd
 ```
 
@@ -109,6 +110,8 @@ In the test instance of psql, create the extension in database.
 ```bash
 CREATE EXTENSION pgdd;
 ```
+
+> Note: When you see "Re-using existing database pgdd" your previous installed version of `pgdd` will be available. To ensure you are working with the latest version of the `pgdd` extension you must drop/create the extension, quit the psql shell, and re-run the `cargo pgx run` command.
 
 
 ## Build binary packages
@@ -135,10 +138,10 @@ cp ./target/artifacts/* ./standalone/
 
 ```bash
 cargo pgx schema -d
-dot -Goverlap=prism -Gspline=ortho -Tjpg extension.dot > extension.jpg
+dot -Goverlap=prism -Gspline=ortho -Tjpg extension.dot > pgdd.jpg
 ```
 
-![pgx dependencies for pgdd v0.4.0](pgdd--0.4.0.jpg)
+![pgx dependencies for pgdd](pgdd.jpg)
 
 
 ## Non-standard dev

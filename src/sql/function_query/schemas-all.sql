@@ -36,7 +36,8 @@ SELECT s.s_name::TEXT,
         COALESCE(f.function_count, 0::bigint)::BIGINT AS function_count,
         pg_size_pretty(sum(pg_table_size(c.oid::regclass)))::TEXT AS size_pretty,
         pg_size_pretty(sum(pg_total_relation_size(c.oid::regclass)))::TEXT AS size_plus_indexes,
-        sum(pg_table_size(c.oid::regclass))::BIGINT AS size_bytes
+        sum(pg_table_size(c.oid::regclass))::BIGINT AS size_bytes,
+        sum(pg_total_relation_size(c.oid::regclass))::BIGINT AS size_plus_indexes_bytes
     FROM s
     LEFT JOIN pg_class c
         ON s.oid = c.relnamespace

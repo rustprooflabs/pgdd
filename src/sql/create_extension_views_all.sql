@@ -24,16 +24,56 @@ SELECT * FROM dd.functions()
 ;
 
 
-COMMENT ON VIEW dd.schemas IS 'Data dictionary view: Lists schemas, excluding system schemas.';
-COMMENT ON VIEW dd.tables IS 'Data dictionary view: Lists tables, excluding system tables.';
-COMMENT ON VIEW dd.views IS 'Data dictionary view: Lists views, excluding system views.';
-COMMENT ON VIEW dd.columns IS 'Data dictionary view: Lists columns, excluding system columns.';
-COMMENT ON VIEW dd.functions IS 'Data dictionary view: Lists functions, excluding system functions.';
+CREATE OR REPLACE VIEW dd.partition_parents AS
+WITH partition_details AS (
+SELECT p.oid, p.s_name, p.t_name, p.partition_type, p.partitions,
+        SUM(t.size_bytes) AS size_bytes,
+        -- Check for Postgres 14 and newer
+        -- "If the table has never yet been vacuumed or analyzed, reltuples contains -1 indicating that the row count is unknown."
+        -- https://www.postgresql.org/docs/current/catalog-pg-class.html
+        SUM(CASE WHEN t.rows = -1 THEN NULL ELSE t.rows END) AS rows,
+        COUNT(*) FILTER (WHERE t.rows = -1) AS partitions_never_analyzed,
+        COUNT(*) FILTER (WHERE t.rows = 0) AS partitions_no_data
+    FROM dd.partition_parents() p
+    LEFT JOIN dd.partition_children() c ON p.oid = c.parent_oid
+    LEFT JOIN dd.tables() t ON c.oid = t.oid
+    GROUP BY p.oid, p.s_name, p.t_name, p.partition_type, p.partitions
+)
+SELECT oid, s_name, t_name, partition_type, partitions,
+        size_bytes, pg_size_pretty(size_bytes) AS size_pretty,
+        CASE WHEN partitions > 0
+            THEN pg_size_pretty(ROUND(size_bytes / partitions))
+            ELSE NULL
+        END AS size_per_partition,
+        rows,
+        CASE WHEN partitions > 0
+            THEN ROUND(rows / partitions)
+            ELSE NULL
+        END AS rows_per_partition,
+        partitions_never_analyzed,
+        partitions_no_data
+    FROM partition_details
+;
 
-COMMENT ON FUNCTION dd.about IS 'Basic details about PgDD extension';
 
-COMMENT ON FUNCTION dd.schemas IS 'Data dictionary function: Lists all schemas';
-COMMENT ON FUNCTION dd.tables IS 'Data dictionary function: Lists all tables';
-COMMENT ON FUNCTION dd.views IS 'Data dictionary function: Lists all views.';
-COMMENT ON FUNCTION dd.columns IS 'Data dictionary function: Lists all columns';
-COMMENT ON FUNCTION dd.functions IS 'Data dictionary function: Lists all functions';
+CREATE OR REPLACE VIEW dd.partition_children AS
+SELECT pc.oid, pc.s_name, pc.t_name, pc.parent_oid, pc.parent_name,
+        t.rows, t.size_bytes, t.size_pretty, t.size_plus_indexes, t.bytes_per_row,
+        CASE WHEN pp.rows > 0
+            THEN ROUND(t.rows * 1.0 / pp.rows, 4)
+            ELSE NULL
+            END AS percent_of_partition_rows,
+        CASE WHEN pp.size_bytes > 0
+            THEN ROUND(t.size_bytes * 1.0 / pp.size_bytes, 4)
+            ELSE NULL
+            END AS percent_of_partition_bytes
+    FROM dd.partition_children() pc
+    INNER JOIN dd.partition_parents pp ON pc.parent_oid = pp.oid
+    INNER JOIN dd.tables() t ON pc.oid = t.oid
+;
+
+
+CREATE OR REPLACE VIEW dd.database AS
+SELECT *
+    FROM dd.database()
+;

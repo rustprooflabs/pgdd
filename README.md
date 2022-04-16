@@ -12,41 +12,6 @@ The extension is built on the Rust [pgx framework](https://github.com/zombodb/pg
 PgDD has been tested to work for PostgreSQL 10 through 14.
 
 
-## Upgrading from <= v0.3
-
-Version 0.4.0 was a complete rewrite of the PgDD extension from a raw-SQL
-extension to using the [pgx framework](https://github.com/zombodb/pgx). 
-
-
-
-Upgrading from Raw SQL version of PgDD (v0.3) to the pgx version (v0.4.0) is done with `DROP EXTENSION pgdd; CREATE EXTENSION pgdd;`
-Care has been taken to provide a smooth upgrade experience but
-**do not install the upgrade without testing the process on a test server!**
-
-If custom attributes were stored in the `dd` tables you will need to use
-`pg_dump` to export the data and reload after recreating the extension
-with pgx.  If any of the three (3) queries below return a count > 0
-this applies to you.
-
-
-```sql
-SELECT COUNT(*)
-    FROM dd.meta_table
-    WHERE s_name <> 'dd';
-SELECT COUNT(*)
-    FROM dd.meta_column
-    WHERE s_name <> 'dd';
-SELECT COUNT(*)
-    FROM dd.meta_schema
-    WHERE s_name <> 'dd';
-```
-
-
-
-The last raw SQL version is still available to [download](https://raw.githubusercontent.com/rustprooflabs/pgdd/main/standalone/pgdd_v0_3.sql).  This version is no longer maintained and may or may not
-work on future Postgres versions.
-
-
 ## Install from binary
 
 Binaries are available for Ubuntu 20.04 (focal) and Ubuntu 21.04 (hirsute).
@@ -209,6 +174,55 @@ SELECT s_name, f_name, argument_data_types, result_data_types
 ;
 ```
 
+### Partitioned tables
+
+There are two views, ``dd.partition_parents`` and ``dd.partition_children`` to provide
+partition-focused details.  Will display partitions for both
+declarative partitions and inheritance based partitions
+
+
+
+With the test data in this project for declarative partitions.
+
+
+```sql
+SELECT *
+    FROM dd.partition_parents
+    WHERE s_name = 'pgdd_test'
+;
+```
+
+```
+┌───────┬───────────┬────────┬────────────────┬────────────┬────────────┬─────────────┬────────────────────┬──────┬────────────────────┬───────────────────────────┬────────────────────┐
+│  oid  │  s_name   │ t_name │ partition_type │ partitions │ size_bytes │ size_pretty │ size_per_partition │ rows │ rows_per_partition │ partitions_never_analyzed │ partitions_no_data │
+╞═══════╪═══════════╪════════╪════════════════╪════════════╪════════════╪═════════════╪════════════════════╪══════╪════════════════════╪═══════════════════════════╪════════════════════╡
+│ 25090 │ pgdd_test │ parent │ declarative    │          3 │      40960 │ 40 kB       │ 13 kB              │   15 │                  5 │                         0 │                  1 │
+└───────┴───────────┴────────┴────────────────┴────────────┴────────────┴─────────────┴────────────────────┴──────┴────────────────────┴───────────────────────────┴────────────────────┘
+```
+
+Details for each child partition, including calculated percentages of the single
+partition against the totals for the parent partition.
+
+
+
+```sql
+SELECT *
+    FROM dd.partition_children
+    WHERE s_name = 'pgdd_test'
+;
+```
+
+```
+┌───────┬───────────┬─────────────┬────────────┬──────────────────┬──────┬────────────┬─────────────┬───────────────────┬───────────────┬───────────────────────────┬────────────────────────────┐
+│  oid  │  s_name   │   t_name    │ parent_oid │   parent_name    │ rows │ size_bytes │ size_pretty │ size_plus_indexes │ bytes_per_row │ percent_of_partition_rows │ percent_of_partition_bytes │
+╞═══════╪═══════════╪═════════════╪════════════╪══════════════════╪══════╪════════════╪═════════════╪═══════════════════╪═══════════════╪═══════════════════════════╪════════════════════════════╡
+│ 25095 │ pgdd_test │ child_0_10  │      25090 │ pgdd_test.parent │    9 │      16384 │ 16 kB       │ 32 kB             │          1820 │                    0.6000 │                     0.4000 │
+│ 25109 │ pgdd_test │ child_20_30 │      25090 │ pgdd_test.parent │    0 │       8192 │ 8192 bytes  │ 16 kB             │             ¤ │                    0.0000 │                     0.2000 │
+│ 25102 │ pgdd_test │ child_10_20 │      25090 │ pgdd_test.parent │    6 │      16384 │ 16 kB       │ 32 kB             │          2731 │                    0.4000 │                     0.4000 │
+└───────┴───────────┴─────────────┴────────────┴──────────────────┴──────┴────────────┴─────────────┴───────────────────┴───────────────┴───────────────────────────┴────────────────────────────┘
+```
+
+
 
 
 
@@ -253,6 +267,46 @@ GRANT dd_readwrite TO <your_login_user>;
 
 
 
+## Upgrade extension
+
+Version 0.4.0 was a complete rewrite of the PgDD extension from a raw-SQL
+extension to using the [pgx framework](https://github.com/zombodb/pgx).
+
+
+Upgrading versions currently requires `DROP EXTENSION pgdd; CREATE EXTENSION pgdd;`
+to recreate the extension.
+This is unlikely to change until [pgx #121 is resolved](https://github.com/zombodb/pgx/issues/121).
+
+
+
+If custom attributes were stored in the `dd` tables you will need to use
+`pg_dump` to export the data and reload after recreating the extension
+with pgx.  If any of the three (3) queries below return a count > 0
+this applies to you.
+
+
+```sql
+SELECT COUNT(*)
+    FROM dd.meta_table
+    WHERE s_name <> 'dd';
+SELECT COUNT(*)
+    FROM dd.meta_column
+    WHERE s_name <> 'dd';
+SELECT COUNT(*)
+    FROM dd.meta_schema
+    WHERE s_name <> 'dd';
+```
+
+
+
+The last raw SQL version (v0.3) is available to [download](https://raw.githubusercontent.com/rustprooflabs/pgdd/main/standalone/pgdd_v0_3.sql).  This version is no longer maintained and may or may not
+work on future Postgres versions.
+
+
+
+----
+
+
 ## PgDD UI
 
 The [PgDD UI](https://github.com/rustprooflabs/pgdd-ui) project provides
@@ -265,6 +319,8 @@ PgDD versioning must conform to
 [PEP 440](https://www.python.org/dev/peps/pep-0440/).
 
 
+----
+
 ## Caveats
 
 End user caveats:
@@ -273,6 +329,10 @@ End user caveats:
 
 Extension developer caveats:
 
-* DDL changes made in `src/lib.rs` need to be in version-to-version upgrade (e.g. ``sql/pgdd-0.3.1--0.4.0.sql``)
+* DDL changes made in `src/lib.rs` need to be in version-to-version upgrade (e.g. ``sql/pgdd-0.3.1--0.4.0.sql``).  This trick is not being used due to
+[pgx #121](https://github.com/zombodb/pgx/issues/121). The Pgx functionality is exposed
+via functions, and the functions are the core problem here.
+
+
 
 
