@@ -137,8 +137,8 @@ cp ./target/artifacts/* ./standalone/
 ## Pgx Generate graphviz
 
 ```bash
-cargo pgx schema -d
-dot -Goverlap=prism -Gspline=ortho -Tjpg extension.dot > pgdd.jpg
+cargo pgx schema -d pgdd.dot
+dot -Goverlap=prism -Gspline=ortho -Tjpg pgdd.dot > pgdd.jpg
 ```
 
 ![pgx dependencies for pgdd](pgdd.jpg)
