@@ -27,6 +27,9 @@ fi
 
 PKG_FORMAT=deb
 
+echo "    Running pgx init for ${PG_VER}"
+$(cargo pgx init --${PG_VER} download)
+
 echo "Changing to build dir..."
 cd /build
 
