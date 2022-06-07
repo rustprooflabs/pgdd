@@ -14,8 +14,8 @@ ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get upgrade -y && apt-get install -y make wget curl gnupg git
 RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ focal-pgdg main" >> /etc/apt/sources.list.d/pgdg.list \
     && wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
-RUN apt-get update && apt-get upgrade -y
-RUN apt-get install -y \
+RUN apt-get update && apt-get upgrade -y --fix-missing
+RUN apt-get install -y --fix-missing \
         clang-12 llvm-12 clang libz-dev strace pkg-config \
         libxml2 libxml2-dev libreadline8 libreadline-gplv2-dev \
         flex bison libbison-dev build-essential \

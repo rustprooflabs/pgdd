@@ -58,6 +58,8 @@ find ./ -name "*.so" -exec strip {} \;
 #
 OUTNAME=pgdd_${VERSION}_${OSNAME}_${PG_VER}_amd64
 if [ "${PKG_FORMAT}" == "deb" ]; then
+	rm ${OUTNAME}.deb || true
+
 	fpm \
 		-s dir \
 		-t deb \
