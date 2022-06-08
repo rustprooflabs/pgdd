@@ -11,9 +11,11 @@ RUN useradd -m ${USER} --uid=${UID}
 
 
 ARG DEBIAN_FRONTEND=noninteractive
-RUN apt-get update && apt-get upgrade -y && apt-get install -y make wget curl gnupg git
-RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ jammy-pgdg main" >> /etc/apt/sources.list.d/pgdg.list \
-    &&  curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor | tee /etc/apt/trusted.gpg.d/apt.postgresql.org.gpg >/dev/null
+RUN apt-get update && apt-get upgrade -y \
+    && apt-get install -y make wget curl gnupg git postgresql-common
+
+RUN sh /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y
+
 RUN apt-get update && apt-get upgrade -y --fix-missing
 RUN apt-get install -y --fix-missing \
         clang-14 llvm-14 clang libz-dev strace pkg-config \
