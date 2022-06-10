@@ -21,7 +21,7 @@ BASE=$(dirname `pwd`)
 VERSION=$(cat $BASE/pgdd.control | grep default_version | cut -f2 -d\')
 LOGDIR=${BASE}/target/logs
 ARTIFACTDIR=${BASE}/target/artifacts
-PGXVERSION=0.4.2
+PGXVERSION=0.4.5
 
 PG_VERS=("pg10" "pg11" "pg12" "pg13" "pg14")
 #PG_VERS=("pg14")
@@ -35,7 +35,7 @@ echo "PGX Version: ${PGXVERSION}"
 mkdir -p ${LOGDIR}
 mkdir -p ${ARTIFACTDIR}
 
-for image in `ls docker/` ; do
+for image in `ls docker/ ` ; do
 
     OS_DIST=$(echo ${image}|cut -f2 -d-)
     OS_VER=$(echo ${image}|cut -f3 -d-)

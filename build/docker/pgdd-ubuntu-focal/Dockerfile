@@ -11,12 +11,14 @@ RUN useradd -m ${USER} --uid=${UID}
 
 
 ARG DEBIAN_FRONTEND=noninteractive
-RUN apt-get update && apt-get upgrade -y && apt-get install -y make wget curl gnupg git
-RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ focal-pgdg main" >> /etc/apt/sources.list.d/pgdg.list \
-    && wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
-RUN apt-get update && apt-get upgrade -y
-RUN apt-get install -y \
-        clang-10 llvm-10 clang libz-dev strace pkg-config \
+RUN apt-get update && apt-get upgrade -y \
+    && apt-get install -y make wget curl gnupg git postgresql-common
+
+RUN sh /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y
+
+RUN apt-get update && apt-get upgrade -y --fix-missing
+RUN apt-get install -y --fix-missing \
+        clang-12 llvm-12 clang libz-dev strace pkg-config \
         libxml2 libxml2-dev libreadline8 libreadline-gplv2-dev \
         flex bison libbison-dev build-essential \
         zlib1g-dev libxslt-dev libssl-dev libxml2-utils xsltproc libgss-dev \
@@ -41,21 +43,4 @@ ENV PATH="/home/${USER}/.cargo/bin:${PATH}"
 
 RUN /bin/bash rustup.sh -y \
     && cargo install cargo-pgx --version ${PGXVERSION}
-#RUN /bin/bash rustup.sh -y \
-#    && cargo install --force --git "https://github.com/zombodb/pgx" \
-#        --branch "develop" \
-#        "cargo-pgx"
 
-
-RUN mkdir -p /home/${USER}/.pgx/data-10 \
-    && mkdir /home/${USER}/.pgx/data-11 \
-    && mkdir /home/${USER}/.pgx/data-12 \
-    && mkdir /home/${USER}/.pgx/data-13 \
-    && mkdir /home/${USER}/.pgx/data-14
-
-RUN cargo pgx init \
-    --pg10=/usr/lib/postgresql/10/bin/pg_config \
-    --pg11=/usr/lib/postgresql/11/bin/pg_config \
-    --pg12=/usr/lib/postgresql/12/bin/pg_config \
-    --pg13=/usr/lib/postgresql/13/bin/pg_config \
-    --pg14=/usr/lib/postgresql/14/bin/pg_config

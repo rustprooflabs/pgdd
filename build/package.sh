@@ -27,6 +27,9 @@ fi
 
 PKG_FORMAT=deb
 
+echo "    Running pgx init for ${PG_VER}"
+$(cargo pgx init --${PG_VER} download)
+
 echo "Changing to build dir..."
 cd /build
 
@@ -55,6 +58,8 @@ find ./ -name "*.so" -exec strip {} \;
 #
 OUTNAME=pgdd_${VERSION}_${OSNAME}_${PG_VER}_amd64
 if [ "${PKG_FORMAT}" == "deb" ]; then
+	rm ${OUTNAME}.deb || true
+
 	fpm \
 		-s dir \
 		-t deb \
