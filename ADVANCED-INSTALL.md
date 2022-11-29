@@ -36,7 +36,7 @@ Install `cargo-pgx` regularly (see dev steps below for non-standard install).
 
 
 ```bash
-cargo install cargo-pgx
+cargo install --locked cargo-pgx
 ```
 
 
@@ -117,7 +117,7 @@ CREATE EXTENSION pgdd;
 ## Build binary packages
 
 Debian/Ubuntu Bionic binaries are available for 0.4.0
-(first [pgx](https://github.com/zombodb/pgx) version)
+(first [pgx](https://github.com/tcdi/pgx) version)
 and later.  More distributions will likely have binaries available in the future.
 
 
@@ -149,7 +149,7 @@ dot -Goverlap=prism -Gspline=ortho -Tjpg pgdd.dot > pgdd.jpg
 When working against Pgx installed from a non-tagged branch, install pgx using:
 
 ```bash
-cargo install --force --git "https://github.com/zombodb/pgx" \
+cargo install --locked --force --git "https://github.com/tcdi/pgx" \
     --branch "develop" \
     "cargo-pgx"
 ```
@@ -157,7 +157,7 @@ cargo install --force --git "https://github.com/zombodb/pgx" \
 Or a beta branch
 
 ```bash
-cargo install --force cargo-pgx --version 0.2.0-beta.4
+cargo install --locked --force cargo-pgx --version 0.2.0-beta.4
 ```
 
 Changes to `Cargo.toml` required in `[lib]` and `[dependencies]` sections.
@@ -174,16 +174,16 @@ crate-type = ["cdylib", "rlib"]
 ```toml
 [dependencies]
 
-pgx = { git = "https://github.com/zombodb/pgx", branch = "oh-no-type-resolution" }
-pgx-macros = { git = "https://github.com/zombodb/pgx", branch = "develop" }
+pgx = { git = "https://github.com/tcdi/pgx", branch = "oh-no-type-resolution" }
+pgx-macros = { git = "https://github.com/tcdi/pgx", branch = "develop" }
 #pgx = "0.1.21"
 #pgx-macros = "0.1.21"
 
 # Won't be needed in final version (hopefully!)
-pgx-utils = { git = "https://github.com/zombodb/pgx", branch = "develop" }
+pgx-utils = { git = "https://github.com/tcdi/pgx", branch = "develop" }
 
 [dev-dependencies]
-pgx-tests = { git = "https://github.com/zombodb/pgx", branch = "develop" }
+pgx-tests = { git = "https://github.com/tcdi/pgx", branch = "develop" }
 #pgx-tests = "0.1.21"
 ```
 
@@ -222,14 +222,14 @@ Change
 
 ```bash
 RUN /bin/bash rustup.sh -y \
-    && cargo install cargo-pgx
+    && cargo install --locked cargo-pgx
 ```
 
 To
 
 ```bash
 RUN /bin/bash rustup.sh -y \
-    && cargo install --force --git "https://github.com/zombodb/pgx" \
+    && cargo install --locked --force --git "https://github.com/tcdi/pgx" \
         --branch "develop" \
         "cargo-pgx"
 ```

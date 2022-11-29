@@ -1,6 +1,7 @@
-use pgx::*;
+use pgx::prelude::*;
 
-pg_module_magic!();
+pgx::pg_module_magic!();
+
 
 // NOTE: DDL must be defined here to be created by `CREATE EXTENSION pgdd;`
 //    Changes to DDL must be made BOTH here and
@@ -21,105 +22,104 @@ extension_sql_file!("sql/load_default_data.sql",
 
 #[pg_extern]
 fn schemas(
-) -> impl std::iter::Iterator<Item = (name!(s_name, Option<String>),
-                                      name!(owner, Option<String>),
-                                      name!(data_source, Option<String>),
-                                      name!(sensitive, Option<bool>),
-                                      name!(description, Option<String>),
-                                      name!(system_object, Option<bool>),
-                                      name!(table_count, Option<i64>),
-                                      name!(view_count, Option<i64>),
-                                      name!(function_count, Option<i64>),
-                                      name!(size_pretty, Option<String>),
-                                      name!(size_plus_indexes, Option<String>),
-                                      name!(size_bytes, Option<i64>),
-                                      name!(size_plus_indexes_bytes, Option<i64>))>
-{
+) -> TableIterator<'static, (name!(s_name, Option<String>),
+                             name!(owner, Option<String>),
+                             name!(data_source, Option<String>),
+                             name!(sensitive, Option<bool>),
+                             name!(description, Option<String>),
+                             name!(system_object, Option<bool>),
+                             name!(table_count, Option<i64>),
+                             name!(view_count, Option<i64>),
+                             name!(function_count, Option<i64>),
+                             name!(size_pretty, Option<String>),
+                             name!(size_plus_indexes, Option<String>),
+                             name!(size_bytes, Option<i64>),
+                             name!(size_plus_indexes_bytes, Option<i64>))> {
     let query = include_str!("sql/function_query/schemas-all.sql");
-
     let mut results = Vec::new();
+
     Spi::connect(|client| {
         client
             .select(query, None, None)
-            .map(|row| (row.by_ordinal(1).unwrap().value::<String>(),
-                        row.by_ordinal(2).unwrap().value::<String>(),
-                        row.by_ordinal(3).unwrap().value::<String>(),
-                        row.by_ordinal(4).unwrap().value::<bool>(),
-                        row.by_ordinal(5).unwrap().value::<String>(),
-                        row.by_ordinal(6).unwrap().value::<bool>(),
-                        row.by_ordinal(7).unwrap().value::<i64>(),
-                        row.by_ordinal(8).unwrap().value::<i64>(),
-                        row.by_ordinal(9).unwrap().value::<i64>(),
-                        row.by_ordinal(10).unwrap().value::<String>(),
-                        row.by_ordinal(11).unwrap().value::<String>(),
-                        row.by_ordinal(12).unwrap().value::<i64>(),
-                        row.by_ordinal(13).unwrap().value::<i64>()
+            .map(|row| (row["s_name"].value(),
+                        row["owner"].value(),
+                        row["data_source"].value(),
+                        row["sensitive"].value(),
+                        row["description"].value(),
+                        row["system_object"].value(),
+                        row["table_count"].value(),
+                        row["view_count"].value(),
+                        row["function_count"].value(),
+                        row["size_pretty"].value(),
+                        row["size_plus_indexes"].value(),
+                        row["size_bytes"].value(),
+                        row["size_plus_indexes_bytes"].value()
                         ))
             .for_each(|tuple| results.push(tuple));
         Ok(Some(()))
     });
-
-    results.into_iter()
+    TableIterator::new(results.into_iter())
 }
+
+
 
 #[pg_extern]
 fn columns(
-) -> impl std::iter::Iterator<Item = (name!(s_name, Option<String>),
-                                        name!(source_type, Option<String>),
-                                        name!(t_name, Option<String>),
-                                        name!(c_name, Option<String>),
-                                        name!(data_type, Option<String>),
-                                        name!(position, Option<i64>),
-                                        name!(description, Option<String>),
-                                        name!(data_source, Option<String>),
-                                        name!(sensitive, Option<bool>),
-                                        name!(system_object, Option<bool>),
-                                        name!(default_value, Option<String>),
-                                        name!(generated_column, Option<bool>))>
+) -> TableIterator<'static, (name!(s_name, Option<String>),
+                             name!(source_type, Option<String>),
+                             name!(t_name, Option<String>),
+                             name!(c_name, Option<String>),
+                             name!(data_type, Option<String>),
+                             name!(position, Option<i64>),
+                             name!(description, Option<String>),
+                             name!(data_source, Option<String>),
+                             name!(sensitive, Option<bool>),
+                             name!(system_object, Option<bool>),
+                             name!(default_value, Option<String>),
+                             name!(generated_column, Option<bool>))>
 {
     #[cfg(any(feature = "pg10", feature="pg11"))]
     let query = include_str!("sql/function_query/columns-pre-12.sql");
-    #[cfg(any(feature = "pg12", feature="pg13", feature="pg14"))]
+    #[cfg(any(feature = "pg12", feature="pg13", feature="pg14", feature="pg15"))]
     let query = include_str!("sql/function_query/columns-12.sql");
 
     let mut results = Vec::new();
     Spi::connect(|client| {
         client
             .select(query, None, None)
-            .map(|row| (row.by_ordinal(1).unwrap().value::<String>(),
-                        row.by_ordinal(2).unwrap().value::<String>(),
-                        row.by_ordinal(3).unwrap().value::<String>(),
-                        row.by_ordinal(4).unwrap().value::<String>(),
-                        row.by_ordinal(5).unwrap().value::<String>(),
-                        row.by_ordinal(6).unwrap().value::<i64>(),
-                        row.by_ordinal(7).unwrap().value::<String>(),
-                        row.by_ordinal(8).unwrap().value::<String>(),
-                        row.by_ordinal(9).unwrap().value::<bool>(),
-                        row.by_ordinal(10).unwrap().value::<bool>(),
-                        row.by_ordinal(11).unwrap().value::<String>(),
-                        row.by_ordinal(12).unwrap().value::<bool>()
+            .map(|row| (row["s_name"].value(),
+                        row["source_type"].value(),
+                        row["t_name"].value(),
+                        row["c_name"].value(),
+                        row["data_type"].value(),
+                        row["position"].value(),
+                        row["description"].value(),
+                        row["data_source"].value(),
+                        row["sensitive"].value(),
+                        row["system_object"].value(),
+                        row["default_value"].value(),
+                        row["generated_column"].value()
                         ))
             .for_each(|tuple| results.push(tuple));
         Ok(Some(()))
     });
-
-    results.into_iter()
+    TableIterator::new(results.into_iter())
 }
 
 
 #[pg_extern]
 fn functions(
-) -> impl std::iter::Iterator<Item = (name!(s_name, Option<String>),
-                                        name!(f_name, Option<String>),
-                                        name!(result_data_types, Option<String>),
-                                        name!(argument_data_types, Option<String>),
-                                        name!(owned_by, Option<String>),
-                                        name!(proc_security, Option<String>),
-                                        name!(access_privileges, Option<String>),
-                                        name!(proc_language, Option<String>),
-                                        name!(source_code, Option<String>),
-                                        name!(description, Option<String>),
-                                        name!(system_object, Option<bool>))>
+) -> TableIterator<'static, (name!(s_name, Option<String>),
+                                   name!(f_name, Option<String>),
+                                   name!(result_data_types, Option<String>),
+                                   name!(argument_data_types, Option<String>),
+                                   name!(owned_by, Option<String>),
+                                   name!(proc_security, Option<String>),
+                                   name!(access_privileges, Option<String>),
+                                   name!(proc_language, Option<String>),
+                                   name!(source_code, Option<String>),
+                                   name!(description, Option<String>),
+                                   name!(system_object, Option<bool>))>
 {
     let query = include_str!("sql/function_query/functions-all.sql");
 
@@ -127,45 +127,44 @@ fn functions(
     Spi::connect(|client| {
         client
             .select(query, None, None)
-            .map(|row| (row.by_ordinal(1).unwrap().value::<String>(),
-                        row.by_ordinal(2).unwrap().value::<String>(),
-                        row.by_ordinal(3).unwrap().value::<String>(),
-                        row.by_ordinal(4).unwrap().value::<String>(),
-                        row.by_ordinal(5).unwrap().value::<String>(),
-                        row.by_ordinal(6).unwrap().value::<String>(),
-                        row.by_ordinal(7).unwrap().value::<String>(),
-                        row.by_ordinal(8).unwrap().value::<String>(),
-                        row.by_ordinal(9).unwrap().value::<String>(),
-                        row.by_ordinal(10).unwrap().value::<String>(),
-                        row.by_ordinal(11).unwrap().value::<bool>()
+            .map(|row| (row["s_name"].value(),
+                        row["f_name"].value(),
+                        row["result_data_types"].value(),
+                        row["argument_data_types"].value(),
+                        row["owned_by"].value(),
+                        row["proc_security"].value(),
+                        row["access_privileges"].value(),
+                        row["proc_language"].value(),
+                        row["source_code"].value(),
+                        row["description"].value(),
+                        row["system_object"].value()
                         ))
             .for_each(|tuple| results.push(tuple));
         Ok(Some(()))
     });
-
-    results.into_iter()
+    TableIterator::new(results.into_iter())
 }
 
 
 
 #[pg_extern]
 fn tables(
-) -> impl std::iter::Iterator<Item = (name!(s_name, Option<String>),
-                                      name!(t_name, Option<String>),
-                                      name!(type, Option<String>),
-                                      name!(owned_by, Option<String>),
-                                      name!(size_pretty, Option<String>),
-                                      name!(size_bytes, Option<i64>),
-                                      name!(rows, Option<i64>),
-                                      name!(bytes_per_row, Option<i64>),
-                                      name!(size_plus_indexes_bytes, Option<i64>),
-                                      name!(size_plus_indexes, Option<String>),
-                                      name!(description, Option<String>),
-                                      name!(system_object, Option<bool>),
-                                      name!(data_source, Option<String>),
-                                      name!(sensitive, Option<bool>),
-                                      name!(oid, Option<i64>)
-                                      )>
+) -> TableIterator<'static, (name!(s_name, Option<String>),
+                             name!(t_name, Option<String>),
+                             name!(type, Option<String>),
+                             name!(owned_by, Option<String>),
+                             name!(size_pretty, Option<String>),
+                             name!(size_bytes, Option<i64>),
+                             name!(rows, Option<i64>),
+                             name!(bytes_per_row, Option<i64>),
+                             name!(size_plus_indexes_bytes, Option<i64>),
+                             name!(size_plus_indexes, Option<String>),
+                             name!(description, Option<String>),
+                             name!(system_object, Option<bool>),
+                             name!(data_source, Option<String>),
+                             name!(sensitive, Option<bool>),
+                             name!(oid, Option<i64>)
+                             )>
 {
     let query = include_str!("sql/function_query/tables-all.sql");
 
@@ -173,45 +172,44 @@ fn tables(
     Spi::connect(|client| {
         client
             .select(query, None, None)
-            .map(|row| (row.by_ordinal(1).unwrap().value::<String>(),
-                        row.by_ordinal(2).unwrap().value::<String>(),
-                        row.by_ordinal(3).unwrap().value::<String>(),
-                        row.by_ordinal(4).unwrap().value::<String>(),
-                        row.by_ordinal(5).unwrap().value::<String>(),
-                        row.by_ordinal(6).unwrap().value::<i64>(),
-                        row.by_ordinal(7).unwrap().value::<i64>(),
-                        row.by_ordinal(8).unwrap().value::<i64>(),
-                        row.by_ordinal(9).unwrap().value::<i64>(),
-                        row.by_ordinal(10).unwrap().value::<String>(),
-                        row.by_ordinal(11).unwrap().value::<String>(),
-                        row.by_ordinal(12).unwrap().value::<bool>(),
-                        row.by_ordinal(13).unwrap().value::<String>(),
-                        row.by_ordinal(14).unwrap().value::<bool>(),
-                        row.by_ordinal(15).unwrap().value::<i64>()
+            .map(|row| (row["s_name"].value(),
+                        row["t_name"].value(),
+                        row["type"].value(),
+                        row["owned_by"].value(),
+                        row["size_pretty"].value(),
+                        row["size_bytes"].value(),
+                        row["rows"].value(),
+                        row["bytes_per_row"].value(),
+                        row["size_plus_indexes_bytes"].value(),
+                        row["size_plus_indexes"].value(),
+                        row["description"].value(),
+                        row["system_object"].value(),
+                        row["data_source"].value(),
+                        row["sensitive"].value(),
+                        row["oid"].value()
                         ))
             .for_each(|tuple| results.push(tuple));
         Ok(Some(()))
     });
-
-    results.into_iter()
+    TableIterator::new(results.into_iter())
 }
 
 
 
 #[pg_extern]
 fn views(
-) -> impl std::iter::Iterator<Item = (name!(s_name, Option<String>),
-                                      name!(v_name, Option<String>),
-                                      name!(view_type, Option<String>),
-                                      name!(owned_by, Option<String>),
-                                      name!(rows, Option<i64>),
-                                      name!(size_pretty, Option<String>),
-                                      name!(size_bytes, Option<i64>),
-                                      name!(size_plus_indexes, Option<String>),
-                                      name!(size_plus_indexes_bytes, Option<i64>),
-                                      name!(description, Option<String>),
-                                      name!(system_object, Option<bool>),
-                                      name!(oid, Option<i64>))>
+) -> TableIterator<'static, (name!(s_name, Option<String>),
+                             name!(v_name, Option<String>),
+                             name!(view_type, Option<String>),
+                             name!(owned_by, Option<String>),
+                             name!(rows, Option<i64>),
+                             name!(size_pretty, Option<String>),
+                             name!(size_bytes, Option<i64>),
+                             name!(size_plus_indexes, Option<String>),
+                             name!(size_plus_indexes_bytes, Option<i64>),
+                             name!(description, Option<String>),
+                             name!(system_object, Option<bool>),
+                             name!(oid, Option<i64>))>
 {
     let query = include_str!("sql/function_query/views-all.sql");
 
@@ -219,35 +217,34 @@ fn views(
     Spi::connect(|client| {
         client
             .select(query, None, None)
-            .map(|row| (row.by_ordinal(1).unwrap().value::<String>(),
-                        row.by_ordinal(2).unwrap().value::<String>(),
-                        row.by_ordinal(3).unwrap().value::<String>(),
-                        row.by_ordinal(4).unwrap().value::<String>(),
-                        row.by_ordinal(5).unwrap().value::<i64>(),
-                        row.by_ordinal(6).unwrap().value::<String>(),
-                        row.by_ordinal(7).unwrap().value::<i64>(),
-                        row.by_ordinal(8).unwrap().value::<String>(),
-                        row.by_ordinal(9).unwrap().value::<i64>(),
-                        row.by_ordinal(10).unwrap().value::<String>(),
-                        row.by_ordinal(11).unwrap().value::<bool>(),
-                        row.by_ordinal(12).unwrap().value::<i64>()
+            .map(|row| (row["s_name"].value(),
+                        row["v_name"].value(),
+                        row["view_type"].value(),
+                        row["owned_by"].value(),
+                        row["rows"].value(),
+                        row["size_pretty"].value(),
+                        row["size_bytes"].value(),
+                        row["size_plus_indexes"].value(),
+                        row["size_plus_indexes_bytes"].value(),
+                        row["description"].value(),
+                        row["system_object"].value(),
+                        row["oid"].value()
                         ))
             .for_each(|tuple| results.push(tuple));
         Ok(Some(()))
     });
-
-    results.into_iter()
+    TableIterator::new(results.into_iter())
 }
 
 
 
 #[pg_extern]
 fn partition_parents(
-) -> impl std::iter::Iterator<Item = (name!(oid, Option<i64>),
-                                      name!(s_name, Option<String>),
-                                      name!(t_name, Option<String>),
-                                      name!(partition_type, Option<String>),
-                                      name!(partitions, Option<i64>))>
+) -> TableIterator<'static, (name!(oid, Option<i64>),
+                             name!(s_name, Option<String>),
+                             name!(t_name, Option<String>),
+                             name!(partition_type, Option<String>),
+                             name!(partitions, Option<i64>))>
 {
     let query = include_str!("sql/function_query/partition-parent.sql");
 
@@ -255,29 +252,28 @@ fn partition_parents(
     Spi::connect(|client| {
         client
             .select(query, None, None)
-            .map(|row| (row.by_ordinal(1).unwrap().value::<i64>(),
-                        row.by_ordinal(2).unwrap().value::<String>(),
-                        row.by_ordinal(3).unwrap().value::<String>(),
-                        row.by_ordinal(4).unwrap().value::<String>(),
-                        row.by_ordinal(5).unwrap().value::<i64>()
+            .map(|row| (row["oid"].value(),
+                        row["s_name"].value(),
+                        row["t_name"].value(),
+                        row["partition_type"].value(),
+                        row["partitions"].value()
                         ))
             .for_each(|tuple| results.push(tuple));
         Ok(Some(()))
     });
-
-    results.into_iter()
+    TableIterator::new(results.into_iter())
 }
 
 
 #[pg_extern]
 fn partition_children(
-) -> impl std::iter::Iterator<Item = (name!(oid, Option<i64>),
-                                      name!(s_name, Option<String>),
-                                      name!(t_name, Option<String>),
-                                      name!(parent_oid, Option<i64>),
-                                      name!(parent_name, Option<String>),
-                                      name!(declarative_partition, Option<bool>),
-                                      name!(partition_expression, Option<String>))>
+) -> TableIterator<'static, (name!(oid, Option<i64>),
+                             name!(s_name, Option<String>),
+                             name!(t_name, Option<String>),
+                             name!(parent_oid, Option<i64>),
+                             name!(parent_name, Option<String>),
+                             name!(declarative_partition, Option<bool>),
+                             name!(partition_expression, Option<String>))>
 {
     let query = include_str!("sql/function_query/partition-child.sql");
 
@@ -285,33 +281,32 @@ fn partition_children(
     Spi::connect(|client| {
         client
             .select(query, None, None)
-            .map(|row| (row.by_ordinal(1).unwrap().value::<i64>(),
-                        row.by_ordinal(2).unwrap().value::<String>(),
-                        row.by_ordinal(3).unwrap().value::<String>(),
-                        row.by_ordinal(4).unwrap().value::<i64>(),
-                        row.by_ordinal(5).unwrap().value::<String>(),
-                        row.by_ordinal(6).unwrap().value::<bool>(),
-                        row.by_ordinal(7).unwrap().value::<String>()
+            .map(|row| (row["oid"].value(),
+                        row["s_name"].value(),
+                        row["t_name"].value(),
+                        row["parent_oid"].value(),
+                        row["parent_name"].value(),
+                        row["declarative_partition"].value(),
+                        row["partition_expression"].value()
                         ))
             .for_each(|tuple| results.push(tuple));
         Ok(Some(()))
     });
-
-    results.into_iter()
+    TableIterator::new(results.into_iter())
 }
 
 
 #[pg_extern]
 fn database(
-) -> impl std::iter::Iterator<Item = (name!(oid, Option<i64>),
-                                      name!(db_name, Option<String>),
-                                      name!(db_size, Option<String>),
-                                      name!(schema_count, Option<i64>),
-                                      name!(table_count, Option<i64>),
-                                      name!(size_in_tables, Option<String>),
-                                      name!(view_count, Option<i64>),
-                                      name!(size_in_views, Option<String>),
-                                      name!(extension_count, Option<i64>))>
+) -> TableIterator<'static, (name!(oid, Option<i64>),
+                             name!(db_name, Option<String>),
+                             name!(db_size, Option<String>),
+                             name!(schema_count, Option<i64>),
+                             name!(table_count, Option<i64>),
+                             name!(size_in_tables, Option<String>),
+                             name!(view_count, Option<i64>),
+                             name!(size_in_views, Option<String>),
+                             name!(extension_count, Option<i64>))>
 {
     let query = include_str!("sql/function_query/database-all.sql");
 
@@ -319,21 +314,20 @@ fn database(
     Spi::connect(|client| {
         client
             .select(query, None, None)
-            .map(|row| (row.by_ordinal(1).unwrap().value::<i64>(),
-                        row.by_ordinal(2).unwrap().value::<String>(),
-                        row.by_ordinal(3).unwrap().value::<String>(),
-                        row.by_ordinal(4).unwrap().value::<i64>(),
-                        row.by_ordinal(5).unwrap().value::<i64>(),
-                        row.by_ordinal(6).unwrap().value::<String>(),
-                        row.by_ordinal(7).unwrap().value::<i64>(),
-                        row.by_ordinal(8).unwrap().value::<String>(),
-                        row.by_ordinal(9).unwrap().value::<i64>()
+            .map(|row| (row["oid"].value(),
+                        row["db_name"].value(),
+                        row["db_size"].value(),
+                        row["schema_count"].value(),
+                        row["table_count"].value(),
+                        row["size_in_tables"].value(),
+                        row["view_count"].value(),
+                        row["size_in_views"].value(),
+                        row["extension_count"].value()
                         ))
             .for_each(|tuple| results.push(tuple));
         Ok(Some(()))
     });
-
-    results.into_iter()
+    TableIterator::new(results.into_iter())
 }
 
 
