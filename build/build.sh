@@ -35,8 +35,8 @@ echo "PGX Version: ${PGXVERSION}"
 mkdir -p ${LOGDIR}
 mkdir -p ${ARTIFACTDIR}
 
-# Skipping focal for now, fails.
-for image in `ls docker/ | grep jammy ` ; do
+
+for image in `ls docker/  ` ; do
 
     OS_DIST=$(echo ${image}|cut -f2 -d-)
     OS_VER=$(echo ${image}|cut -f3 -d-)
