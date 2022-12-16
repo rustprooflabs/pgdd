@@ -1,6 +1,6 @@
 # Borrowed heavily from https://github.com/zombodb/zombodb/blob/master/build/package.sh
 #
-# Copyright 2021 RustProof Labs
+# Copyright 2021-2022 RustProof Labs
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -27,8 +27,12 @@ fi
 
 PKG_FORMAT=deb
 
-echo "    Running pgx init for ${PG_VER}"
-$(cargo pgx init --${PG_VER} download)
+PG_VER_SHORT=${PG_VER: -2}
+echo "    Running pgx init for ${PG_VER} (${PG_VER_SHORT})"
+
+mkdir -p /home/docker/.pgx/data-${PG_VER_SHORT} 
+
+cargo pgx init --${PG_VER} /usr/lib/postgresql/${PG_VER_SHORT}/bin/pg_config
 
 echo "Changing to build dir..."
 cd /build

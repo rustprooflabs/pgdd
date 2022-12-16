@@ -25,11 +25,11 @@ RUN apt-get install -y --fix-missing \
         libldap-dev libkrb5-dev gettext tcl-tclreadline tcl-dev libperl-dev \
         libpython3-dev libprotobuf-c-dev libprotobuf-dev gcc \
         ruby ruby-dev rubygems \
-        postgresql-server-dev-10 \
-        postgresql-server-dev-11 \
-        postgresql-server-dev-12 \
-        postgresql-server-dev-13 \
-        postgresql-server-dev-14 \
+        postgresql-11 postgresql-server-dev-11 \
+        postgresql-12 postgresql-server-dev-12 \
+        postgresql-13 postgresql-server-dev-13 \
+        postgresql-14 postgresql-server-dev-14 \
+        postgresql-15 postgresql-server-dev-15 \
     && apt autoremove -y
 
 
@@ -43,4 +43,4 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs > rustup.sh
 ENV PATH="/home/${USER}/.cargo/bin:${PATH}"
 
 RUN /bin/bash rustup.sh -y \
-    && cargo install cargo-pgx --version ${PGXVERSION}
+    && cargo install --locked cargo-pgx --version ${PGXVERSION}
