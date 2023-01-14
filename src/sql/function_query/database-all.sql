@@ -20,7 +20,7 @@ SELECT
 SELECT COUNT(e.oid) AS extension_count
     FROM pg_catalog.pg_extension e
 )
-SELECT d.oid::BIGINT, d.db_name::TEXT, d.db_size,
+SELECT d.oid, d.db_name::TEXT, d.db_size,
         s.schema_count,
         t.table_count, t.size_in_tables,
         v.view_count, v.size_in_views,

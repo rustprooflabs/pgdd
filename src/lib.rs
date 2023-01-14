@@ -21,316 +21,384 @@ extension_sql_file!("sql/load_default_data.sql",
 
 
 #[pg_extern]
-fn schemas(
-) -> Result<TableIterator<'static, (
-                             name!(s_name, Option<String>),
-                             name!(owner, Option<String>),
-                             name!(data_source, Option<String>),
-                             name!(sensitive, Option<bool>),
-                             name!(description, Option<String>),
-                             name!(system_object, Option<bool>),
-                             name!(table_count, Option<i64>),
-                             name!(view_count, Option<i64>),
-                             name!(function_count, Option<i64>),
-                             name!(size_pretty, Option<String>),
-                             name!(size_plus_indexes, Option<String>),
-                             name!(size_bytes, Option<i64>),
-                             name!(size_plus_indexes_bytes, Option<i64>)
-                            ),>, spi::Error,> {
+fn schemas() -> Result<
+    TableIterator<
+        'static,
+        (
+            name!(s_name, Result<Option<String>, pgx::spi::Error>),
+            name!(owner, Result<Option<String>, pgx::spi::Error>),
+            name!(data_source, Result<Option<String>, pgx::spi::Error>),
+            name!(sensitive, Result<Option<bool>, pgx::spi::Error>),
+            name!(description, Result<Option<String>, pgx::spi::Error>),
+            name!(system_object, Result<Option<bool>, pgx::spi::Error>),
+            name!(table_count, Result<Option<i64>, pgx::spi::Error>),
+            name!(view_count, Result<Option<i64>, pgx::spi::Error>),
+            name!(function_count, Result<Option<i64>, pgx::spi::Error>),
+            name!(size_pretty, Result<Option<String>, pgx::spi::Error>),
+            name!(size_plus_indexes, Result<Option<String>, pgx::spi::Error>),
+            name!(size_bytes, Result<Option<i64>, pgx::spi::Error>),
+            name!(size_plus_indexes_bytes, Result<Option<i64>, pgx::spi::Error>)
+        ),
+    >,
+    spi::Error,
+> {
     let query = include_str!("sql/function_query/schemas-all.sql");
-    let mut results = Vec::new();
 
     Spi::connect(|client| {
-        client
-            .select(query, None, None)?
-            .map(|row| (row["s_name"].value(),
-                        row["owner"].value(),
-                        row["data_source"].value(),
-                        row["sensitive"].value(),
-                        row["description"].value(),
-                        row["system_object"].value(),
-                        row["table_count"].value(),
-                        row["view_count"].value(),
-                        row["function_count"].value(),
-                        row["size_pretty"].value(),
-                        row["size_plus_indexes"].value(),
-                        row["size_bytes"].value(),
-                        row["size_plus_indexes_bytes"].value()
-                        ))
-            .for_each(|tuple| results.push(tuple));
-        Ok(Some(()))
-    });
-    TableIterator::new(results.into_iter())
+        let mut results = Vec::new();
+        let mut tup_table = client.select(query, None, None)?;
+
+        while let Some(row) = tup_table.next() {
+            let s_name = row["s_name"].value::<String>();
+            let owner = row["owner"].value::<String>();
+            let data_source = row["data_source"].value::<String>();
+            let sensitive = row["sensitive"].value::<bool>();
+            let description = row["description"].value::<String>();
+            let system_object = row["system_object"].value::<bool>();
+            let table_count = row["table_count"].value::<i64>();
+            let view_count = row["view_count"].value::<i64>();
+            let function_count = row["function_count"].value::<i64>();
+            let size_pretty = row["size_pretty"].value::<String>();
+            let size_plus_indexes = row["size_plus_indexes"].value::<String>();
+            let size_bytes = row["size_bytes"].value::<i64>();
+            let size_plus_indexes_bytes = row["size_plus_indexes_bytes"].value::<i64>();
+            results.push((s_name, owner, data_source, sensitive, description,
+                system_object, table_count, view_count, function_count,
+                size_pretty, size_plus_indexes, size_bytes, size_plus_indexes_bytes
+            ));
+        }
+        Ok(TableIterator::new(results.into_iter()))
+    })
 }
 
 
-
 #[pg_extern]
-fn columns(
-) -> TableIterator<'static, (name!(s_name, Option<String>),
-                             name!(source_type, Option<String>),
-                             name!(t_name, Option<String>),
-                             name!(c_name, Option<String>),
-                             name!(data_type, Option<String>),
-                             name!(position, Option<i64>),
-                             name!(description, Option<String>),
-                             name!(data_source, Option<String>),
-                             name!(sensitive, Option<bool>),
-                             name!(system_object, Option<bool>),
-                             name!(default_value, Option<String>),
-                             name!(generated_column, Option<bool>))>
-{
-    #[cfg(any(feature = "pg10", feature="pg11"))]
+fn columns() -> Result<
+TableIterator<
+    'static,
+    (
+        name!(s_name, Result<Option<String>, pgx::spi::Error>),
+        name!(source_type, Result<Option<String>, pgx::spi::Error>),
+        name!(t_name, Result<Option<String>, pgx::spi::Error>),
+        name!(c_name, Result<Option<String>, pgx::spi::Error>),
+        name!(data_type, Result<Option<String>, pgx::spi::Error>),
+        name!(position, Result<Option<i64>, pgx::spi::Error>),
+        name!(description, Result<Option<String>, pgx::spi::Error>),
+        name!(data_source, Result<Option<String>, pgx::spi::Error>),
+        name!(sensitive, Result<Option<bool>, pgx::spi::Error>),
+        name!(system_object, Result<Option<bool>, pgx::spi::Error>),
+        name!(default_value, Result<Option<String>, pgx::spi::Error>),
+        name!(generated_column, Result<Option<bool>, pgx::spi::Error>)
+    ),
+    >,
+    spi::Error,
+> {
+    #[cfg(any(feature="pg11"))]
     let query = include_str!("sql/function_query/columns-pre-12.sql");
     #[cfg(any(feature = "pg12", feature="pg13", feature="pg14", feature="pg15"))]
     let query = include_str!("sql/function_query/columns-12.sql");
 
-    let mut results = Vec::new();
     Spi::connect(|client| {
-        client
-            .select(query, None, None)
-            .map(|row| (row["s_name"].value(),
-                        row["source_type"].value(),
-                        row["t_name"].value(),
-                        row["c_name"].value(),
-                        row["data_type"].value(),
-                        row["position"].value(),
-                        row["description"].value(),
-                        row["data_source"].value(),
-                        row["sensitive"].value(),
-                        row["system_object"].value(),
-                        row["default_value"].value(),
-                        row["generated_column"].value()
-                        ))
-            .for_each(|tuple| results.push(tuple));
-        Ok(Some(()))
-    });
-    TableIterator::new(results.into_iter())
+        let mut results = Vec::new();
+        let mut tup_table = client.select(query, None, None)?;
+
+        while let Some(row) = tup_table.next() {
+            let s_name = row["s_name"].value::<String>();
+            let source_type = row["source_type"].value::<String>();
+            let t_name = row["t_name"].value::<String>();
+            let c_name = row["c_name"].value::<String>();
+            let data_type = row["data_type"].value::<String>();
+            let position = row["position"].value::<i64>();
+            let description = row["description"].value::<String>();
+            let data_source = row["data_source"].value::<String>();
+            let sensitive = row["sensitive"].value::<bool>();
+            let system_object = row["system_object"].value::<bool>();
+            let default_value = row["default_value"].value::<String>();
+            let generated_column = row["generated_column"].value::<bool>();
+
+            results.push((s_name, source_type, t_name, c_name, data_type,
+                position, description, data_source, sensitive,
+                system_object, default_value, generated_column
+            ));
+        }
+        Ok(TableIterator::new(results.into_iter()))
+    })
 }
 
 
 #[pg_extern]
-fn functions(
-) -> TableIterator<'static, (name!(s_name, Option<String>),
-                                   name!(f_name, Option<String>),
-                                   name!(result_data_types, Option<String>),
-                                   name!(argument_data_types, Option<String>),
-                                   name!(owned_by, Option<String>),
-                                   name!(proc_security, Option<String>),
-                                   name!(access_privileges, Option<String>),
-                                   name!(proc_language, Option<String>),
-                                   name!(source_code, Option<String>),
-                                   name!(description, Option<String>),
-                                   name!(system_object, Option<bool>))>
-{
+fn functions() -> Result<
+TableIterator<
+    'static,
+    (
+        name!(s_name, Result<Option<String>, pgx::spi::Error>),
+        name!(f_name, Result<Option<String>, pgx::spi::Error>),
+        name!(result_data_types, Result<Option<String>, pgx::spi::Error>),
+        name!(argument_data_types, Result<Option<String>, pgx::spi::Error>),
+        name!(owned_by, Result<Option<String>, pgx::spi::Error>),
+        name!(proc_security, Result<Option<String>, pgx::spi::Error>),
+        name!(access_privileges, Result<Option<String>, pgx::spi::Error>),
+        name!(proc_language, Result<Option<String>, pgx::spi::Error>),
+        name!(source_code, Result<Option<String>, pgx::spi::Error>),
+        name!(description, Result<Option<String>, pgx::spi::Error>),
+        name!(system_object, Result<Option<bool>, pgx::spi::Error>)
+    ),
+    >,
+    spi::Error,
+> {
     let query = include_str!("sql/function_query/functions-all.sql");
 
-    let mut results = Vec::new();
     Spi::connect(|client| {
-        client
-            .select(query, None, None)
-            .map(|row| (row["s_name"].value(),
-                        row["f_name"].value(),
-                        row["result_data_types"].value(),
-                        row["argument_data_types"].value(),
-                        row["owned_by"].value(),
-                        row["proc_security"].value(),
-                        row["access_privileges"].value(),
-                        row["proc_language"].value(),
-                        row["source_code"].value(),
-                        row["description"].value(),
-                        row["system_object"].value()
-                        ))
-            .for_each(|tuple| results.push(tuple));
-        Ok(Some(()))
-    });
-    TableIterator::new(results.into_iter())
+        let mut results = Vec::new();
+        let mut tup_table = client.select(query, None, None)?;
+
+        while let Some(row) = tup_table.next() {
+            let s_name = row["s_name"].value::<String>();
+            let f_name = row["f_name"].value::<String>();
+            let result_data_types = row["result_data_types"].value::<String>();
+            let argument_data_types = row["argument_data_types"].value::<String>();
+            let owned_by = row["owned_by"].value::<String>();
+            let proc_security = row["proc_security"].value::<String>();
+            let access_privileges = row["access_privileges"].value::<String>();
+            let proc_language = row["proc_language"].value::<String>();
+            let source_code = row["source_code"].value::<String>();
+            let description = row["description"].value::<String>();
+            let system_object = row["system_object"].value::<bool>();
+
+            results.push((s_name, f_name, result_data_types, argument_data_types,
+                owned_by, proc_security, access_privileges, proc_language,
+                source_code, description, system_object
+            ));
+        }
+        Ok(TableIterator::new(results.into_iter()))
+    })
 }
 
 
-
 #[pg_extern]
-fn tables(
-) -> TableIterator<'static, (name!(s_name, Option<String>),
-                             name!(t_name, Option<String>),
-                             name!(type, Option<String>),
-                             name!(owned_by, Option<String>),
-                             name!(size_pretty, Option<String>),
-                             name!(size_bytes, Option<i64>),
-                             name!(rows, Option<i64>),
-                             name!(bytes_per_row, Option<i64>),
-                             name!(size_plus_indexes_bytes, Option<i64>),
-                             name!(size_plus_indexes, Option<String>),
-                             name!(description, Option<String>),
-                             name!(system_object, Option<bool>),
-                             name!(data_source, Option<String>),
-                             name!(sensitive, Option<bool>),
-                             name!(oid, Option<i64>)
-                             )>
-{
+fn tables() -> Result<
+TableIterator<
+    'static,
+    (
+        name!(s_name, Result<Option<String>, pgx::spi::Error>),
+        name!(t_name, Result<Option<String>, pgx::spi::Error>),
+        name!(data_type, Result<Option<String>, pgx::spi::Error>),
+        name!(owned_by, Result<Option<String>, pgx::spi::Error>),
+        name!(size_pretty, Result<Option<String>, pgx::spi::Error>),
+        name!(size_bytes, Result<Option<i64>, pgx::spi::Error>),
+        name!(rows, Result<Option<i64>, pgx::spi::Error>),
+        name!(bytes_per_row, Result<Option<i64>, pgx::spi::Error>),
+        name!(size_plus_indexes_bytes, Result<Option<i64>, pgx::spi::Error>),
+        name!(size_plus_indexes, Result<Option<String>, pgx::spi::Error>),
+        name!(description, Result<Option<String>, pgx::spi::Error>),
+        name!(system_object, Result<Option<bool>, pgx::spi::Error>),
+        name!(data_source, Result<Option<String>, pgx::spi::Error>),
+        name!(sensitive, Result<Option<bool>, pgx::spi::Error>),
+        name!(oid, Result<Option<pg_sys::Oid>, pgx::spi::Error>)
+),
+    >,
+    spi::Error,
+> {
     let query = include_str!("sql/function_query/tables-all.sql");
 
-    let mut results = Vec::new();
     Spi::connect(|client| {
-        client
-            .select(query, None, None)
-            .map(|row| (row["s_name"].value(),
-                        row["t_name"].value(),
-                        row["type"].value(),
-                        row["owned_by"].value(),
-                        row["size_pretty"].value(),
-                        row["size_bytes"].value(),
-                        row["rows"].value(),
-                        row["bytes_per_row"].value(),
-                        row["size_plus_indexes_bytes"].value(),
-                        row["size_plus_indexes"].value(),
-                        row["description"].value(),
-                        row["system_object"].value(),
-                        row["data_source"].value(),
-                        row["sensitive"].value(),
-                        row["oid"].value()
-                        ))
-            .for_each(|tuple| results.push(tuple));
-        Ok(Some(()))
-    });
-    TableIterator::new(results.into_iter())
+        let mut results = Vec::new();
+        let mut tup_table = client.select(query, None, None)?;
+
+        while let Some(row) = tup_table.next() {
+            let s_name = row["s_name"].value::<String>();
+            let t_name = row["t_name"].value::<String>();
+            let data_type = row["data_type"].value::<String>();
+            let owned_by = row["owned_by"].value::<String>();
+            let size_pretty = row["size_pretty"].value::<String>();
+            let size_bytes = row["size_bytes"].value::<i64>();
+            let rows = row["rows"].value::<i64>();
+            let bytes_per_row = row["bytes_per_row"].value::<i64>();
+            let size_plus_indexes_bytes = row["size_plus_indexes_bytes"].value::<i64>();
+            let size_plus_indexes = row["size_plus_indexes"].value::<String>();
+            let description = row["description"].value::<String>();
+            let system_object = row["system_object"].value::<bool>();
+            let data_source = row["data_source"].value::<String>();
+            let sensitive = row["sensitive"].value::<bool>();
+            let oid = row["oid"].value::<pg_sys::Oid>();
+
+            results.push((s_name, t_name, data_type, owned_by, size_pretty,
+                size_bytes, rows, bytes_per_row, size_plus_indexes_bytes,
+                size_plus_indexes, description, system_object, data_source,
+                sensitive, oid
+            ));
+        }
+        Ok(TableIterator::new(results.into_iter()))
+    })
 }
 
 
-
 #[pg_extern]
-fn views(
-) -> TableIterator<'static, (name!(s_name, Option<String>),
-                             name!(v_name, Option<String>),
-                             name!(view_type, Option<String>),
-                             name!(owned_by, Option<String>),
-                             name!(rows, Option<i64>),
-                             name!(size_pretty, Option<String>),
-                             name!(size_bytes, Option<i64>),
-                             name!(size_plus_indexes, Option<String>),
-                             name!(size_plus_indexes_bytes, Option<i64>),
-                             name!(description, Option<String>),
-                             name!(system_object, Option<bool>),
-                             name!(oid, Option<i64>))>
-{
+fn views() -> Result<
+TableIterator<
+    'static,
+    (
+        name!(s_name, Result<Option<String>, pgx::spi::Error>),
+        name!(v_name, Result<Option<String>, pgx::spi::Error>),
+        name!(view_type, Result<Option<String>, pgx::spi::Error>),
+        name!(owned_by, Result<Option<String>, pgx::spi::Error>),
+        name!(rows, Result<Option<i64>, pgx::spi::Error>),
+        name!(size_pretty, Result<Option<String>, pgx::spi::Error>),
+        name!(size_bytes, Result<Option<i64>, pgx::spi::Error>),
+        name!(size_plus_indexes, Result<Option<String>, pgx::spi::Error>),
+        name!(size_plus_indexes_bytes, Result<Option<i64>, pgx::spi::Error>),
+        name!(description, Result<Option<String>, pgx::spi::Error>),
+        name!(system_object, Result<Option<bool>, pgx::spi::Error>),
+        name!(oid, Result<Option<pg_sys::Oid>, pgx::spi::Error>)),
+    >,
+    spi::Error,
+> {
     let query = include_str!("sql/function_query/views-all.sql");
 
-    let mut results = Vec::new();
     Spi::connect(|client| {
-        client
-            .select(query, None, None)
-            .map(|row| (row["s_name"].value(),
-                        row["v_name"].value(),
-                        row["view_type"].value(),
-                        row["owned_by"].value(),
-                        row["rows"].value(),
-                        row["size_pretty"].value(),
-                        row["size_bytes"].value(),
-                        row["size_plus_indexes"].value(),
-                        row["size_plus_indexes_bytes"].value(),
-                        row["description"].value(),
-                        row["system_object"].value(),
-                        row["oid"].value()
-                        ))
-            .for_each(|tuple| results.push(tuple));
-        Ok(Some(()))
-    });
-    TableIterator::new(results.into_iter())
+        let mut results = Vec::new();
+        let mut tup_table = client.select(query, None, None)?;
+
+        while let Some(row) = tup_table.next() {
+            let s_name = row["s_name"].value::<String>();
+            let v_name = row["v_name"].value::<String>();
+            let view_type = row["view_type"].value::<String>();
+            let owned_by = row["owned_by"].value::<String>();
+            let rows = row["rows"].value::<i64>();
+            let size_pretty = row["size_pretty"].value::<String>();
+            let size_bytes = row["size_bytes"].value::<i64>();
+            let size_plus_indexes = row["size_plus_indexes"].value::<String>();
+            let size_plus_indexes_bytes = row["size_plus_indexes_bytes"].value::<i64>();
+            let description = row["description"].value::<String>();
+            let system_object = row["system_object"].value::<bool>();
+            let oid = row["oid"].value::<pg_sys::Oid>();
+
+            results.push((s_name, v_name, view_type, owned_by, rows, size_pretty,
+                size_bytes, size_plus_indexes, size_plus_indexes_bytes,
+                description, system_object, oid
+            ));
+        }
+        Ok(TableIterator::new(results.into_iter()))
+    })
 }
 
 
 
 #[pg_extern]
-fn partition_parents(
-) -> TableIterator<'static, (name!(oid, Option<i64>),
-                             name!(s_name, Option<String>),
-                             name!(t_name, Option<String>),
-                             name!(partition_type, Option<String>),
-                             name!(partitions, Option<i64>))>
-{
+fn partition_parents() -> Result<
+TableIterator<
+    'static,
+    (
+        name!(oid, Result<Option<pg_sys::Oid>, pgx::spi::Error>),
+        name!(s_name, Result<Option<String>, pgx::spi::Error>),
+        name!(t_name, Result<Option<String>, pgx::spi::Error>),
+        name!(partition_type, Result<Option<String>, pgx::spi::Error>),
+        name!(partitions, Result<Option<i64>, pgx::spi::Error>)),
+    >,
+    spi::Error,
+> {
     let query = include_str!("sql/function_query/partition-parent.sql");
 
-    let mut results = Vec::new();
     Spi::connect(|client| {
-        client
-            .select(query, None, None)
-            .map(|row| (row["oid"].value(),
-                        row["s_name"].value(),
-                        row["t_name"].value(),
-                        row["partition_type"].value(),
-                        row["partitions"].value()
-                        ))
-            .for_each(|tuple| results.push(tuple));
-        Ok(Some(()))
-    });
-    TableIterator::new(results.into_iter())
+        let mut results = Vec::new();
+        let mut tup_table = client.select(query, None, None)?;
+
+        while let Some(row) = tup_table.next() {
+            let oid = row["oid"].value::<pg_sys::Oid>();
+            let s_name = row["s_name"].value::<String>();
+            let t_name = row["t_name"].value::<String>();
+            let partition_type = row["partition_type"].value::<String>();
+            let partitions = row["partitions"].value::<i64>();
+
+            results.push((oid, s_name, t_name, partition_type, partitions
+            ));
+        }
+        Ok(TableIterator::new(results.into_iter()))
+    })
 }
 
 
 #[pg_extern]
-fn partition_children(
-) -> TableIterator<'static, (name!(oid, Option<i64>),
-                             name!(s_name, Option<String>),
-                             name!(t_name, Option<String>),
-                             name!(parent_oid, Option<i64>),
-                             name!(parent_name, Option<String>),
-                             name!(declarative_partition, Option<bool>),
-                             name!(partition_expression, Option<String>))>
-{
+fn partition_children() -> Result<
+TableIterator<
+    'static,
+    (
+        name!(oid, Result<Option<pg_sys::Oid>, pgx::spi::Error>),
+        name!(s_name, Result<Option<String>, pgx::spi::Error>),
+        name!(t_name, Result<Option<String>, pgx::spi::Error>),
+        name!(parent_oid, Result<Option<pg_sys::Oid>, pgx::spi::Error>),
+        name!(parent_name, Result<Option<String>, pgx::spi::Error>),
+        name!(declarative_partition, Result<Option<bool>, pgx::spi::Error>),
+        name!(partition_expression, Result<Option<String>, pgx::spi::Error>)),
+    >,
+    spi::Error,
+> {
     let query = include_str!("sql/function_query/partition-child.sql");
 
-    let mut results = Vec::new();
     Spi::connect(|client| {
-        client
-            .select(query, None, None)
-            .map(|row| (row["oid"].value(),
-                        row["s_name"].value(),
-                        row["t_name"].value(),
-                        row["parent_oid"].value(),
-                        row["parent_name"].value(),
-                        row["declarative_partition"].value(),
-                        row["partition_expression"].value()
-                        ))
-            .for_each(|tuple| results.push(tuple));
-        Ok(Some(()))
-    });
-    TableIterator::new(results.into_iter())
+        let mut results = Vec::new();
+        let mut tup_table = client.select(query, None, None)?;
+
+        while let Some(row) = tup_table.next() {
+            let oid = row["oid"].value::<pg_sys::Oid>();
+            let s_name = row["s_name"].value::<String>();
+            let t_name = row["t_name"].value::<String>();
+            let parent_oid = row["parent_oid"].value::<pg_sys::Oid>();
+            let parent_name = row["parent_name"].value::<String>();
+            let declarative_partition = row["declarative_partition"].value::<bool>();
+            let partition_expression = row["partition_expression"].value::<String>();
+
+            results.push((oid, s_name, t_name, parent_oid, parent_name,
+                declarative_partition, partition_expression
+            ));
+        }
+        Ok(TableIterator::new(results.into_iter()))
+    })
 }
 
 
 #[pg_extern]
-fn database(
-) -> TableIterator<'static, (name!(oid, Option<i64>),
-                             name!(db_name, Option<String>),
-                             name!(db_size, Option<String>),
-                             name!(schema_count, Option<i64>),
-                             name!(table_count, Option<i64>),
-                             name!(size_in_tables, Option<String>),
-                             name!(view_count, Option<i64>),
-                             name!(size_in_views, Option<String>),
-                             name!(extension_count, Option<i64>))>
-{
+fn database() -> Result<
+TableIterator<
+    'static,
+    (
+        name!(oid, Result<Option<pg_sys::Oid>, pgx::spi::Error>),
+        name!(db_name, Result<Option<String>, pgx::spi::Error>),
+        name!(db_size, Result<Option<String>, pgx::spi::Error>),
+        name!(schema_count, Result<Option<i64>, pgx::spi::Error>),
+        name!(table_count, Result<Option<i64>, pgx::spi::Error>),
+        name!(size_in_tables, Result<Option<String>, pgx::spi::Error>),
+        name!(view_count, Result<Option<i64>, pgx::spi::Error>),
+        name!(size_in_views, Result<Option<String>, pgx::spi::Error>),
+        name!(extension_count, Result<Option<i64>, pgx::spi::Error>)),
+    >,
+    spi::Error,
+> {
     let query = include_str!("sql/function_query/database-all.sql");
 
-    let mut results = Vec::new();
     Spi::connect(|client| {
-        client
-            .select(query, None, None)
-            .map(|row| (row["oid"].value(),
-                        row["db_name"].value(),
-                        row["db_size"].value(),
-                        row["schema_count"].value(),
-                        row["table_count"].value(),
-                        row["size_in_tables"].value(),
-                        row["view_count"].value(),
-                        row["size_in_views"].value(),
-                        row["extension_count"].value()
-                        ))
-            .for_each(|tuple| results.push(tuple));
-        Ok(Some(()))
-    });
-    TableIterator::new(results.into_iter())
+        let mut results = Vec::new();
+        let mut tup_table = client.select(query, None, None)?;
+
+        while let Some(row) = tup_table.next() {
+            let oid = row["oid"].value::<pg_sys::Oid>();
+            let db_name = row["db_name"].value::<String>();
+            let db_size = row["db_size"].value::<String>();
+            let schema_count = row["schema_count"].value::<i64>();
+            let table_count = row["table_count"].value::<i64>();
+            let size_in_tables = row["size_in_tables"].value::<String>();
+            let view_count = row["view_count"].value::<i64>();
+            let size_in_views = row["size_in_views"].value::<String>();
+            let extension_count = row["extension_count"].value::<i64>();
+
+            results.push((oid, db_name, db_size, schema_count, table_count,
+                size_in_tables, view_count, size_in_views, extension_count
+            ));
+        }
+        Ok(TableIterator::new(results.into_iter()))
+    })
 }
+
 
 
 #[pg_extern]
@@ -347,26 +415,3 @@ extension_sql_file!("sql/comments_all.sql",
     finalize
 );
 
-
-#[cfg(any(test, feature = "pg_test"))]
-mod tests {
-    use pgx::*;
-
-    #[pg_test]
-    fn test_hello_pgdd_rust() {
-        assert_eq!("Hello, pgdd_rust", crate::hello_pgdd_rust());
-    }
-
-}
-
-#[cfg(test)]
-pub mod pg_test {
-    pub fn setup(_options: Vec<&str>) {
-        // perform one-off initialization when the pg_test framework starts
-    }
-
-    pub fn postgresql_conf_options() -> Vec<&'static str> {
-        // return any postgresql.conf settings that are required for your tests
-        vec![]
-    }
-}
