@@ -22,7 +22,8 @@ extension_sql_file!("sql/load_default_data.sql",
 
 #[pg_extern]
 fn schemas(
-) -> TableIterator<'static, (name!(s_name, Option<String>),
+) -> Result<TableIterator<'static, (
+                             name!(s_name, Option<String>),
                              name!(owner, Option<String>),
                              name!(data_source, Option<String>),
                              name!(sensitive, Option<bool>),
@@ -34,13 +35,14 @@ fn schemas(
                              name!(size_pretty, Option<String>),
                              name!(size_plus_indexes, Option<String>),
                              name!(size_bytes, Option<i64>),
-                             name!(size_plus_indexes_bytes, Option<i64>))> {
+                             name!(size_plus_indexes_bytes, Option<i64>)
+                            ),>, spi::Error,> {
     let query = include_str!("sql/function_query/schemas-all.sql");
     let mut results = Vec::new();
 
     Spi::connect(|client| {
         client
-            .select(query, None, None)
+            .select(query, None, None)?
             .map(|row| (row["s_name"].value(),
                         row["owner"].value(),
                         row["data_source"].value(),
