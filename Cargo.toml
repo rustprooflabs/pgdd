@@ -1,6 +1,6 @@
 [package]
 name = "pgdd"
-version = "0.4.1"
+version = "0.5.0-dev"
 edition = "2018"
 description = "In-database (PostgreSQL) data dictionary providing database introspection via standard SQL query syntax."
 
@@ -17,18 +17,12 @@ pg15 = ["pgx/pg15"]
 pg_test = []
 
 [dependencies]
+pgx = "=0.7.1"
+pgx-macros = "=0.7.1"
 
-#pgx = { git = "https://github.com/zombodb/pgx", branch = "develop" }
-#pgx-macros = { git = "https://github.com/zombodb/pgx", branch = "develop" }
-pgx = "=0.6.0"
-pgx-macros = "=0.6.0"
-
-#pgx-utils = { git = "https://github.com/zombodb/pgx", branch = "develop" }
-pgx-utils = "=0.6.0"
 
 [dev-dependencies]
-#pgx-tests = { git = "https://github.com/zombodb/pgx", branch = "develop" }
-pgx-tests = "=0.6.0"
+pgx-tests = "=0.7.1"
 
 
 [profile.dev]

@@ -6,7 +6,7 @@ SELECT n.nspname::TEXT AS s_name,
             WHEN c.relkind = 's'::"char" THEN 'special'::text
             WHEN c.relkind = 'f'::"char" THEN 'foreign table'::text
             ELSE NULL::text
-        END AS type,
+        END AS data_type,
     pg_get_userbyid(c.relowner)::TEXT AS owned_by,
     pg_size_pretty(pg_table_size(c.oid::regclass))::TEXT AS size_pretty,
     pg_table_size(c.oid::regclass)::BIGINT AS size_bytes,

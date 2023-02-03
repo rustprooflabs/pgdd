@@ -24,7 +24,7 @@ SELECT  n.nspname::TEXT AS s_name,
         FROM pg_catalog.pg_attrdef d
         WHERE d.adrelid = a.attrelid
             AND d.adnum = a.attnum
-            AND a.atthasdef),
+            AND a.atthasdef) AS default_value,
     CASE WHEN a.attgenerated = '' THEN False 
         ELSE True 
         END AS generated_column
