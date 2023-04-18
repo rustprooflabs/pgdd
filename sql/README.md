@@ -1,1 +1,1 @@
-pgx generated SQL files go in this folder.
+pgrx generated SQL files go in this folder.

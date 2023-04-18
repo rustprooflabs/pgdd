@@ -9,20 +9,20 @@ crate-type = ["cdylib"]
 
 [features]
 default = ["pg15"]
-pg11 = ["pgx/pg11"]
-pg12 = ["pgx/pg12"]
-pg13 = ["pgx/pg13"]
-pg14 = ["pgx/pg14"]
-pg15 = ["pgx/pg15"]
+pg11 = ["pgrx/pg11"]
+pg12 = ["pgrx/pg12"]
+pg13 = ["pgrx/pg13"]
+pg14 = ["pgrx/pg14"]
+pg15 = ["pgrx/pg15"]
 pg_test = []
 
 [dependencies]
-pgx = "=0.7.1"
-pgx-macros = "=0.7.1"
+pgrx = "=0.7.4"
+pgrx-macros = "=0.7.4"
 
 
 [dev-dependencies]
-pgx-tests = "=0.7.1"
+pgrx-tests = "=0.7.4"
 
 
 [profile.dev]
