@@ -12,11 +12,11 @@ One way to install `pgdd` is to install from source by cloning this repository.
 
 ### Prereqs
 
-Pgx and its dependencies are the main prereq for PgDD.
+pgrx and its dependencies are the main prereq for PgDD.
 Install Prereqs and ensure PostgreSQL dev tools are installed.
 
-> See the [Cargo PGX](https://github.com/zombodb/pgx/tree/master/cargo-pgx)
-documentation for more information on using pgx.
+> See the [Cargo pgrx](https://github.com/zombodb/pgrx/tree/master/cargo-pgrx)
+documentation for more information on using pgrx.
 
 
 ```bash
@@ -25,18 +25,18 @@ sudo apt install postgresql-server-dev-all libreadline-dev zlib1g-dev curl \
     graphviz
 ```
 
-[Install Rust](https://www.rust-lang.org/tools/install) and Pgx.
+[Install Rust](https://www.rust-lang.org/tools/install) and pgrx.
 
 ```bash
 curl https://sh.rustup.rs -sSf | sh -s -- -y
 source $HOME/.cargo/env
 ```
 
-Install `cargo-pgx` regularly (see dev steps below for non-standard install).
+Install `cargo-pgrx` regularly (see dev steps below for non-standard install).
 
 
 ```bash
-cargo install --locked cargo-pgx
+cargo install --locked cargo-pgrx
 ```
 
 
@@ -47,13 +47,13 @@ cargo install cargo-deb
 ```
 
 
-Initialize pgx.  Need to run this after install AND occasionally to get updates
-to Postgres versions or glibc updates.  Not typically required to follow pgx
+Initialize pgrx.  Need to run this after install AND occasionally to get updates
+to Postgres versions or glibc updates.  Not typically required to follow pgrx
 developments.
 
 
 ```bash
-cargo pgx init
+cargo pgrx init
 ```
 
 
@@ -74,7 +74,7 @@ changes the last two digits of the port!
 
 
 ```bash
-cargo pgx run pg14
+cargo pgrx run pg14
 ```
 
 The output starts with something similar to:
@@ -87,8 +87,8 @@ building extension with features `pg14`
 
 
 ```bash
-     Copying control file to `/home/username/.pgx/14.0/pgx-install/share/postgresql/extension/pgdd.control`
-     Copying shared library to `/home/username/.pgx/14.0/pgx-install/lib/postgresql/pgdd.so`
+     Copying control file to `/home/username/.pgrx/14.0/pgrx-install/share/postgresql/extension/pgdd.control`
+     Copying shared library to `/home/username/.pgrx/14.0/pgrx-install/lib/postgresql/pgdd.so`
     Building SQL generator with features `pg14`
 "cargo" "build" "--bin" "sql-generator" "--features" "pg14" "--no-default-features"
    Compiling pgdd v0.4.0 (/home/username/git/pgdd)
@@ -96,10 +96,10 @@ building extension with features `pg14`
  Discovering SQL entities
   Discovered 9 SQL entities: 0 schemas (0 unique), 6 functions, 0 types, 0 enums, 3 sqls, 0 ords, 0 hashes
 running SQL generator with features `pg14`
-"cargo" "run" "--bin" "sql-generator" "--features" "pg14" "--no-default-features" "--" "--sql" "/home/username/.pgx/14.0/pgx-install/share/postgresql/extension/pgdd--0.4.1-dev.sql"
+"cargo" "run" "--bin" "sql-generator" "--features" "pg14" "--no-default-features" "--" "--sql" "/home/username/.pgrx/14.0/pgrx-install/share/postgresql/extension/pgdd--0.4.1-dev.sql"
     Finished dev [unoptimized + debuginfo] target(s) in 0.06s
-     Running `target/debug/sql-generator --sql /home/username/.pgx/14.0/pgx-install/share/postgresql/extension/pgdd--0.4.1-dev.sql`
-     Copying extension schema file to `/home/username/.pgx/14.0/pgx-install/share/postgresql/extension/pgdd--0.4.1-dev.sql`
+     Running `target/debug/sql-generator --sql /home/username/.pgrx/14.0/pgrx-install/share/postgresql/extension/pgdd--0.4.1-dev.sql`
+     Copying extension schema file to `/home/username/.pgrx/14.0/pgrx-install/share/postgresql/extension/pgdd--0.4.1-dev.sql`
     Finished installing pgdd
     Starting Postgres v14 on port 28814
     Re-using existing database pgdd
@@ -111,13 +111,13 @@ In the test instance of psql, create the extension in database.
 CREATE EXTENSION pgdd;
 ```
 
-> Note: When you see "Re-using existing database pgdd" your previous installed version of `pgdd` will be available. To ensure you are working with the latest version of the `pgdd` extension you must drop/create the extension, quit the psql shell, and re-run the `cargo pgx run` command.
+> Note: When you see "Re-using existing database pgdd" your previous installed version of `pgdd` will be available. To ensure you are working with the latest version of the `pgdd` extension you must drop/create the extension, quit the psql shell, and re-run the `cargo pgrx run` command.
 
 
 ## Build binary packages
 
 Debian/Ubuntu Bionic binaries are available for 0.4.0
-(first [pgx](https://github.com/tcdi/pgx) version)
+(first [pgrx](https://github.com/tcdi/pgrx) version)
 and later.  More distributions will likely have binaries available in the future.
 
 
@@ -134,62 +134,28 @@ During development some versions may be copied to the `./standalone/` directory.
 cp ./target/artifacts/* ./standalone/
 ```
 
-## Pgx Generate graphviz
+## pgrx Generate graphviz
 
 ```bash
-cargo pgx schema -d pgdd.dot
+cargo pgrx schema -d pgdd.dot
 dot -Goverlap=prism -Gspline=ortho -Tjpg pgdd.dot > pgdd.jpg
 ```
 
-![pgx dependencies for pgdd](pgdd.jpg)
+![pgrx dependencies for pgdd](pgdd.jpg)
 
 
 ## Non-standard dev
 
-When working against Pgx installed from a non-tagged branch, install pgx using:
+When working against pgrx installed from a non-tagged branch, install pgrx using:
 
 ```bash
-cargo install --locked --force --git "https://github.com/tcdi/pgx" \
+cargo install --locked --force --git "https://github.com/tcdi/pgrx" \
     --branch "develop" \
-    "cargo-pgx"
-```
-
-Or a beta branch
-
-```bash
-cargo install --locked --force cargo-pgx --version 0.2.0-beta.4
-```
-
-Changes to `Cargo.toml` required in `[lib]` and `[dependencies]` sections.
-
-
-```toml
-[lib]
-# rlib added to build against repo instead of crate (I think)
-crate-type = ["cdylib", "rlib"]
-#crate-type = ["cdylib"]
+    "cargo-pgrx"
 ```
 
 
-```toml
-[dependencies]
-
-pgx = { git = "https://github.com/tcdi/pgx", branch = "oh-no-type-resolution" }
-pgx-macros = { git = "https://github.com/tcdi/pgx", branch = "develop" }
-#pgx = "0.1.21"
-#pgx-macros = "0.1.21"
-
-# Won't be needed in final version (hopefully!)
-pgx-utils = { git = "https://github.com/tcdi/pgx", branch = "develop" }
-
-[dev-dependencies]
-pgx-tests = { git = "https://github.com/tcdi/pgx", branch = "develop" }
-#pgx-tests = "0.1.21"
-```
-
-
-
-The following command can be used to force pgx to overwrite the configs it needs to
+The following command can be used to force pgrx to overwrite the configs it needs to
 for various dev related changes.
 
 Clean things out.
@@ -209,28 +175,28 @@ Force build the schema.
 
 
 ```bash
-cargo pgx schema -f
+cargo pgrx schema -f
 ```
 
 
 ## Non-standard In Docker
 
-If testing this extension against non-standard pgx install, update the
+If testing this extension against non-standard pgrx install, update the
 Dockerfile to install from the specific branch.
 
 Change
 
 ```bash
 RUN /bin/bash rustup.sh -y \
-    && cargo install --locked cargo-pgx
+    && cargo install --locked cargo-pgrx
 ```
 
 To
 
 ```bash
 RUN /bin/bash rustup.sh -y \
-    && cargo install --locked --force --git "https://github.com/tcdi/pgx" \
+    && cargo install --locked --force --git "https://github.com/tcdi/pgrx" \
         --branch "develop" \
-        "cargo-pgx"
+        "cargo-pgrx"
 ```
 

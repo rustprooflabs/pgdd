@@ -4,7 +4,7 @@ The PostgreSQL Data Dictionary (`pgdd`) is an in-database solution to provide
 introspection via standard SQL query syntax. This extension makes it easy to
 provide a usable data dictionary to all users of a PostgreSQL database.
 
-The extension is built on the Rust [pgx framework](https://github.com/zombodb/pgx) as of version 0.4.0.
+The extension is built on the Rust [pgrx framework](https://github.com/tcdi/pgrx) as of version 0.4.0.
 
 
 ## Compatibility
@@ -270,18 +270,18 @@ GRANT dd_readwrite TO <your_login_user>;
 ## Upgrade extension
 
 Version 0.4.0 was a complete rewrite of the PgDD extension from a raw-SQL
-extension to using the [pgx framework](https://github.com/zombodb/pgx).
+extension to using the [pgrx framework](https://github.com/zombodb/pgrx).
 
 
 Upgrading versions currently requires `DROP EXTENSION pgdd; CREATE EXTENSION pgdd;`
 to recreate the extension.
-This is unlikely to change until [pgx #121 is resolved](https://github.com/zombodb/pgx/issues/121).
+This is unlikely to change until [pgrx #121 is resolved](https://github.com/zombodb/pgrx/issues/121).
 
 
 
 If custom attributes were stored in the `dd` tables you will need to use
 `pg_dump` to export the data and reload after recreating the extension
-with pgx.  If any of the three (3) queries below return a count > 0
+with pgrx.  If any of the three (3) queries below return a count > 0
 this applies to you.
 
 
@@ -330,7 +330,7 @@ End user caveats:
 Extension developer caveats:
 
 * DDL changes made in `src/lib.rs` need to be in version-to-version upgrade (e.g. ``sql/pgdd-0.3.1--0.4.0.sql``).  This trick is not being used due to
-[pgx #121](https://github.com/zombodb/pgx/issues/121). The Pgx functionality is exposed
+[pgrx #121](https://github.com/zombodb/pgrx/issues/121). The pgrx functionality is exposed
 via functions, and the functions are the core problem here.
 
 
