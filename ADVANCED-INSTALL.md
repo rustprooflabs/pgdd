@@ -2,20 +2,21 @@
 
 This page covers installing PgDD from source locally, and the Docker build
 method based on [ZomboDB's build system](https://github.com/zombodb/zombodb)
-used to create the binaries.
+used to create the binaries for multiple versions.
 
 
-## Install `pgdd` from source
+## Create Binary installer for your system
 
+The following steps walk through creating a package on a typical
+Ubuntu based system with Postgres 15.
 
-One way to install `pgdd` is to install from source by cloning this repository.
 
 ### Prereqs
 
 pgrx and its dependencies are the main prereq for PgDD.
 Install Prereqs and ensure PostgreSQL dev tools are installed.
 
-> See the [Cargo pgrx](https://github.com/zombodb/pgrx/tree/master/cargo-pgrx)
+> See the [Cargo pgrx](https://github.com/tcdi/pgrx/tree/master/cargo-pgrx)
 documentation for more information on using pgrx.
 
 
@@ -57,7 +58,15 @@ cargo pgrx init
 ```
 
 
-### Clone PgDD repo
+
+The `fpm` step requires the `fpm` Ruby gem.
+
+```bash
+sudo apt install ruby-rubygems
+sudo gem i fpm
+```
+
+Of course, the PgDD project itself is required.
 
 ```bash
 mkdir ~/git
@@ -66,59 +75,36 @@ git clone https://github.com/rustprooflabs/pgdd.git
 cd ~/git/pgdd
 ```
 
-### Test deployment
+### Create package
 
-Specify version, `pg10` through `pg13` are currently supported. This command will
-start a test instance of Postgres on port `28812`.  Using a different version
-changes the last two digits of the port!
+> Timing note:  `cargo pgrx package` takes ~ 2 minutes on my main dev machine.
 
 
 ```bash
-cargo pgrx run pg14
+cargo pgrx package --pg-config /usr/lib/postgresql/15/bin/pg_config
+cd target/release/pgdd-pg15/
+
+find ./ -name "*.so" -exec strip {} \;
+OUTFILE=pgdd.deb
+rm ${OUTFILE} || true
+fpm \
+  -s dir \
+  -t deb -n pgdd \
+  -v 0.5.0 \
+  --deb-no-default-config-files \
+  -p ${OUTFILE} \
+  -a amd64 \
+  .
+
+sudo dpkg -i --force-overwrite ./pgdd.deb
 ```
 
-The output starts with something similar to:
-
-```bash
-building extension with features `pg14`
-"cargo" "build" "--lib" "--features" "pg14" "--no-default-features"
-    Updating crates.io index
-```
 
 
-```bash
-     Copying control file to `/home/username/.pgrx/14.0/pgrx-install/share/postgresql/extension/pgdd.control`
-     Copying shared library to `/home/username/.pgrx/14.0/pgrx-install/lib/postgresql/pgdd.so`
-    Building SQL generator with features `pg14`
-"cargo" "build" "--bin" "sql-generator" "--features" "pg14" "--no-default-features"
-   Compiling pgdd v0.4.0 (/home/username/git/pgdd)
-    Finished dev [unoptimized + debuginfo] target(s) in 13.84s
- Discovering SQL entities
-  Discovered 9 SQL entities: 0 schemas (0 unique), 6 functions, 0 types, 0 enums, 3 sqls, 0 ords, 0 hashes
-running SQL generator with features `pg14`
-"cargo" "run" "--bin" "sql-generator" "--features" "pg14" "--no-default-features" "--" "--sql" "/home/username/.pgrx/14.0/pgrx-install/share/postgresql/extension/pgdd--0.4.1-dev.sql"
-    Finished dev [unoptimized + debuginfo] target(s) in 0.06s
-     Running `target/debug/sql-generator --sql /home/username/.pgrx/14.0/pgrx-install/share/postgresql/extension/pgdd--0.4.1-dev.sql`
-     Copying extension schema file to `/home/username/.pgrx/14.0/pgrx-install/share/postgresql/extension/pgdd--0.4.1-dev.sql`
-    Finished installing pgdd
-    Starting Postgres v14 on port 28814
-    Re-using existing database pgdd
-```
+## Use Docker to build binary packages
 
-In the test instance of psql, create the extension in database.
-
-```bash
-CREATE EXTENSION pgdd;
-```
-
-> Note: When you see "Re-using existing database pgdd" your previous installed version of `pgdd` will be available. To ensure you are working with the latest version of the `pgdd` extension you must drop/create the extension, quit the psql shell, and re-run the `cargo pgrx run` command.
-
-
-## Build binary packages
-
-Debian/Ubuntu Bionic binaries are available for 0.4.0
-(first [pgrx](https://github.com/tcdi/pgrx) version)
-and later.  More distributions will likely have binaries available in the future.
+Ubuntu 22.04 (Jammy) binaries are available for 0.5.0 for Postgres 11
+through Postgres 15.
 
 
 ```bash
@@ -128,11 +114,6 @@ time bash ./build.sh
 
 Tagged versions will be attached to their [releases](https://github.com/rustprooflabs/pgdd/releases).
 
-During development some versions may be copied to the `./standalone/` directory.
-
-```bash
-cp ./target/artifacts/* ./standalone/
-```
 
 ## pgrx Generate graphviz
 

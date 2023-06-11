@@ -1,6 +1,6 @@
 # Borrowed heavily from https://github.com/zombodb/zombodb/blob/master/build/build.sh
 #
-# Copyright 2018-2021 RustProof Labs
+# Copyright 2018-2023 RustProof Labs
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ BASE=$(dirname `pwd`)
 VERSION=$(cat $BASE/pgdd.control | grep default_version | cut -f2 -d\')
 LOGDIR=${BASE}/target/logs
 ARTIFACTDIR=${BASE}/target/artifacts
-PGXVERSION=0.6.0
+PGRXVERSION=0.9.5
 
 PG_VERS=("pg11" "pg12" "pg13" "pg14" "pg15")
 #PG_VERS=("pg15")
@@ -30,7 +30,7 @@ echo $BASE
 echo $VERSION
 echo $LOGDIR
 echo $ARTIFACTDIR
-echo "PGX Version: ${PGXVERSION}"
+echo "PGRX Version: ${PGRXVERSION}"
 
 mkdir -p ${LOGDIR}
 mkdir -p ${ARTIFACTDIR}
@@ -49,7 +49,7 @@ for image in `ls docker/  ` ; do
 
     cd docker/${image}
     echo "  Building Docker image: ${image}"
-    docker build -t ${image} --build-arg PGXVERSION=${PGXVERSION}  . 2>&1 > ${LOGDIR}/${image}-build.log || exit 1
+    docker build -t ${image} --build-arg PGRXVERSION=${PGRXVERSION}  . 2>&1 > ${LOGDIR}/${image}-build.log || exit 1
 
     for PG_VER in ${PG_VERS[@]} ; do
 
