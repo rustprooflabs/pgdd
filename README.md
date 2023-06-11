@@ -9,20 +9,19 @@ The extension is built on the Rust [pgrx framework](https://github.com/tcdi/pgrx
 
 ## Compatibility
 
-PgDD has been tested to work for PostgreSQL 10 through 14.
+PgDD has been tested to work for PostgreSQL 11 through 15.
 
 
 ## Install from binary
 
-Binaries are available for Ubuntu 20.04 (focal) and Ubuntu 21.04 (hirsute).
-See [releases](https://github.com/rustprooflabs/pgdd/releases) for the full list
-of binaries.
+Binaries are available for Ubuntu 22.04 (jammy) for AMD 64 architectures.
+See [releases](https://github.com/rustprooflabs/pgdd/releases) for the full list of binaries.
 
-Download and install for Postgres 14 on Ubuntu 20.04 (focal).
+Download and install for Postgres 15 on Ubuntu 22.04.
 
 ```bash
-wget https://github.com/rustprooflabs/pgdd/releases/download/0.4.0/pgdd_0.4.0_focal_pg14_amd64.deb
-sudo dpkg -i ./pgdd_0.4.0_focal_pg14_amd64.deb
+wget https://github.com/rustprooflabs/pgdd/releases/download/0.5.0/pgdd_0.5.0_focal_pg15_amd64.deb
+sudo dpkg -i ./pgdd_0.5.0_focal_pg15_amd64.deb
 ```
 
 Create the extension in your database.
@@ -48,6 +47,7 @@ SELECT extname, extversion
 │ pgdd    │ 0.4.0      │
 └─────────┴────────────┘
 ```
+
 
 
 ## Use Data Dictionary
@@ -275,7 +275,7 @@ extension to using the [pgrx framework](https://github.com/zombodb/pgrx).
 
 Upgrading versions currently requires `DROP EXTENSION pgdd; CREATE EXTENSION pgdd;`
 to recreate the extension.
-This is unlikely to change until [pgrx #121 is resolved](https://github.com/zombodb/pgrx/issues/121).
+This is unlikely to change until [pgrx #121 is resolved](https://github.com/tcdi/pgrx/issues/121).
 
 
 
