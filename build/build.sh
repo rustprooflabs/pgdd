@@ -36,7 +36,7 @@ mkdir -p ${LOGDIR}
 mkdir -p ${ARTIFACTDIR}
 
 
-for image in `ls docker/  ` ; do
+for image in `ls docker/ ` ; do
 
     OS_DIST=$(echo ${image}|cut -f2 -d-)
     OS_VER=$(echo ${image}|cut -f3 -d-)
