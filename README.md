@@ -21,11 +21,10 @@ Download and install for Postgres 15 on Ubuntu 22.04.
 
 ```bash
 wget https://github.com/rustprooflabs/pgdd/releases/download/0.5.0/pgdd_0.5.0_focal_pg15_amd64.deb
-sudo dpkg -i ./pgdd_0.5.0_focal_pg15_amd64.deb
+sudo dpkg -i ./pgdd_0.5.0_jammy_pg15_amd64.deb
 ```
 
 Create the extension in your database.
-
 
 ```sql
 CREATE EXTENSION pgdd;
@@ -44,7 +43,7 @@ SELECT extname, extversion
 ┌─────────┬────────────┐
 │ extname │ extversion │
 ╞═════════╪════════════╡
-│ pgdd    │ 0.4.0      │
+│ pgdd    │ 0.5.0      │
 └─────────┴────────────┘
 ```
 
