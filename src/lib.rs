@@ -95,7 +95,7 @@ TableIterator<
 > {
     #[cfg(any(feature="pg11"))]
     let query = include_str!("sql/function_query/columns-pre-12.sql");
-    #[cfg(any(feature = "pg12", feature="pg13", feature="pg14", feature="pg15"))]
+    #[cfg(any(feature = "pg12", feature="pg13", feature="pg14", feature="pg15", feature="pg16"))]
     let query = include_str!("sql/function_query/columns-12.sql");
 
     Spi::connect(|client| {
