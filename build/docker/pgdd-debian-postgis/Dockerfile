@@ -27,11 +27,11 @@ RUN apt-get install -y --fix-missing \
         libldap-dev libkrb5-dev gettext tcl-tclreadline tcl-dev libperl-dev \
         libpython3-dev libprotobuf-c-dev libprotobuf-dev gcc \
         ruby ruby-dev rubygems \
-        postgresql-11 postgresql-server-dev-11 \
         postgresql-12 postgresql-server-dev-12 \
         postgresql-13 postgresql-server-dev-13 \
         postgresql-14 postgresql-server-dev-14 \
         postgresql-15 postgresql-server-dev-15 \
+        postgresql-16 postgresql-server-dev-16 \
     && apt autoremove -y
 
 
