@@ -77,3 +77,7 @@ CREATE OR REPLACE VIEW dd.database AS
 SELECT *
     FROM dd.database()
 ;
+
+CREATE OR REPLACE VIEW dd.index AS
+SELECT * FROM dd.index()
+;
