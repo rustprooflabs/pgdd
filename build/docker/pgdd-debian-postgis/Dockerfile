@@ -1,6 +1,6 @@
 # Uses the PostGIS image used by PgOSM Flex. At time of writing
 # it was Debian 11 (bullseye)
-FROM postgis/postgis:15-3.3
+FROM postgis/postgis:16-3.4
 
 LABEL maintainer="PgDD Project - https://github.com/rustprooflabs/pgdd"
 
