@@ -80,4 +80,5 @@ SELECT *
 
 CREATE OR REPLACE VIEW dd.index AS
 SELECT * FROM dd.index()
+    WHERE NOT system_object
 ;

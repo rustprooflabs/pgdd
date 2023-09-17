@@ -417,7 +417,9 @@ TableIterator<
         name!(partial_index, Result<Option<bool>, pgrx::spi::Error>),
         name!(rows_indexed, Result<Option<f32>, pgrx::spi::Error>),
         name!(index_size, Result<Option<String>, pgrx::spi::Error>),
-        name!(index_size_bytes, Result<Option<i64>, pgrx::spi::Error>)),
+        name!(index_size_bytes, Result<Option<i64>, pgrx::spi::Error>),
+        name!(system_object, Result<Option<bool>, pgrx::spi::Error>)
+        ),
     >,
     spi::Error,
 > {
@@ -441,10 +443,12 @@ TableIterator<
             let rows_indexed = row["rows_indexed"].value::<f32>();
             let index_size = row["index_size"].value::<String>();
             let index_size_bytes = row["index_size_bytes"].value::<i64>();
+            let system_object = row["system_object"].value::<bool>();
 
             results.push((oid, s_name, t_name, i_name, key_columns,
                 total_columns, primary_key, unique_index, valid_index,
-                partial_index, rows_indexed, index_size, index_size_bytes
+                partial_index, rows_indexed, index_size, index_size_bytes,
+                system_object
             ));
         }
         Ok(TableIterator::new(results.into_iter()))

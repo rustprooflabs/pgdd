@@ -10,7 +10,13 @@ SELECT c.oid,
         CASE WHEN i.indpred IS NULL THEN False ELSE True END AS partial_index,
         c.reltuples AS rows_indexed,
         pg_size_pretty(pg_total_relation_size(c.oid::regclass)) AS index_size,
-        pg_total_relation_size(c.oid::regclass) AS index_size_bytes
+        pg_total_relation_size(c.oid::regclass) AS index_size_bytes,
+        CASE
+            WHEN n.nspname !~ '^pg_toast'::text
+                    AND (n.nspname <> ALL (ARRAY['pg_catalog'::name, 'information_schema'::name]))
+                THEN false
+            ELSE true
+        END AS system_object
     FROM pg_catalog.pg_index i
     INNER JOIN pg_catalog.pg_class c
         ON c.relkind = 'i' AND i.indexrelid = c.oid
