@@ -68,3 +68,19 @@ COMMENT ON COLUMN dd.database.schema_count IS 'Count of non-system schemas, uses
 COMMENT ON COLUMN dd.database.table_count IS 'Count of non-system tables, uses dd.tables view.';
 COMMENT ON COLUMN dd.database.extension_count IS 'Count of extensions installed in database.';
 
+COMMENT ON VIEW dd.index IS 'Data dictionary view: Details about indexes in current database.';
+COMMENT ON COLUMN dd.index.oid IS 'OID for the index.';
+COMMENT ON COLUMN dd.index.s_name IS 'Name of the schema for the index described.';
+COMMENT ON COLUMN dd.index.t_name IS 'Name of the table for the index described.';
+COMMENT ON COLUMN dd.index.i_name IS 'Name of the index';
+COMMENT ON COLUMN dd.index.key_columns IS 'Number of columns actually indexed.  Does not count INCLUDE columns. Source: pg_catalog.pg_index.indnkeyatts';
+COMMENT ON COLUMN dd.index.total_columns IS 'Total number of columns involved, includes INCLUDE columns.  Source: pg_catalog.pg_index.indnatts';
+COMMENT ON COLUMN dd.index.primary_key IS 'Indicates if index is primary key.  Source: pg_catalog.pg_index.indisprimary';
+COMMENT ON COLUMN dd.index.unique_index IS 'Indicates if index is unique index.  Source: pg_catalog.pg_index.indisunique';
+COMMENT ON COLUMN dd.index.valid_index IS 'Indicates if index is valid.  Source: pg_catalog.pg_index.indisvalid';
+COMMENT ON COLUMN dd.index.partial_index IS 'Indicates if index is partial (filtered) index.  Source: pg_catalog.pg_index.indpred';
+COMMENT ON COLUMN dd.index.rows_indexed IS 'Estimated number of rows included in the index';
+COMMENT ON COLUMN dd.index.index_size IS 'Size of the index formatted for display, reported by pg_size_pretty(pg_total_relation_size()).';
+COMMENT ON COLUMN dd.index.index_size_bytes IS 'Size of the index in bytes reported by pg_total_relation_size().';
+
+

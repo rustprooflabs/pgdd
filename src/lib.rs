@@ -400,6 +400,62 @@ TableIterator<
 }
 
 
+#[pg_extern]
+fn index() -> Result<
+TableIterator<
+    'static,
+    (
+        name!(oid, Result<Option<pg_sys::Oid>, pgrx::spi::Error>),
+        name!(s_name, Result<Option<String>, pgrx::spi::Error>),
+        name!(t_name, Result<Option<String>, pgrx::spi::Error>),
+        name!(i_name, Result<Option<String>, pgrx::spi::Error>),
+        name!(key_columns, Result<Option<i16>, pgrx::spi::Error>),
+        name!(total_columns, Result<Option<i16>, pgrx::spi::Error>),
+        name!(primary_key, Result<Option<bool>, pgrx::spi::Error>),
+        name!(unique_index, Result<Option<bool>, pgrx::spi::Error>),
+        name!(valid_index, Result<Option<bool>, pgrx::spi::Error>),
+        name!(partial_index, Result<Option<bool>, pgrx::spi::Error>),
+        name!(rows_indexed, Result<Option<f32>, pgrx::spi::Error>),
+        name!(index_size, Result<Option<String>, pgrx::spi::Error>),
+        name!(index_size_bytes, Result<Option<i64>, pgrx::spi::Error>),
+        name!(system_object, Result<Option<bool>, pgrx::spi::Error>)
+        ),
+    >,
+    spi::Error,
+> {
+    let query = include_str!("sql/function_query/index-all.sql");
+
+    Spi::connect(|client| {
+        let mut results = Vec::new();
+        let mut tup_table = client.select(query, None, None)?;
+
+        while let Some(row) = tup_table.next() {
+            let oid = row["oid"].value::<pg_sys::Oid>();
+            let s_name = row["s_name"].value::<String>();
+            let t_name = row["t_name"].value::<String>();
+            let i_name = row["i_name"].value::<String>();
+            let key_columns = row["key_columns"].value::<i16>();
+            let total_columns = row["total_columns"].value::<i16>();
+            let primary_key = row["primary_key"].value::<bool>();
+            let unique_index = row["unique_index"].value::<bool>();
+            let valid_index = row["valid_index"].value::<bool>();
+            let partial_index = row["partial_index"].value::<bool>();
+            let rows_indexed = row["rows_indexed"].value::<f32>();
+            let index_size = row["index_size"].value::<String>();
+            let index_size_bytes = row["index_size_bytes"].value::<i64>();
+            let system_object = row["system_object"].value::<bool>();
+
+            results.push((oid, s_name, t_name, i_name, key_columns,
+                total_columns, primary_key, unique_index, valid_index,
+                partial_index, rows_indexed, index_size, index_size_bytes,
+                system_object
+            ));
+        }
+        Ok(TableIterator::new(results.into_iter()))
+    })
+}
+
+
 
 #[pg_extern]
 fn about() -> &'static str {
