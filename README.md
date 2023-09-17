@@ -4,12 +4,12 @@ The PostgreSQL Data Dictionary (`pgdd`) is an in-database solution to provide
 introspection via standard SQL query syntax. This extension makes it easy to
 provide a usable data dictionary to all users of a PostgreSQL database.
 
-The extension is built on the Rust [pgrx framework](https://github.com/tcdi/pgrx) as of version 0.4.0.
+The extension is built on the Rust [pgrx framework](https://github.com/pgcentralfoundation/pgrx).
 
 
 ## Compatibility
 
-PgDD has been tested to work for PostgreSQL 11 through 15.
+PgDD has been tested to work for PostgreSQL 12 through 16.
 
 
 ## Install from binary
@@ -17,11 +17,11 @@ PgDD has been tested to work for PostgreSQL 11 through 15.
 Binaries are available for Ubuntu 22.04 (jammy) for AMD 64 architectures.
 See [releases](https://github.com/rustprooflabs/pgdd/releases) for the full list of binaries.
 
-Download and install for Postgres 15 on Ubuntu 22.04.
+Download and install for Postgres 16 on Ubuntu 22.04.
 
 ```bash
-wget https://github.com/rustprooflabs/pgdd/releases/download/0.5.0/pgdd_0.5.0_focal_pg15_amd64.deb
-sudo dpkg -i ./pgdd_0.5.0_jammy_pg15_amd64.deb
+wget https://github.com/rustprooflabs/pgdd/releases/download/0.5.1/pgdd_0.5.1_focal_pg16_amd64.deb
+sudo dpkg -i ./pgdd_0.5.1_jammy_pg16_amd64.deb
 ```
 
 Create the extension in your database.
