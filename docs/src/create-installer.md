@@ -1,27 +1,47 @@
-# PgDD Docker Build System
+# Create Installer
 
 
 This page covers two methods that can be used to build binary installers
-for PgDD.
+for PgDD. This documents how the pre-built binaries are provided for each versions
+and explains how end users can extend this to their operating systems and
+architectures.
+
 The two methods that can be used to build binaries are the Docker build system
-and manually installing `pgrx` on the target OS and architecture.
-Installers are specific to three (3) details:
+and manually installing and using `pgrx`.
+PgDD's installers are specific to three (3) details:
 
 * CPU Architecture
 * Operating System version
 * Postgres version
 
 
+## Architecture supported
+
+Project maintainers currently only provide pre-built installers for the AMD architecture.
+This matches the hardware easily available.
+
+Pre-built binaries are provided for recent operating systems, typically
+ones in Long Term Support (LTS).
+
+## Operating Systems Supported
+
+Currently building for:
+
+* Ubuntu 23.04
+* Ubuntu 22.04
+* Debian 11 (named PostGIS internally)
+
+
+## Docker Build System
+
 The Docker build method uses OS specific `Dockerfile` to provide one binary
-installer for each supported Postgres version.  This is the best approach
-when the appropriate `Dockerfile` already exists.
+installer for each supported Postgres version.  The CPU architecture it is
+built for matches the hardware building the installer.
+The Docker build system is the best approach to use when the appropriate
+`Dockerfile` already exists.
 
 
-## Use Docker to build binary packages
-
-The Docker build method was originally based on
-[ZomboDB's build system](https://github.com/zombodb/zombodb) and has
-evolved with this project since then.
+> The Docker build method was originally based on [ZomboDB's build system](https://github.com/zombodb/zombodb).
 
 To generate the full suite of binaries change into the `./build` directory
 and run `build.sh`.  This currently creates 15 total binary installers for
@@ -69,6 +89,16 @@ following example.
 for image in `ls docker/ | grep lunar ` ; do
 ```
 
+### Operating Systems supported
+
+
+Pull requests are welcome for new Dockerfiles to add support for additional operating
+systems. These PRs should operate in a similar manner (where possible) to
+existing `Dockerfile` for easiest maintenance. 
+
+ 
+
+----
 
 ## Create Binary Installer w/out Docker
 
