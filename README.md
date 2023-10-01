@@ -14,8 +14,13 @@ PgDD has been tested to work for PostgreSQL 12 through 16.
 
 ## Install from binary
 
-Binaries are available for Ubuntu 22.04 (jammy) for AMD 64 architectures.
-See [releases](https://github.com/rustprooflabs/pgdd/releases) for the full list of binaries.
+Binaries for supported Postgres versions are made available for each release.
+See the individual release from the [releases](https://github.com/rustprooflabs/pgdd/releases)
+page for the full list of binaries.
+This includes binaries for two main LTS supported OS's using the AMD64 architecture.
+The latest Ubuntu LTS (currently Jammy, 22.04) and the "PostGIS" image
+(currently Debian 11).  The PostGIS image is provided to allow inclusion
+in the [PgOSM Flex](https://pgosm-flex.com) project's Docker image. 
 
 Download and install for Postgres 16 on Ubuntu 22.04.
 
@@ -46,6 +51,20 @@ SELECT extname, extversion
 │ pgdd    │ 0.5.0      │
 └─────────┴────────────┘
 ```
+
+
+## Non-LTS OS Support
+
+Interim Ubuntu OS versions, such as 23.04, may have minimal support
+through the inclusion of a `Dockerfile` under
+[`./build/docker/`](https://github.com/rustprooflabs/pgdd/tree/main/build/docker).
+The intent with these is to prepare for potential changes in the upcoming LTS
+version, e.g. 24.04.
+
+Binaries will not be provided for these interim OS's.  To get the binary for
+one of these releases follow the instructions in the
+[Advanced Installation](./ADVANCED-INSTALL.md) section, under
+[the Docker section](ADVANCED-INSTALL.md#use-docker-to-build-binary-packages).
 
 
 
