@@ -103,8 +103,8 @@ sudo dpkg -i --force-overwrite ./pgdd.deb
 
 ## Use Docker to build binary packages
 
-Ubuntu 22.04 (Jammy) binaries are available for 0.5.0 for Postgres 11
-through Postgres 15.
+Ubuntu 22.04 (Jammy) binaries are available for 0.5.1 for Postgres 12
+through Postgres 16.
 
 
 ```bash
@@ -114,6 +114,29 @@ time bash ./build.sh
 
 Tagged versions will be attached to their [releases](https://github.com/rustprooflabs/pgdd/releases).
 
+### Specific Postgres version and OS
+
+The `./build.sh` is setup to loop through all supported Postgres versions and OSs.
+
+The Postgres version behavior can be altered manually by commenting out the line
+with all versions and uncommenting the line with a specific Postgres version:
+
+```bash
+PG_VERS=("pg12" "pg13" "pg14" "pg15" "pg16")
+#PG_VERS=("pg16")
+```
+
+To limit to a single OS change this line:
+
+```bash
+for image in `ls docker/ ` ; do
+```
+
+To `grep <osname>` to limit.
+
+```bash
+for image in `ls docker/ | grep lunar ` ; do
+```
 
 ## pgrx Generate graphviz
 

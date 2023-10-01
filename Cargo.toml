@@ -17,12 +17,12 @@ pg16 = ["pgrx/pg16"]
 pg_test = []
 
 [dependencies]
-pgrx = "=0.10.1"
-pgrx-macros = "=0.10.1"
+pgrx = "=0.10.2"
+pgrx-macros = "=0.10.2"
 
 
 [dev-dependencies]
-pgrx-tests = "=0.10.1"
+pgrx-tests = "=0.10.2"
 
 
 [profile.dev]
