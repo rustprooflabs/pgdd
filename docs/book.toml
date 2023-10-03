@@ -1,0 +1,12 @@
+[book]
+authors = ["Ryan Lambert"]
+language = "en"
+multilingual = false
+src = "src"
+title = "PgDD: Postgres Data Dictionary Extension"
+
+[output.html]
+default-theme = "rust"
+preferred-dark-theme = "navy"
+git-repository-url = "https://github.com/rustprooflabs/pgdd"
+git-repository-icon = "fa-github"
