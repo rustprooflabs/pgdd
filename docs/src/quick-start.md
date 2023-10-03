@@ -28,7 +28,7 @@ CREATE EXTENSION pgdd;
 ## Database overview
 
 ```sql
-SELECT * FROM dd.database();
+SELECT * FROM dd.database;
 ```
 
 

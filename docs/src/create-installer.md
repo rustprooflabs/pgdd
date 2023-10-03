@@ -20,12 +20,11 @@ PgDD's installers are specific to three (3) details:
 Project maintainers currently only provide pre-built installers for the AMD architecture.
 This matches the hardware easily available.
 
-Pre-built binaries are provided for recent operating systems, typically
-ones in Long Term Support (LTS).
 
 ## Operating Systems Supported
 
-Currently building for:
+Pre-built binaries are provided for recent operating systems, typically
+ones in Long Term Support (LTS). Currently building for:
 
 * Ubuntu 23.04
 * Ubuntu 22.04

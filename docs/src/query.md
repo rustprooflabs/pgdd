@@ -1,11 +1,35 @@
 # Query PgDD
 
-
 Connect to your database using your favorite SQL client. This
 could be psql, DBeaver, PgAdmin, or Python code... all you need
 is a place to execute SQL code and see the results.
 
 The main interaction with PgDD is through the views in the `dd` schema.
+
+## Database overview
+
+```sql
+SELECT * FROM dd.database;
+```
+
+
+```bash
+┌─[ RECORD 1 ]────┬───────────┐
+│ oid             │ 2853066   │
+│ db_name         │ pgosm_dev │
+│ db_size         │ 2325 MB   │
+│ schema_count    │ 16        │
+│ table_count     │ 107       │
+│ size_in_tables  │ 2294 MB   │
+│ view_count      │ 27        │
+│ size_in_views   │ 11 MB     │
+│ extension_count │ 8         │
+└─────────────────┴───────────┘
+```
+
+
+
+
 
 The `dd.views` query can be used to query the views within a database.
 
