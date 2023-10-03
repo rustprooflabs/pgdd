@@ -8,7 +8,7 @@ ARG GID=1000
 ARG PGRXVERSION
 
 RUN useradd -m ${USER} --uid=${UID}
-
+RUN mkdir /build && chown ${USER}:${USER} /build
 
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get upgrade -y \
