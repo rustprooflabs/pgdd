@@ -1,6 +1,6 @@
 [package]
 name = "pgdd"
-version = "0.5.1"
+version = "0.5.2"
 edition = "2018"
 description = "In-database (PostgreSQL) data dictionary providing database introspection via standard SQL query syntax."
 
