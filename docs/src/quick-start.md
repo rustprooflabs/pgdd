@@ -11,11 +11,11 @@ The latest Ubuntu LTS (currently Jammy, 22.04) and the "PostGIS" image
 (currently Debian 11).  The PostGIS image is provided to allow inclusion
 in the [PgOSM Flex](https://pgosm-flex.com) project's Docker image. 
 
-Download and install for PgDD 0.5.1 for Postgres 16 on Ubuntu 22.04.
+Download and install for PgDD 0.5.2 for Postgres 16 on Ubuntu 22.04.
 
 ```bash
-wget https://github.com/rustprooflabs/pgdd/releases/download/0.5.1/pgdd_0.5.1_focal_pg16_amd64.deb
-sudo dpkg -i ./pgdd_0.5.1_jammy_pg16_amd64.deb
+wget https://github.com/rustprooflabs/pgdd/releases/download/0.5.2/pgdd_0.5.2_focal_pg16_amd64.deb
+sudo dpkg -i ./pgdd_0.5.2_jammy_pg16_amd64.deb
 ```
 
 Create the extension in your database.
