@@ -1,7 +1,7 @@
-SELECT c.oid::BIGINT,
+SELECT c.oid,
         ns.nspname::TEXT AS s_name,
         c.relname::TEXT AS t_name,
-        i.inhparent::BIGINT AS parent_oid,
+        i.inhparent AS parent_oid,
         i.inhparent::regclass::TEXT AS parent_name,
         c.relispartition::BOOLEAN AS declarative_partition,
         pg_catalog.pg_get_expr(c.relpartbound, c.oid)::TEXT
