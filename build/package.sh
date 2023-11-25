@@ -45,6 +45,10 @@ echo "PgDD Building for:  ${OSNAME}-${VERSION}"
 PG_CONFIG_DIR=$(dirname $(grep ${PG_VER} ~/.pgrx/config.toml | cut -f2 -d= | cut -f2 -d\"))
 export PATH=${PG_CONFIG_DIR}:${PATH}
 
+# Jubilee's suggestion fixed the issue:
+#  https://github.com/pgcentralfoundation/pgrx/issues/1298#issuecomment-1806688762
+export PGRX_BINDGEN_NO_DETECT_INCLUDES=please
+
 echo "   Packaging pgrx"
 cargo pgrx package || exit $?
 
