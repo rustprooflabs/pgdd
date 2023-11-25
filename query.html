@@ -1,0 +1,365 @@
+<!DOCTYPE HTML>
+<html lang="en" class="rust" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Querying PgDD - PgDD: Postgres Data Dictionary Extension</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "rust";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('rust')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="intro.html"><strong aria-hidden="true">1.</strong> What is PgDD?</a></li><li class="chapter-item expanded affix "><li class="part-title">User Guide</li><li class="chapter-item expanded "><a href="quick-start.html"><strong aria-hidden="true">2.</strong> Quick Start</a></li><li class="chapter-item expanded "><a href="query.html" class="active"><strong aria-hidden="true">3.</strong> Querying PgDD</a></li><li class="chapter-item expanded "><a href="permissions.html"><strong aria-hidden="true">4.</strong> Permissions</a></li><li class="chapter-item expanded "><a href="upgrade.html"><strong aria-hidden="true">5.</strong> Upgrade PgDD</a></li><li class="chapter-item expanded affix "><li class="part-title">Advanced</li><li class="chapter-item expanded "><a href="create-installer.html"><strong aria-hidden="true">6.</strong> Create Installer</a></li><li class="chapter-item expanded "><a href="developer.html"><strong aria-hidden="true">7.</strong> Developer Notes</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">PgDD: Postgres Data Dictionary Extension</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/rustprooflabs/pgdd" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="query-pgdd"><a class="header" href="#query-pgdd">Query PgDD</a></h1>
+<p>Connect to your database using your favorite SQL client. This
+could be psql, DBeaver, PgAdmin, or Python code... all you need
+is a place to execute SQL code and see the results.</p>
+<p>The main interaction with PgDD is through the views in the <code>dd</code> schema.</p>
+<h2 id="database-overview"><a class="header" href="#database-overview">Database overview</a></h2>
+<pre><code class="language-sql">SELECT * FROM dd.database;
+</code></pre>
+<pre><code class="language-bash">┌─[ RECORD 1 ]────┬───────────┐
+│ oid             │ 2853066   │
+│ db_name         │ pgosm_dev │
+│ db_size         │ 2325 MB   │
+│ schema_count    │ 16        │
+│ table_count     │ 107       │
+│ size_in_tables  │ 2294 MB   │
+│ view_count      │ 27        │
+│ size_in_views   │ 11 MB     │
+│ extension_count │ 8         │
+└─────────────────┴───────────┘
+</code></pre>
+<p>The <code>dd.views</code> query can be used to query the views within a database.</p>
+<pre><code class="language-sql">SELECT s_name, v_name, description
+    FROM dd.views
+    WHERE s_name = 'dd'
+;
+</code></pre>
+<pre><code class="language-bash">┌────────┬────────────────────┬────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ s_name │       v_name       │                                            description                                             │
+╞════════╪════════════════════╪════════════════════════════════════════════════════════════════════════════════════════════════════╡
+│ dd     │ tables             │ Data dictionary view: Lists tables, excluding system tables.                                       │
+│ dd     │ schemas            │ Data dictionary view: Lists schemas, excluding system schemas.                                     │
+│ dd     │ views              │ Data dictionary view: Lists views, excluding system views.                                         │
+│ dd     │ columns            │ Data dictionary view: Lists columns, excluding system columns.                                     │
+│ dd     │ functions          │ Data dictionary view: Lists functions, excluding system functions.                                 │
+│ dd     │ partition_parents  │ Data dictionary view: Lists parent partition tables with aggregate details about child partitions. │
+│ dd     │ partition_children │ Data dictionary view: Lists individual partitions (children) of partitioned tables.                │
+│ dd     │ database           │ Data dictionary view: Provides basic statistics for the current database.                          │
+└────────┴────────────────────┴────────────────────────────────────────────────────────────────────────────────────────────────────┘
+</code></pre>
+<blockquote>
+<p>PgDD views wrap around functions with the same name and enforce <code>WHERE NOT system_object</code>. Query the functions to include <code>system_object</code> results.  e.g. <code>SELECT s_name, v_name FROM dd.views() WHERE system_object;</code></p>
+</blockquote>
+<h3 id="schema"><a class="header" href="#schema">Schema</a></h3>
+<p>The highest level of querying provided by <code>pgdd</code> is at the schema level.
+This provides counts of tables, views and functions along with the size on disk of the objects within the schema.</p>
+<pre><code class="language-sql">SELECT s_name, table_count, view_count, function_count,
+        size_plus_indexes, description
+    FROM dd.schemas
+    WHERE s_name = 'dd';
+</code></pre>
+<p>Yields results such as this.</p>
+<pre><code class="language-bash">┌─[ RECORD 1 ]──────┬────────────────────────────────────────────────────────────────────────────────┐
+│ s_name            │ dd                                                                             │
+│ table_count       │ 3                                                                              │
+│ view_count        │ 5                                                                              │
+│ function_count    │ 6                                                                              │
+│ size_plus_indexes │ 144 kB                                                                         │
+│ description       │ Schema for Data Dictionary objects.  See https://github.com/rustprooflabs/pgdd │
+└───────────────────┴────────────────────────────────────────────────────────────────────────────────┘
+</code></pre>
+<h3 id="tables"><a class="header" href="#tables">Tables</a></h3>
+<p>The <code>dd.tables</code> view to examine tables created and populated by <code>pgbench</code>.</p>
+<pre><code class="language-sql">SELECT t_name, size_pretty, rows, bytes_per_row
+    FROM dd.tables
+    WHERE s_name = 'public'
+        AND t_name LIKE 'pgbench%'
+    ORDER BY size_bytes DESC;
+</code></pre>
+<pre><code class="language-bash">┌──────────────────┬─────────────┬──────────┬───────────────┐
+│      t_name      │ size_pretty │   rows   │ bytes_per_row │
+╞══════════════════╪═════════════╪══════════╪═══════════════╡
+│ pgbench_accounts │ 1281 MB     │ 10000000 │           134 │
+│ pgbench_tellers  │ 80 kB       │     1000 │            82 │
+│ pgbench_branches │ 40 kB       │      100 │           410 │
+│ pgbench_history  │ 0 bytes     │        0 │             ¤ │
+└──────────────────┴─────────────┴──────────┴───────────────┘
+</code></pre>
+<h3 id="columns"><a class="header" href="#columns">Columns</a></h3>
+<pre><code class="language-sql">SELECT source_type, s_name, t_name, c_name, data_type
+    FROM dd.columns
+    WHERE data_type LIKE 'int%'
+;
+</code></pre>
+<pre><code>┌─────────────┬────────┬─────────────┬────────────────┬───────────┐
+│ source_type │ s_name │   t_name    │     c_name     │ data_type │
+╞═════════════╪════════╪═════════════╪════════════════╪═══════════╡
+│ table       │ dd     │ meta_schema │ meta_schema_id │ int8      │
+│ table       │ dd     │ meta_table  │ meta_table_id  │ int8      │
+│ table       │ dd     │ meta_column │ meta_column_id │ int8      │
+│ view        │ dd     │ schemas     │ table_count    │ int8      │
+│ view        │ dd     │ schemas     │ view_count     │ int8      │
+│ view        │ dd     │ schemas     │ function_count │ int8      │
+│ view        │ dd     │ schemas     │ size_bytes     │ int8      │
+│ view        │ dd     │ tables      │ size_bytes     │ int8      │
+│ view        │ dd     │ tables      │ rows           │ int8      │
+│ view        │ dd     │ tables      │ bytes_per_row  │ int8      │
+│ view        │ dd     │ views       │ rows           │ int8      │
+│ view        │ dd     │ views       │ size_bytes     │ int8      │
+│ view        │ dd     │ columns     │ position       │ int8      │
+└─────────────┴────────┴─────────────┴────────────────┴───────────┘
+</code></pre>
+<h3 id="functions"><a class="header" href="#functions">Functions</a></h3>
+<pre><code class="language-sql">SELECT s_name, f_name, argument_data_types, result_data_types
+    FROM dd.functions
+;
+</code></pre>
+<h3 id="partitioned-tables"><a class="header" href="#partitioned-tables">Partitioned tables</a></h3>
+<p>There are two views, <code>dd.partition_parents</code> and <code>dd.partition_children</code> to provide
+partition-focused details.  Will display partitions for both
+declarative partitions and inheritance based partitions</p>
+<p>With the test data in this project for declarative partitions.</p>
+<pre><code class="language-sql">SELECT *
+    FROM dd.partition_parents
+    WHERE s_name = 'pgdd_test'
+;
+</code></pre>
+<pre><code>┌───────┬───────────┬────────┬────────────────┬────────────┬────────────┬─────────────┬────────────────────┬──────┬────────────────────┬───────────────────────────┬────────────────────┐
+│  oid  │  s_name   │ t_name │ partition_type │ partitions │ size_bytes │ size_pretty │ size_per_partition │ rows │ rows_per_partition │ partitions_never_analyzed │ partitions_no_data │
+╞═══════╪═══════════╪════════╪════════════════╪════════════╪════════════╪═════════════╪════════════════════╪══════╪════════════════════╪═══════════════════════════╪════════════════════╡
+│ 25090 │ pgdd_test │ parent │ declarative    │          3 │      40960 │ 40 kB       │ 13 kB              │   15 │                  5 │                         0 │                  1 │
+└───────┴───────────┴────────┴────────────────┴────────────┴────────────┴─────────────┴────────────────────┴──────┴────────────────────┴───────────────────────────┴────────────────────┘
+</code></pre>
+<p>Details for each child partition, including calculated percentages of the single
+partition against the totals for the parent partition.</p>
+<pre><code class="language-sql">SELECT *
+    FROM dd.partition_children
+    WHERE s_name = 'pgdd_test'
+;
+</code></pre>
+<pre><code>┌───────┬───────────┬─────────────┬────────────┬──────────────────┬──────┬────────────┬─────────────┬───────────────────┬───────────────┬───────────────────────────┬────────────────────────────┐
+│  oid  │  s_name   │   t_name    │ parent_oid │   parent_name    │ rows │ size_bytes │ size_pretty │ size_plus_indexes │ bytes_per_row │ percent_of_partition_rows │ percent_of_partition_bytes │
+╞═══════╪═══════════╪═════════════╪════════════╪══════════════════╪══════╪════════════╪═════════════╪═══════════════════╪═══════════════╪═══════════════════════════╪════════════════════════════╡
+│ 25095 │ pgdd_test │ child_0_10  │      25090 │ pgdd_test.parent │    9 │      16384 │ 16 kB       │ 32 kB             │          1820 │                    0.6000 │                     0.4000 │
+│ 25109 │ pgdd_test │ child_20_30 │      25090 │ pgdd_test.parent │    0 │       8192 │ 8192 bytes  │ 16 kB             │             ¤ │                    0.0000 │                     0.2000 │
+│ 25102 │ pgdd_test │ child_10_20 │      25090 │ pgdd_test.parent │    6 │      16384 │ 16 kB       │ 32 kB             │          2731 │                    0.4000 │                     0.4000 │
+└───────┴───────────┴─────────────┴────────────┴──────────────────┴──────┴────────────┴─────────────┴───────────────────┴───────────────┴───────────────────────────┴────────────────────────────┘
+</code></pre>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="quick-start.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="permissions.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="quick-start.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="permissions.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>
