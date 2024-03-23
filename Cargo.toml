@@ -1,7 +1,7 @@
 [package]
 name = "pgdd"
 version = "0.5.3-dev.0"
-edition = "2018"
+edition = "2021"
 description = "In-database (PostgreSQL) data dictionary providing database introspection via standard SQL query syntax."
 
 [lib]
@@ -18,7 +18,7 @@ pg_test = []
 
 [dependencies]
 pgrx = "=0.12.0-alpha.1"
-pgrx-macros = "=0.12.0-alpha.1"
+#pgrx-macros = "=0.12.0-alpha.1"
 
 
 [dev-dependencies]
