@@ -14,7 +14,7 @@ in the [PgOSM Flex](https://pgosm-flex.com) project's Docker image.
 Download and install for PgDD 0.5.2 for Postgres 16 on Ubuntu 22.04.
 
 ```bash
-wget https://github.com/rustprooflabs/pgdd/releases/download/0.5.2/pgdd_0.5.2_focal_pg16_amd64.deb
+wget https://github.com/rustprooflabs/pgdd/releases/download/0.5.2/pgdd_0.5.2_jammy_pg16_amd64.deb
 sudo dpkg -i ./pgdd_0.5.2_jammy_pg16_amd64.deb
 ```
 
