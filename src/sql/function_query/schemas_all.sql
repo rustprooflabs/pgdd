@@ -1,3 +1,4 @@
+CREATE VIEW dd.schemas_all AS
 WITH s AS (
      SELECT n.oid,
         n.nspname AS s_name,
@@ -47,4 +48,15 @@ SELECT s.s_name::TEXT,
     GROUP BY s.s_name, s.owner, s.data_source, s.sensitive,
         s.description, s.system_object, v.view_count,
         f.function_count
-    ;
+;
+
+
+CREATE OR REPLACE VIEW dd.schemas AS
+SELECT * FROM dd.schemas_all
+    WHERE NOT system_object
+;
+
+
+
+COMMENT ON VIEW dd.schemas_all IS 'Data dictionary view: Lists all schemas, including system schemas';
+COMMENT ON VIEW dd.schemas IS 'Data dictionary view: Lists schemas, excluding system schemas.';

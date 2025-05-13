@@ -1,3 +1,4 @@
+CREATE VIEW dd.index_all AS
 SELECT c.oid,
         n.nspname::TEXT AS s_name,
         t.relname::TEXT AS t_name,
@@ -23,4 +24,10 @@ SELECT c.oid,
     INNER JOIN pg_catalog.pg_class t ON i.indrelid = t.oid
     INNER JOIN pg_catalog.pg_namespace t_n ON t_n.oid = t.relnamespace
     INNER JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
+;
+
+
+CREATE OR REPLACE VIEW dd.index AS
+SELECT * FROM dd.index_all
+    WHERE NOT system_object
 ;

@@ -1,3 +1,4 @@
+CREATE VIEW dd.partition_child_all AS
 SELECT c.oid,
         ns.nspname::TEXT AS s_name,
         c.relname::TEXT AS t_name,

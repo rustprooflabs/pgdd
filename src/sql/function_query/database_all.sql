@@ -1,3 +1,4 @@
+CREATE VIEW dd.database AS
 WITH db_stats AS (
 SELECT d.oid, d.datname AS db_name,
         pg_size_pretty(pg_database_size(d.datname)) AS db_size
@@ -31,3 +32,5 @@ SELECT d.oid, d.db_name::TEXT, d.db_size,
     INNER JOIN view_stats v ON True
     INNER JOIN extension_stats e ON True
 ;
+
+

@@ -1,3 +1,4 @@
+CREATE VIEW dd.views_all AS
 SELECT n.nspname::TEXT AS s_name,
     c.relname::TEXT AS v_name,
         CASE c.relkind
@@ -22,3 +23,11 @@ SELECT n.nspname::TEXT AS s_name,
      LEFT JOIN pg_namespace n ON n.oid = c.relnamespace
   WHERE (c.relkind = ANY (ARRAY['v'::"char", 'm'::"char"]))
 ;
+
+
+CREATE OR REPLACE VIEW dd.views AS
+SELECT * FROM dd.views_all
+    WHERE NOT system_object
+;
+
+

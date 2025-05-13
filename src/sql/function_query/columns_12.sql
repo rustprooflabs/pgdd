@@ -1,4 +1,4 @@
--- Adds generated column details for Pg12+
+CREATE VIEW dd.columns_all AS
 SELECT  n.nspname::TEXT AS s_name,
         CASE c.relkind
             WHEN 'r'::"char" THEN 'table'::text
@@ -34,4 +34,11 @@ SELECT  n.nspname::TEXT AS s_name,
      JOIN pg_type t ON a.atttypid = t.oid
      LEFT JOIN dd.meta_column mc ON n.nspname = mc.s_name AND c.relname = mc.t_name AND a.attname = mc.c_name
   WHERE a.attnum > 0 AND (c.relkind = ANY (ARRAY['r'::"char", 'p'::"char", 's'::"char", 'v'::"char", 'f'::"char", 'm'::"char"]))
+;
+
+
+
+CREATE OR REPLACE VIEW dd.columns AS
+SELECT * FROM dd.columns_all
+    WHERE NOT system_object
 ;

@@ -1,28 +1,28 @@
 [package]
 name = "pgdd"
-version = "0.5.2"
-edition = "2018"
+version = "0.6.0-dev.0"
+edition = "2021"
 description = "In-database (PostgreSQL) data dictionary providing database introspection via standard SQL query syntax."
 
 [lib]
-crate-type = ["cdylib"]
+crate-type = ["cdylib", "lib"]
 
 [features]
-default = ["pg16"]
-pg12 = ["pgrx/pg12"]
+default = ["pg17"]
 pg13 = ["pgrx/pg13"]
 pg14 = ["pgrx/pg14"]
 pg15 = ["pgrx/pg15"]
 pg16 = ["pgrx/pg16"]
+pg17 = ["pgrx/pg17"]
 pg_test = []
 
 [dependencies]
-pgrx = "=0.10.2"
-pgrx-macros = "=0.10.2"
+pgrx = "0.14.1"
+pgrx-macros = "=0.14.1"
 
 
 [dev-dependencies]
-pgrx-tests = "=0.10.2"
+pgrx-tests = "0.14.1"
 
 
 [profile.dev]

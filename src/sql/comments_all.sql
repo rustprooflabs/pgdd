@@ -23,7 +23,6 @@ COMMENT ON COLUMN dd.meta_table.sensitive IS 'Manually updated indicator. Does t
 COMMENT ON COLUMN dd.meta_column.sensitive IS 'Manually updated indicator. Does the column contain store sensitive data?';
 
 
-COMMENT ON VIEW dd.schemas IS 'Data dictionary view: Lists schemas, excluding system schemas.';
 COMMENT ON VIEW dd.tables IS 'Data dictionary view: Lists tables, excluding system tables.';
 COMMENT ON VIEW dd.views IS 'Data dictionary view: Lists views, excluding system views.';
 COMMENT ON VIEW dd.columns IS 'Data dictionary view: Lists columns, excluding system columns.';
@@ -31,14 +30,12 @@ COMMENT ON VIEW dd.functions IS 'Data dictionary view: Lists functions, excludin
 
 COMMENT ON FUNCTION dd.about IS 'Basic details about PgDD extension';
 
-COMMENT ON FUNCTION dd.schemas IS 'Data dictionary function: Lists all schemas';
-COMMENT ON FUNCTION dd.tables IS 'Data dictionary function: Lists all tables';
-COMMENT ON FUNCTION dd.views IS 'Data dictionary function: Lists all views.';
-COMMENT ON FUNCTION dd.columns IS 'Data dictionary function: Lists all columns';
-COMMENT ON FUNCTION dd.functions IS 'Data dictionary function: Lists all functions';
-COMMENT ON FUNCTION dd.partition_parents IS 'Data dictionary function: Lists parent partition tables. Column partition_type indicates declarative vs inheritance based partitioning.';
-COMMENT ON FUNCTION dd.partition_children IS 'Data dictionary function: Lists partition child tables.';
-COMMENT ON FUNCTION dd.database IS 'Data dictionary function: Provides basic statistics for the current database. Limited to current database via current_database() function.';
+COMMENT ON VIEW dd.tables_all IS 'Data dictionary view: Lists all tables';
+COMMENT ON VIEW dd.views_all IS 'Data dictionary view: Lists all views.';
+COMMENT ON VIEW dd.columns_all IS 'Data dictionary view: Lists all columns';
+COMMENT ON VIEW dd.functions_all IS 'Data dictionary view: Lists all functions';
+COMMENT ON VIEW dd.partition_parents_all IS 'Data dictionary view: Lists parent partition tables. Column partition_type indicates declarative vs inheritance based partitioning.';
+COMMENT ON VIEW dd.partition_child_all IS 'Data dictionary view: Lists partition child tables.';
 
 COMMENT ON VIEW dd.partition_parents IS 'Data dictionary view: Lists parent partition tables with aggregate details about child partitions.';
 COMMENT ON COLUMN dd.partition_parents.partition_type IS 'Options declarative and inheritance. Declarative determined by record existing in pg_catalog.pg_partitioned_table. Inheritance based on pg_class.relkind.';

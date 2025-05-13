@@ -68,7 +68,7 @@ with all versions and uncommenting the line with a specific Postgres version.
 The two lines in the script are shown below.
 
 ```bash
-PG_VERS=("pg12" "pg13" "pg14" "pg15" "pg16")
+PG_VERS=("pg13" "pg14" "pg15" "pg16" "pg17")
 #PG_VERS=("pg16")
 ```
 
