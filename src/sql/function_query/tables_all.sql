@@ -1,4 +1,4 @@
--- dd."tables" source
+CREATE VIEW dd.tables_all AS
 SELECT n.nspname::TEXT AS s_name,
     c.relname::TEXT AS t_name,
         CASE
@@ -32,3 +32,13 @@ SELECT n.nspname::TEXT AS s_name,
      LEFT JOIN dd.meta_table mt ON n.nspname = mt.s_name AND c.relname = mt.t_name
   WHERE c.relkind = ANY (ARRAY['r'::"char", 'p'::"char", 's'::"char", 'f'::"char"])
 ;
+
+
+
+
+CREATE OR REPLACE VIEW dd.tables AS
+SELECT * FROM dd.tables_all
+    WHERE NOT system_object
+;
+
+

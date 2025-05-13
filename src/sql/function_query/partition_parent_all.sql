@@ -3,6 +3,7 @@
 -- Inheritance includes partitions like Timescale hypertables,
 --    but probably includes objects that are not partitions such as
 --    https://www.postgresql.org/docs/current/tutorial-inheritance.html
+CREATE VIEW dd.partition_parents_all AS
 WITH partition_parent AS (
 SELECT c.oid,
         n.nspname::TEXT AS s_name,
@@ -22,3 +23,4 @@ SELECT c.oid,
 SELECT *
     FROM partition_parent
 ;
+

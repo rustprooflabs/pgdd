@@ -1,28 +1,9 @@
-CREATE OR REPLACE VIEW dd.schemas AS
-SELECT * FROM dd.schemas()
-    WHERE NOT system_object
-;
+/*
+    Both final partition views have cross dependencies on their _all views.
+    Putting both in this script to make those dependencies clear.
 
-CREATE OR REPLACE VIEW dd.tables AS
-SELECT * FROM dd.tables()
-    WHERE NOT system_object
-;
-
-CREATE OR REPLACE VIEW dd.views AS
-SELECT * FROM dd.views()
-    WHERE NOT system_object
-;
-
-CREATE OR REPLACE VIEW dd.columns AS
-SELECT * FROM dd.columns()
-    WHERE NOT system_object
-;
-
-CREATE OR REPLACE VIEW dd.functions AS
-SELECT * FROM dd.functions()
-    WHERE NOT system_object
-;
-
+    Could probably be refactored, but not a high priority.
+*/
 
 CREATE OR REPLACE VIEW dd.partition_parents AS
 WITH partition_details AS (
@@ -34,9 +15,9 @@ SELECT p.oid, p.s_name, p.t_name, p.partition_type, p.partitions,
         SUM(CASE WHEN t.rows = -1 THEN NULL ELSE t.rows END) AS rows,
         COUNT(*) FILTER (WHERE t.rows = -1) AS partitions_never_analyzed,
         COUNT(*) FILTER (WHERE t.rows = 0) AS partitions_no_data
-    FROM dd.partition_parents() p
-    LEFT JOIN dd.partition_children() c ON p.oid = c.parent_oid
-    LEFT JOIN dd.tables() t ON c.oid = t.oid
+    FROM dd.partition_parents_all p
+    LEFT JOIN dd.partition_child_all c ON p.oid = c.parent_oid
+    LEFT JOIN dd.tables_all t ON c.oid = t.oid
     GROUP BY p.oid, p.s_name, p.t_name, p.partition_type, p.partitions
 )
 SELECT oid, s_name, t_name, partition_type, partitions,
@@ -67,18 +48,7 @@ SELECT pc.oid, pc.s_name, pc.t_name, pc.parent_oid, pc.parent_name,
             THEN ROUND(t.size_bytes * 1.0 / pp.size_bytes, 4)
             ELSE NULL
             END AS percent_of_partition_bytes
-    FROM dd.partition_children() pc
+    FROM dd.partition_child_all pc
     INNER JOIN dd.partition_parents pp ON pc.parent_oid = pp.oid
-    INNER JOIN dd.tables() t ON pc.oid = t.oid
-;
-
-
-CREATE OR REPLACE VIEW dd.database AS
-SELECT *
-    FROM dd.database()
-;
-
-CREATE OR REPLACE VIEW dd.index AS
-SELECT * FROM dd.index()
-    WHERE NOT system_object
+    INNER JOIN dd.tables_all t ON pc.oid = t.oid
 ;

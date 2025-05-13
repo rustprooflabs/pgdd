@@ -1,3 +1,4 @@
+CREATE VIEW dd.functions_all AS
 SELECT n.nspname::TEXT AS s_name,
         p.proname::TEXT AS f_name,
         pg_get_function_result(p.oid)::TEXT AS result_data_types,
@@ -17,4 +18,12 @@ SELECT n.nspname::TEXT AS s_name,
         END AS system_object
    FROM pg_proc p
      LEFT JOIN pg_namespace n ON n.oid = p.pronamespace
-     LEFT JOIN pg_language l ON l.oid = p.prolang;
+     LEFT JOIN pg_language l ON l.oid = p.prolang
+;
+
+
+CREATE OR REPLACE VIEW dd.functions AS
+SELECT * FROM dd.functions_all
+    WHERE NOT system_object
+;
+
