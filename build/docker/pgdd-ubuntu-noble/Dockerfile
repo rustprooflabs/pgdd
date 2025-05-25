@@ -1,6 +1,6 @@
 # Ubuntu Lunar is an intermediate release of Ubuntu, not an LTS version.
 # Non-LTS veresion are minimally supported until the next LTS version is released.
-FROM ubuntu:lunar
+FROM ubuntu:noble
 
 LABEL maintainer="PgDD Project - https://github.com/rustprooflabs/pgdd"
 
@@ -28,11 +28,11 @@ RUN apt-get install -y --fix-missing \
         libldap-dev libkrb5-dev gettext tcl-tclreadline tcl-dev libperl-dev \
         libpython3-dev libprotobuf-c-dev libprotobuf-dev gcc \
         ruby ruby-dev rubygems \
-        postgresql-12 postgresql-server-dev-12 \
         postgresql-13 postgresql-server-dev-13 \
         postgresql-14 postgresql-server-dev-14 \
         postgresql-15 postgresql-server-dev-15 \
         postgresql-16 postgresql-server-dev-16 \
+        postgresql-17 postgresql-server-dev-17 \
     && apt autoremove -y
 
 

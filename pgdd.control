@@ -1,5 +1,5 @@
 comment = 'An in-database data dictionary providing database introspection via standard SQL query syntax.  Developed using pgx (https://github.com/pgcentralfoundation/pgrx).'
-default_version = '0.6.0-dev.0'
+default_version = '0.6.0'
 module_pathname = '$libdir/pgdd'
 relocatable = false
 schema = dd

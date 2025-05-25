@@ -23,8 +23,8 @@ LOGDIR=${BASE}/target/logs
 ARTIFACTDIR=${BASE}/target/artifacts
 PGRXVERSION=0.14.1
 
-#PG_VERS=("pg13" "pg14" "pg15" "pg16" "pg17")
-PG_VERS=("pg17")
+PG_VERS=("pg13" "pg14" "pg15" "pg16" "pg17")
+#PG_VERS=("pg17")
 
 echo $BASE
 echo $VERSION
@@ -36,7 +36,7 @@ mkdir -p ${LOGDIR}
 mkdir -p ${ARTIFACTDIR}
 
 
-for image in `ls docker/ | grep jammy ` ; do
+for image in `ls docker/  ` ; do
 
     OS_DIST=$(echo ${image}|cut -f2 -d-)
     OS_VER=$(echo ${image}|cut -f3 -d-)

@@ -3,5 +3,5 @@
 **/*.rs.bk
 Cargo.lock
 sql/*.generated.sql
-extension.dot
-extension.jpg
+pgdd.dot
+build/pgdd-binaries.tar.gz

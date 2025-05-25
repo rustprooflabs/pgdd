@@ -73,7 +73,7 @@ PG_VERS=("pg13" "pg14" "pg15" "pg16" "pg17")
 ```
 
 
-To only build for Postgres on a single OS, add a `grep <osname` command to the
+To only build for Postgres on a single OS, add a `grep <osname>` command to the
 loop logic.  The original file that runs for all OSs with Dockerfiles looks like
 the following line.
 
@@ -201,7 +201,7 @@ sudo dpkg -i --force-overwrite ./pgdd.deb
 
 ```bash
 cargo pgrx schema -d pgdd.dot
-dot -Goverlap=prism -Gspline=ortho -Tjpg pgdd.dot > pgdd.jpg
+dot -Goverlap=prism -Gspline=ortho -Tjpg pgdd.dot > docs/src/pgdd.jpg
 ```
 
 ![pgrx dependencies for pgdd](pgdd.jpg)
