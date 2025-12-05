@@ -18,8 +18,8 @@ extension_sql_file!("sql/load_default_data.sql",
 );
 
 
-// Using a feature flag to enable for all current version as a reminder to self we can do this.
-#[cfg(any(feature="pg13", feature="pg14", feature="pg15", feature="pg16", feature="pg17"))]
+// Example of feature flag to enable specific versions as a reminder to self we can do this.
+//#[cfg(any(feature="pg14", feature="pg15", feature="pg16", feature="pg17", feature="pg18"))]
 extension_sql_file!("sql/function_query/columns_12.sql",
     requires = ["create_extension_tables_all"]
 );

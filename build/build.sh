@@ -21,10 +21,10 @@ BASE=$(dirname `pwd`)
 VERSION=$(cat $BASE/pgdd.control | grep default_version | cut -f2 -d\')
 LOGDIR=${BASE}/target/logs
 ARTIFACTDIR=${BASE}/target/artifacts
-PGRXVERSION=0.14.1
+PGRXVERSION=0.16.1
 
-PG_VERS=("pg13" "pg14" "pg15" "pg16" "pg17")
-#PG_VERS=("pg17")
+PG_VERS=("pg14" "pg15" "pg16" "pg17" "pg18")
+#PG_VERS=("pg18")
 
 echo $BASE
 echo $VERSION
