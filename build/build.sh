@@ -24,7 +24,7 @@ ARTIFACTDIR=${BASE}/target/artifacts
 PGRXVERSION=0.16.1
 
 PG_VERS=("pg14" "pg15" "pg16" "pg17" "pg18")
-#PG_VERS=("pg17")
+#PG_VERS=("pg18")
 
 echo $BASE
 echo $VERSION
