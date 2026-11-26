@@ -13,7 +13,7 @@ developers, and even DBAs need to access from time to time.
 
 ## Compatibility
 
-PgDD has been tested to work for PostgreSQL 12 through 16.
+PgDD supports PostgreSQL 15 through 19.
 This extension is built using the
 [pgrx framework](https://github.com/pgcentralfoundation/pgrx).  Postgres
 version support is expected to provide 5 years of support, but is ultimately

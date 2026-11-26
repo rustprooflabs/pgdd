@@ -1,6 +1,5 @@
-# Uses the PostGIS image used by PgOSM Flex. At time of writing
-# it was Debian 11 (bullseye)
-FROM postgis/postgis:17-3.5
+# The trixie-based PostGIS image has PGDG packages for PostgreSQL 15 through 19.
+FROM postgis/postgis:17-3.6
 
 LABEL maintainer="PgDD Project - https://github.com/rustprooflabs/pgdd"
 
@@ -16,22 +15,20 @@ ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get upgrade -y \
     && apt-get install -y make wget curl gnupg git postgresql-common
 
-RUN sh /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y
-
 RUN apt-get update && apt-get upgrade -y --fix-missing
 RUN apt-get install -y --fix-missing \
-        clang-11 llvm-11 clang libz-dev strace pkg-config \
+        clang llvm libclang-dev libz-dev strace pkg-config \
         libxml2 libxml2-dev libreadline8 libreadline-dev \
         flex bison libbison-dev build-essential \
         zlib1g-dev libxslt-dev libssl-dev libxml2-utils xsltproc libgss-dev \
         libldap-dev libkrb5-dev gettext tcl-tclreadline tcl-dev libperl-dev \
         libpython3-dev libprotobuf-c-dev libprotobuf-dev gcc \
         ruby ruby-dev rubygems \
-        postgresql-14 postgresql-server-dev-14 \
         postgresql-15 postgresql-server-dev-15 \
         postgresql-16 postgresql-server-dev-16 \
         postgresql-17 postgresql-server-dev-17 \
         postgresql-18 postgresql-server-dev-18 \
+        postgresql-19 postgresql-server-dev-19 \
     && apt autoremove -y
 
 
