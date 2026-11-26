@@ -23,12 +23,11 @@ This matches the hardware easily available.
 
 ## Operating Systems Supported
 
-Pre-built binaries are provided for recent operating systems, typically
-ones in Long Term Support (LTS). Currently building for:
+The Docker build targets the following operating systems.
 
-* Ubuntu 23.04
+* Ubuntu 24.04
 * Ubuntu 22.04
-* Debian 11 (named PostGIS internally)
+* Debian 13 (the PostGIS image)
 
 
 ## Docker Build System
@@ -43,8 +42,8 @@ The Docker build system is the best approach to use when the appropriate
 > The Docker build method was originally based on [ZomboDB's build system](https://github.com/zombodb/zombodb).
 
 To generate the full suite of binaries change into the `./build` directory
-and run `build.sh`.  This currently creates 15 total binary installers for
-3 different OSs (Postgres 12 - 16).
+and run `build.sh`. This builds an installer for each operating system
+and PostgreSQL major (15 through 19).
 
 ```bash
 cd build/
@@ -68,8 +67,8 @@ with all versions and uncommenting the line with a specific Postgres version.
 The two lines in the script are shown below.
 
 ```bash
-PG_VERS=("pg13" "pg14" "pg15" "pg16" "pg17")
-#PG_VERS=("pg16")
+PG_VERS=("pg15" "pg16" "pg17" "pg18" "pg19")
+#PG_VERS=("pg19")
 ```
 
 
@@ -81,11 +80,11 @@ the following line.
 for image in `ls docker/ ` ; do
 ```
 
-To build for only `lunar` (Ubuntu 23.04) add ` | grep lunar ` as shown in the
+To build for only `noble` (Ubuntu 24.04) add ` | grep noble ` as shown in the
 following example.
 
 ```bash
-for image in `ls docker/ | grep lunar ` ; do
+for image in `ls docker/ | grep noble ` ; do
 ```
 
 ### Operating Systems supported
@@ -116,7 +115,7 @@ documentation for more information on using `pgrx`.
 
 
 ```bash
-sudo apt install postgresql-server-dev-all libreadline-dev zlib1g-dev curl \
+sudo apt install postgresql-server-dev-15 libreadline-dev zlib1g-dev curl \
     libssl-dev llvm-dev libclang-dev clang \
     graphviz
 ```
@@ -128,11 +127,11 @@ curl https://sh.rustup.rs -sSf | sh -s -- -y
 source $HOME/.cargo/env
 ```
 
-Install `cargo-pgrx` regularly (see dev steps below for non-standard install).
+Use Rust 1.99.1 or later and install the version of `cargo-pgrx` that matches PgDD.
 
 
 ```bash
-cargo install --locked cargo-pgrx
+cargo install --locked cargo-pgrx --version 0.20.1
 ```
 
 
@@ -143,13 +142,10 @@ cargo install cargo-deb
 ```
 
 
-Initialize `pgrx`.  Need to run this after install AND occasionally to get updates
-to Postgres versions or glibc updates.  Not typically required to follow pgrx
-developments.
-
+Point `cargo-pgrx` at the PostgreSQL 15 installation used in this example.
 
 ```bash
-cargo pgrx init
+cargo pgrx init --pg15 /usr/lib/postgresql/15/bin/pg_config --no-run
 ```
 
 
@@ -176,7 +172,7 @@ cd ~/git/pgdd
 
 
 ```bash
-cargo pgrx package --pg-config /usr/lib/postgresql/15/bin/pg_config
+cargo pgrx package --no-default-features --features pg15 --pg-config /usr/lib/postgresql/15/bin/pg_config
 cd target/release/pgdd-pg15/
 
 find ./ -name "*.so" -exec strip {} \;
@@ -251,7 +247,7 @@ Change
 
 ```bash
 RUN /bin/bash rustup.sh -y \
-    && cargo install --locked cargo-pgrx
+    && cargo install --locked cargo-pgrx --version ${PGRXVERSION}
 ```
 
 To

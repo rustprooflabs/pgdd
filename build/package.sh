@@ -30,9 +30,8 @@ PKG_FORMAT=deb
 PG_VER_SHORT=${PG_VER: -2}
 echo "    Running pgrx init for ${PG_VER} (${PG_VER_SHORT})"
 
-mkdir -p /home/docker/.pgrx/data-${PG_VER_SHORT}
-
-cargo pgrx init --${PG_VER} /usr/lib/postgresql/${PG_VER_SHORT}/bin/pg_config
+PG_CONFIG="/usr/lib/postgresql/${PG_VER_SHORT}/bin/pg_config"
+cargo pgrx init "--${PG_VER}" "$PG_CONFIG" --no-run || exit $?
 
 echo "Changing to build dir..."
 cd /build
@@ -42,15 +41,14 @@ VERSION=$(cat pgdd.control | grep default_version | cut -f2 -d\')
 
 echo "PgDD Building for:  ${OSNAME}-${VERSION}"
 
-PG_CONFIG_DIR=$(dirname $(grep ${PG_VER} ~/.pgrx/config.toml | cut -f2 -d= | cut -f2 -d\"))
-export PATH=${PG_CONFIG_DIR}:${PATH}
+export PATH="$(dirname "$PG_CONFIG"):$PATH"
 
 # Jubilee's suggestion fixed the issue:
 #  https://github.com/pgcentralfoundation/pgrx/issues/1298#issuecomment-1806688762
 export PGRX_BINDGEN_NO_DETECT_INCLUDES=please
 
 echo "   Packaging pgrx"
-cargo pgrx package || exit $?
+cargo pgrx package --pg-config "$PG_CONFIG" --no-default-features --features "$PG_VER" || exit $?
 
 
 #
